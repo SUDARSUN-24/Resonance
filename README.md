@@ -31,11 +31,21 @@ Real-time speech synthesis with live controls:
 
 | Option | Choices |
 | --- | --- |
-| 🗣️ **Voice characters** | Nova, Deep, Calm, Hype, News, Mysterious, Robotic |
+| 🗣️ **Voice characters** | Nova, Aria‑7, Anchor, Deep, Zen, Hype, Shadow — each with its own color theme |
 | 🚻 **Gender** | Male, Female |
-| 🌍 **Languages** | English (US), English (UK), Thai, Japanese, Korean, Spanish, French, German, Italian, Hindi |
-| 🎭 **Emotions** | Neutral, Calm & Soothing, Energetic, Formal, Dramatic, Mysterious |
-| 🎚️ **Fine-tuning** | Adjustable speed and pitch |
+| 🌍 **Languages** | 45+ built in (Thai, Japanese, Korean, Chinese, Hindi, Sinhala, Tamil, Arabic, Spanish, French, German and more), plus every extra language your device has voices for |
+| 🔍 **Auto-detect** | Type in Thai, Japanese, Korean, Arabic, Hindi, Russian and other scripts and the language switches automatically |
+| 🎧 **Device voice picker** | Picks the best natural voice for the character's gender automatically, or choose any installed voice yourself |
+| 🎭 **Emotions** | Neutral, Calm, Energetic, Formal, Dramatic, Mysterious |
+| 🎚️ **Fine-tuning** | Speed, pitch and volume sliders |
+
+### 🌟 Live Stage
+- 🔮 **Animated visualizer** — a glowing orb and waveform that pulse with every spoken word
+- 📝 **Live captions** — each word lights up as it's spoken, with a progress bar and timer
+- ⏯️ **Pause, resume and stop** — plus `Ctrl + Enter` to generate and `Esc` to stop
+- ✍️ **Script templates** — greeting, headline, story, trailer, ad and *Surprise me*
+- 🕘 **Recent takes** — replay your last 8 generations with their exact settings
+- 🔗 **Share a take** — copy a link that opens the lab with your voice, settings and text
 
 ### 🎵 More
 - 🎧 **Voice Tracks** — showcase page with playable demo tracks and Web Audio API synth effects
