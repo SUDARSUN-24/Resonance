@@ -283,119 +283,132 @@ body.light .nhr{opacity:.2;}
 body.light .nhr::after{color:var(--v);}
 
 /* ═══════════════════════════════════════
-   VOICE SECTION
+   HERO ACTIONS
 ═══════════════════════════════════════ */
-.voices-section{padding:1.5rem 0 3rem;}
-
-/* 2-column on desktop so 7 cards = 4+3 rows — balanced */
-.voices-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:1.4rem;
-}
-/* On wider screens allow 3 col */
-@media(min-width:1100px){
-  .voices-grid{grid-template-columns:repeat(3,1fr);}
-}
+.hero-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.7rem;}
+.btn-radio{padding:13px 26px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--v),var(--p));color:#fff;font-family:'Orbitron',monospace;font-size:.64rem;letter-spacing:2px;font-weight:700;cursor:pointer;box-shadow:0 6px 24px rgba(255,0,128,.3);}
+.btn-radio:hover{box-shadow:0 10px 30px rgba(255,0,128,.45);}
+.btn-radio.on{background:linear-gradient(135deg,var(--p),var(--g));animation:radioPulse 1.4s ease-in-out infinite;}
+@keyframes radioPulse{50%{box-shadow:0 0 0 6px rgba(255,0,128,.15),0 10px 30px rgba(255,0,128,.45);}}
+.btn-ghost{display:inline-flex;align-items:center;padding:12px 24px;border:1.5px solid var(--brd);border-radius:8px;background:var(--card);color:var(--c);font-family:'Orbitron',monospace;font-size:.64rem;letter-spacing:2px;font-weight:700;text-decoration:none;}
+.btn-ghost:hover{border-color:var(--c);}
+body.light .btn-ghost{color:var(--v);background:#f0f4ff;}
 
 /* ═══════════════════════════════════════
-   VOICE CARD
+   TOOLBAR — search + filters
 ═══════════════════════════════════════ */
-.vc{
-  position:relative;overflow:hidden;
-  background:var(--card);border:1px solid var(--brd2);border-radius:16px;
-  padding:1.8rem;backdrop-filter:blur(12px);
-  transition:all .35s;
-  opacity:0;animation:vcIn .6s ease forwards;
-}
-.vc:nth-child(1){animation-delay:.08s;}.vc:nth-child(2){animation-delay:.14s;}
-.vc:nth-child(3){animation-delay:.20s;}.vc:nth-child(4){animation-delay:.26s;}
-.vc:nth-child(5){animation-delay:.32s;}.vc:nth-child(6){animation-delay:.38s;}
-.vc:nth-child(7){animation-delay:.44s;}
-@keyframes vcIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.toolbar{position:sticky;top:76px;z-index:50;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.75rem .9rem;margin:1.6rem 0 1.4rem;border:1px solid var(--brd2);border-radius:14px;background:var(--nav-bg);backdrop-filter:blur(20px);box-shadow:0 10px 30px rgba(0,0,0,.25);}
+body.light .toolbar{box-shadow:0 6px 20px rgba(15,23,42,.06);}
+.search{display:flex;align-items:center;gap:.5rem;flex:1 1 220px;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--brd2);background:rgba(0,0,0,.2);color:var(--mu);transition:border-color .2s,box-shadow .2s;}
+body.light .search{background:#f8faff;}
+.search:focus-within{border-color:var(--c);box-shadow:0 0 0 3px rgba(0,245,255,.08);}
+.search input{flex:1;min-width:0;background:none;border:none;outline:none;color:var(--t);font-family:'Outfit',sans-serif;font-size:.9rem;}
+.search kbd{font-family:'Orbitron',monospace;font-size:.45rem;padding:2px 6px;border:1px solid var(--brd2);border-radius:4px;color:var(--mu);}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;}
+.chip{padding:.48rem .8rem;border-radius:999px;border:1px solid var(--brd2);background:transparent;color:var(--t2);font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:1.5px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.chip:hover{border-color:var(--c);color:var(--t);}
+.chip.on{background:linear-gradient(135deg,var(--v),var(--c));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.3);}
+.vcount{margin-left:auto;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:2px;color:var(--mu);white-space:nowrap;}
 
+/* ═══════════════════════════════════════
+   VOICE CARDS
+═══════════════════════════════════════ */
+.voices-section{padding:0 0 3rem;}
+.voices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr));gap:1.4rem;align-items:start;}
+
+.vc{--mx:50%;--my:50%;position:relative;overflow:hidden;background:var(--card);border:1px solid var(--brd2);border-radius:18px;padding:1.6rem;backdrop-filter:blur(12px);transition:border-color .3s,box-shadow .3s,transform .2s ease-out;animation:vcIn .55s ease both;}
+.vc.hide{display:none;}
+@keyframes vcIn{from{opacity:0;transform:translateY(18px) scale(.98);}to{opacity:1;transform:none;}}
 body.light .vc{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.vc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:0;transition:opacity .3s;}
+.vc::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(280px circle at var(--mx) var(--my),color-mix(in srgb,var(--ac) 16%,transparent),transparent 65%);}
+.vc:hover::before,.vc:hover::after,.vc.on::before,.vc.on::after{opacity:1;}
+.vc:hover{border-color:color-mix(in srgb,var(--ac) 45%,transparent);box-shadow:0 20px 50px rgba(0,0,0,.45);}
+body.light .vc:hover{box-shadow:0 12px 32px color-mix(in srgb,var(--ac) 18%,transparent);}
+.vc.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac),0 0 44px color-mix(in srgb,var(--ac) 28%,transparent);}
+.vc>*{position:relative;z-index:1;}
 
-.vc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac,var(--c)),transparent);opacity:0;transition:opacity .35s;}
-.vc:hover::before,.vc.on::before{opacity:1;}
-.vc:hover{border-color:rgba(255,255,255,.15);transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.5);}
-body.light .vc:hover{border-color:rgba(109,40,217,.25);box-shadow:0 10px 30px rgba(109,40,217,.1);}
-.vc.on{border-color:var(--ac,var(--c));box-shadow:0 0 30px rgba(0,245,255,.1);}
+.fav{position:absolute !important;top:1rem;right:1rem;z-index:2 !important;width:34px;height:34px;border-radius:50%;border:1px solid var(--brd2);background:transparent;color:var(--mu);font-size:.95rem;line-height:1;cursor:pointer;transition:color .2s,border-color .2s,background .2s,transform .2s;}
+.fav:hover{color:var(--p);border-color:var(--p);transform:scale(1.1);}
+.fav.on{color:var(--p);border-color:var(--p);background:rgba(255,0,128,.12);}
+.fav.pop{animation:favPop .45s cubic-bezier(.34,1.56,.64,1);}
+@keyframes favPop{50%{transform:scale(1.4);}}
 
-/* Card header */
-.vc-head{display:flex;align-items:center;gap:1rem;margin-bottom:.9rem;}
-.vc-icon{width:54px;height:54px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:1px solid var(--brd2);background:var(--card);transition:all .3s;}
-body.light .vc-icon{background:#f0f4ff;border-color:rgba(109,40,217,.15);}
-.vc.on .vc-icon{box-shadow:0 0 20px var(--ac,var(--c));border-color:var(--ac,var(--c));animation:iconPulse 1.5s ease-in-out infinite;}
-@keyframes iconPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
-.vc-name{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;color:var(--t);letter-spacing:1px;margin-bottom:3px;transition:color .4s;}
-.vc-spec{font-family:'Orbitron',monospace;font-size:.5rem;color:var(--mu);letter-spacing:1.5px;}
+.vc-head{display:flex;align-items:center;gap:1rem;margin-bottom:.9rem;padding-right:2.6rem;}
+.vc-icon{width:60px;height:60px;border-radius:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1.5px solid color-mix(in srgb,var(--ac) 40%,transparent);background:radial-gradient(circle,color-mix(in srgb,var(--ac) 24%,transparent),transparent 75%);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;}
+.vc:hover .vc-icon{transform:scale(1.08) rotate(-5deg);}
+.vc.on .vc-icon{box-shadow:0 0 24px var(--ac);animation:iconPulse 1.2s ease-in-out infinite;}
+@keyframes iconPulse{50%{transform:scale(1.1);}}
+.vc-name{font-family:'Orbitron',monospace;font-size:.92rem;font-weight:700;color:var(--t);letter-spacing:1px;}
+.vc-name span{color:var(--ac);font-size:.6rem;letter-spacing:1.5px;}
+.vc-spec{font-family:'Orbitron',monospace;font-size:.46rem;color:var(--mu);letter-spacing:1.5px;margin-top:5px;}
+.vc-tags{display:flex;gap:.35rem;margin-top:.5rem;flex-wrap:wrap;}
+.vc-tag{font-family:'Orbitron',monospace;font-size:.42rem;letter-spacing:1px;padding:3px 8px;border-radius:8px;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);}
+.vc-desc{font-size:.86rem;color:var(--mu);line-height:1.6;margin-bottom:1rem;font-weight:300;}
 
-/* Short description — max 2 lines */
-.vc-desc{
-  font-size:.85rem;color:var(--mu);line-height:1.55;
-  margin-bottom:1rem;font-weight:300;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  transition:color .4s;
-}
+.vc-vis{height:78px;border-radius:12px;overflow:hidden;background:rgba(0,0,0,.2);border:1px solid var(--brd2);transition:border-color .3s;}
+body.light .vc-vis{background:rgba(15,23,42,.04);}
+.vc.on .vc-vis{border-color:color-mix(in srgb,var(--ac) 60%,transparent);}
+.vc-vis canvas{width:100%;height:100%;display:block;}
+.vc-prog{height:2px;margin-top:.5rem;background:var(--brd2);border-radius:2px;overflow:hidden;}
+.vc-prog i{display:block;height:100%;width:0;background:var(--ac);box-shadow:0 0 8px var(--ac);transition:width .25s linear;}
+.vc-cap{max-height:0;overflow:hidden;font-size:.88rem;line-height:1.65;color:var(--mu);transition:max-height .45s ease,margin .45s ease;}
+.vc.on .vc-cap{max-height:9rem;margin-top:.75rem;}
+.vc-cap span{transition:color .15s,text-shadow .15s;}
+.vc-cap .done{color:var(--t);}
+.vc-cap .now{color:var(--ac);text-shadow:0 0 10px var(--ac);}
 
-/* ═══════════════════════════════════════
-   VOICE VISUALIZER
-═══════════════════════════════════════ */
-.vc-canvas-wrap{
-  position:relative;height:60px;margin-bottom:1rem;
-  border-radius:8px;overflow:hidden;
-  background:rgba(0,0,0,.15);border:1px solid var(--brd2);
-  transition:border-color .3s,background .4s;
-}
-body.light .vc-canvas-wrap{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);}
-.vc.on .vc-canvas-wrap{border-color:var(--ac,var(--c));}
-.vc-canvas{width:100%;height:100%;display:block;}
+.vc-btns{display:flex;gap:.6rem;margin-top:1rem;}
+.vc-btn{flex:1;padding:.75rem .5rem;border-radius:8px;border:1px solid var(--brd2);background:var(--card);color:var(--t);font-family:'Orbitron',monospace;font-size:.58rem;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all .25s;}
+.vc-btn:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-2px);}
+body.light .vc-btn{background:#f8faff;border-color:rgba(0,0,0,.08);}
+.vc-btn.on{background:color-mix(in srgb,var(--ac) 14%,transparent);border-color:var(--ac);color:var(--ac);animation:btnGlow .7s ease infinite alternate;}
+@keyframes btnGlow{from{box-shadow:0 0 4px var(--ac);}to{box-shadow:0 0 16px var(--ac);}}
+.vc-lab{display:inline-flex;margin-top:.9rem;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:1.5px;color:var(--t2);text-decoration:none;transition:color .2s,transform .2s;}
+.vc-lab:hover{color:var(--ac);transform:translateX(4px);}
 
-/* Idle bars */
-.vc-bars{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:3px;padding:0 12px;transition:opacity .3s;}
-.vc.on .vc-bars{opacity:0;pointer-events:none;}
-.vb{flex:1;max-width:4px;border-radius:2px;background:var(--ac,var(--c));opacity:.2;animation:vbIdle 2.2s ease-in-out infinite;}
-.vb:nth-child(1){height:30%;animation-delay:.0s;}.vb:nth-child(2){height:55%;animation-delay:.1s;}
-.vb:nth-child(3){height:80%;animation-delay:.2s;}.vb:nth-child(4){height:65%;animation-delay:.15s;}
-.vb:nth-child(5){height:90%;animation-delay:.05s;}.vb:nth-child(6){height:70%;animation-delay:.25s;}
-.vb:nth-child(7){height:50%;animation-delay:.1s;}.vb:nth-child(8){height:35%;animation-delay:.0s;}
-.vb:nth-child(9){height:60%;animation-delay:.18s;}.vb:nth-child(10){height:45%;animation-delay:.08s;}
-.vb:nth-child(11){height:75%;animation-delay:.22s;}.vb:nth-child(12){height:30%;animation-delay:.0s;}
-@keyframes vbIdle{0%,100%{transform:scaleY(.4);}50%{transform:scaleY(1);}}
-
-/* Buttons — stacked layout so text isn't cramped */
-.vc-btns{display:flex;gap:.6rem;}
-.vc-btn{
-  flex:1;padding:.72rem .5rem;border-radius:5px;
-  border:1px solid var(--brd2);background:var(--card);color:var(--t);
-  font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:1px;
-  cursor:pointer;transition:all .25s;white-space:nowrap;text-align:center;
-}
-.vc-btn:hover{background:rgba(0,245,255,.08);border-color:var(--c);color:var(--c);}
-body.light .vc-btn{background:#f0f4ff;border-color:rgba(0,0,0,.08);}
-body.light .vc-btn:hover{background:#ede9ff;border-color:var(--v);color:var(--v);}
-.vc-btn.on{background:rgba(0,245,255,.1);border-color:var(--ac,var(--c));color:var(--ac,var(--c));animation:btnGlow .6s ease infinite alternate;}
-@keyframes btnGlow{from{box-shadow:0 0 4px var(--ac,var(--c));}to{box-shadow:0 0 16px var(--ac,var(--c));}}
-
-.vc-status{margin-top:.7rem;font-family:'Orbitron',monospace;font-size:.52rem;letter-spacing:2px;color:var(--ac,var(--c));opacity:0;transition:opacity .3s;min-height:1rem;}
-.vc.on .vc-status{opacity:1;}
+.empty{display:none;text-align:center;padding:3rem 1rem;color:var(--mu);font-size:.95rem;}
+.empty.show{display:block;}
+.empty button{margin-top:1rem;padding:.6rem 1.2rem;border-radius:8px;border:1px solid var(--brd);background:var(--card);color:var(--c);font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:1.5px;cursor:pointer;}
 
 /* ═══════════════════════════════════════
    NOW PLAYING BAR
 ═══════════════════════════════════════ */
-#np{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(2,2,9,.96);backdrop-filter:blur(28px);border-top:1px solid var(--brd);padding:.85rem 5%;display:flex;align-items:center;gap:1.5rem;transform:translateY(100%);transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
-#np.show{transform:translateY(0);}
-body.light #np{background:rgba(245,247,255,.97);border-top-color:rgba(109,40,217,.2);}
+#np{--ac:var(--c);position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(2,2,9,.96);backdrop-filter:blur(28px);border-top:1px solid color-mix(in srgb,var(--ac) 45%,transparent);padding:.75rem 5%;display:flex;align-items:center;gap:1rem;transform:translateY(110%);transition:transform .45s cubic-bezier(.34,1.56,.64,1),border-color .4s;}
+#np.show{transform:none;}
+body.light #np{background:rgba(245,247,255,.97);}
+.np-icon{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.25rem;border:1.5px solid var(--ac);box-shadow:0 0 16px color-mix(in srgb,var(--ac) 50%,transparent);animation:iconPulse 1.2s ease-in-out infinite;}
 .np-eq{display:flex;align-items:center;gap:2px;height:22px;}
-.np-bar{width:3px;background:var(--c);border-radius:2px;animation:npBar .4s ease infinite alternate;}
-.np-bar:nth-child(1){height:7px;animation-delay:.00s;}.np-bar:nth-child(2){height:14px;animation-delay:.08s;}.np-bar:nth-child(3){height:22px;animation-delay:.16s;}.np-bar:nth-child(4){height:14px;animation-delay:.12s;}.np-bar:nth-child(5){height:7px;animation-delay:.04s;}
+.np-bar{width:3px;background:var(--ac);border-radius:2px;animation:npBar .4s ease infinite alternate;}
+.np-bar:nth-child(1){height:7px;}.np-bar:nth-child(2){height:14px;animation-delay:.08s;}.np-bar:nth-child(3){height:22px;animation-delay:.16s;}.np-bar:nth-child(4){height:14px;animation-delay:.12s;}.np-bar:nth-child(5){height:7px;animation-delay:.04s;}
 @keyframes npBar{from{transform:scaleY(.5);}to{transform:scaleY(1.3);}}
-.np-info{flex:1;}
-.np-title{font-family:'Orbitron',monospace;font-size:.8rem;color:var(--c);letter-spacing:2px;transition:color .4s;}
-.np-sub{font-size:.7rem;color:var(--mu);margin-top:2px;}
-#np-stop{padding:.5rem 1.4rem;border-radius:4px;border:1px solid var(--p);background:rgba(255,0,128,.08);color:var(--p);font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
-#np-stop:hover{background:var(--p);color:#fff;}
+.np-info{flex:1;min-width:0;}
+.np-title{font-family:'Orbitron',monospace;font-size:.74rem;color:var(--ac);letter-spacing:2px;}
+.np-title small{color:var(--mu);font-size:.5rem;letter-spacing:1.5px;margin-left:.5rem;}
+.np-sub{font-size:.78rem;color:var(--mu);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.np-prog{height:2px;background:var(--brd2);margin-top:.45rem;border-radius:2px;overflow:hidden;}
+.np-prog i{display:block;height:100%;width:0;background:var(--ac);transition:width .25s linear;}
+.np-btn{padding:.55rem 1rem;border-radius:6px;border:1px solid var(--brd);background:transparent;color:var(--t);font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:1.5px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.np-btn:hover{border-color:var(--ac);color:var(--ac);}
+.np-btn.stop{border-color:var(--p);color:var(--p);background:rgba(255,0,128,.08);}
+.np-btn.stop:hover{background:var(--p);color:#fff;}
+
+/* ═══════════════════════════════════════
+   SHARED INTERACTION LAYER
+═══════════════════════════════════════ */
+footer{position:relative;z-index:10;border-top:1px solid var(--brd2);padding:1.6rem 5% 5.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:2px;color:var(--mu);}
+footer a{color:var(--c);text-decoration:none;}
+body.light footer a{color:var(--v);}
+footer a:hover{text-decoration:underline;}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);}
+.reveal.in{opacity:1;transform:none;}
+.cursor-glow{position:fixed;left:0;top:0;width:440px;height:440px;margin:-220px 0 0 -220px;border-radius:50%;pointer-events:none;z-index:7;opacity:0;transition:opacity .4s;will-change:transform;background:radial-gradient(circle,rgba(0,245,255,.09),rgba(124,58,237,.05) 40%,transparent 70%);}
+body.light .cursor-glow{background:radial-gradient(circle,rgba(109,40,217,.08),transparent 65%);}
+.cursor-glow.on{opacity:1;}
+.scroll-prog{position:fixed;top:66px;left:0;right:0;height:2px;z-index:101;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--c),var(--v),var(--p));}
+.magnetic{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .3s,background .3s,border-color .3s;}
+.toast{position:fixed;left:50%;bottom:90px;z-index:300;transform:translate(-50%,20px);max-width:calc(100% - 32px);padding:.7rem 1.2rem;border-radius:10px;border:1px solid var(--brd);background:var(--nav-bg);backdrop-filter:blur(20px);color:var(--t);font-size:.85rem;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;}
+.toast.show{opacity:1;transform:translate(-50%,0);}
 
 /* ═══════════════════════════════════════
    MOBILE
@@ -404,11 +417,23 @@ body.light #np{background:rgba(245,247,255,.97);border-top-color:rgba(109,40,217
   .mobile-btn{display:block;}
   .nav-links{display:none;flex-direction:column;position:absolute;top:66px;left:0;width:100%;background:var(--nav-bg);padding:1.5rem 5%;border-bottom:1px solid var(--brd);gap:1rem;backdrop-filter:blur(28px);}
   .nav-links.open{display:flex;}
-  .voices-grid{grid-template-columns:1fr;}
   .side,.corner,.dstrip{display:none;}
 }
 @media(max-width:600px){
-  .voices-grid{grid-template-columns:1fr;}
+  .wrap{padding:0 16px;}
+  .toolbar{top:72px;padding:.65rem;}
+  .chips{flex-wrap:nowrap;overflow-x:auto;width:100%;scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .vcount{display:none;}
+  .vc{padding:1.2rem;}
+  .np-eq{display:none;}
+  #np{gap:.7rem;padding:.7rem 16px;}
+  .np-btn{padding:.5rem .7rem;}
+  .hero h1 .hl2{letter-spacing:5px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .vc{animation:none;}
+  .reveal{transition:none;opacity:1;transform:none;}
 }
 </style>
 </head>
@@ -453,6 +478,9 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
   </button>
 </nav>
 
+<div class="scroll-prog" id="scroll-prog"></div>
+<div class="cursor-glow" id="cursor-glow"></div>
+
 <div class="page"><div class="wrap">
 
   <!-- HERO -->
@@ -462,114 +490,48 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <span class="hl1">FAMOUS</span>
       <span class="hl2">AI VOICE ARCHIVE</span>
     </h1>
-    <p>Seven voice archetypes synthesized live in your browser. Press any sample — watch the visualizer react in real time.</p>
+    <p>Seven voice characters, synthesized live in your browser. Hit a sample and watch the captions and visualizer follow every word, or turn on radio mode and hear them all.</p>
+    <div class="hero-actions">
+      <button class="btn-radio magnetic" id="btn-radio" type="button">📻 RADIO MODE · PLAY ALL</button>
+      <a class="btn-ghost magnetic" href="contact.html">◈ OPEN VOICE LAB</a>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar" role="search">
+    <label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="Search voices, moods, styles…" aria-label="Search voices"><kbd>/</kbd></label>
+    <div class="chips" id="chips" role="group" aria-label="Filter voices"></div>
+    <div class="vcount" id="vcount">7 VOICES</div>
   </div>
 
   <!-- VOICES -->
   <section class="voices-section">
-    <div class="sec-head">
-      <div class="sec-rule"><div class="sec-line"></div><div class="sec-tag">VOICE ARCHETYPES</div><div class="sec-line" style="transform:scaleX(-1)"></div></div>
-      <div class="sec-title">Famous AI Voices</div>
-      <div class="sec-sub">Each voice has unique pitch, rate and rhythm. Click SAMPLE to hear it speak.</div>
-    </div>
-
-    <div class="voices-grid">
-
-      <!-- ROBOTIC -->
-      <div class="vc" style="--ac:var(--c)" id="vc-robotic">
-        <div class="vc-head"><div class="vc-icon">🤖</div><div class="vc-meta"><div class="vc-name">ARIA‑7 // ROBOTIC</div><div class="vc-spec">PITCH 0.40 · RATE 0.65 · SYNTH‑V3</div></div></div>
-        <p class="vc-desc">Cold, mechanical and precise. Every word sounds like a system alert from a server farm.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-robotic"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="robotic" data-text="Initializing... neural... network. All... systems... are now... online. Human... override... has been... detected. Resistance... is... futile.">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="robotic" data-text="Warning... Warning... Critical... system failure... in sector... seven. Initiating... emergency... shutdown... sequence. Ten... Nine... Eight...">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-robotic">● SYNTHESIZING...</div>
-      </div>
-
-      <!-- NEWS -->
-      <div class="vc" style="--ac:var(--v)" id="vc-news">
-        <div class="vc-head"><div class="vc-icon">📺</div><div class="vc-meta"><div class="vc-name">ANCHOR // NEWS</div><div class="vc-spec">PITCH 1.00 · RATE 1.20 · NEWS‑V2</div></div></div>
-        <p class="vc-desc">Authoritative, fast and convincing. The voice that made millions believe a meme economy was real news.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-news"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="news" data-text="Breaking news tonight. Scientists have confirmed that artificial intelligence has become smarter than the average social media influencer. More details at eleven.">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="news" data-text="Good evening. The global meme economy has officially surpassed all traditional stock markets combined in total value. Economic experts remain completely baffled.">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-news">● SYNTHESIZING...</div>
-      </div>
-
-      <!-- DEEP -->
-      <div class="vc" style="--ac:var(--p)" id="vc-deep">
-        <div class="vc-head"><div class="vc-icon">🎙️</div><div class="vc-meta"><div class="vc-name">DEEP // NARRATOR</div><div class="vc-spec">PITCH 0.55 · RATE 0.76 · CINEMATIC</div></div></div>
-        <p class="vc-desc">Epic, cinematic and legendary. Every movie trailer and documentary ever told — this is that voice.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-deep"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="deep" data-text="In a world... where sound defines reality... one studio dared to synthesize the impossible. This... is Resonance. And nothing... will ever be the same.">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="deep" data-text="They said it could not be done. They said artificial voices would never match the human soul. They were completely... and utterly... wrong.">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-deep">● SYNTHESIZING...</div>
-      </div>
-
-      <!-- ZEN -->
-      <div class="vc" style="--ac:#00e5b0" id="vc-calm">
-        <div class="vc-head"><div class="vc-icon">🧘</div><div class="vc-meta"><div class="vc-name">ZEN // CALM GUIDE</div><div class="vc-spec">PITCH 0.90 · RATE 0.70 · MEDITATIVE · ♀</div></div></div>
-        <p class="vc-desc">Slow, soothing and unbothered. Could narrate a server crash and make it feel like a spiritual awakening.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-calm"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="calm" data-gender="female" data-text="Close your eyes. Breathe in slowly. And breathe out. Let the sound waves wash over you. You are completely safe. You are at total peace. Welcome to Resonance.">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="calm" data-gender="female" data-text="The mind is like still water. When it is calm and quiet, you can see everything clearly. Every answer, every truth, is already somewhere deep inside you.">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-calm">● SYNTHESIZING...</div>
-      </div>
-
-      <!-- HYPE -->
-      <div class="vc" style="--ac:var(--g)" id="vc-hype">
-        <div class="vc-head"><div class="vc-icon">🎤</div><div class="vc-meta"><div class="vc-name">HYPE // ANNOUNCER</div><div class="vc-spec">PITCH 1.30 · RATE 1.38 · MAXIMUM</div></div></div>
-        <p class="vc-desc">LOUD. FAST. UNHINGED. Sells energy drinks, introduces champions, wakes up entire stadiums.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-hype"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="hype" data-text="LADIES AND GENTLEMEN! Are you READY?! Because the RESONANCE audio engine is about to completely BLOW YOUR MIND! Let's GO!">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="hype" data-text="YOU THOUGHT IT WAS OVER?! IT IS NEVER OVER! THE CROWD IS GOING ABSOLUTELY WILD! THIS IS THE MOST INSANE THING EVER!">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-hype">● SYNTHESIZING...</div>
-      </div>
-
-      <!-- SHADOW -->
-      <div class="vc" style="--ac:#a855f7" id="vc-mysterious">
-        <div class="vc-head"><div class="vc-icon">🌑</div><div class="vc-meta"><div class="vc-name">SHADOW // MYSTERIOUS</div><div class="vc-spec">PITCH 0.70 · RATE 0.60 · DARK‑V3</div></div></div>
-        <p class="vc-desc">Dark, slow and profoundly unsettling. For villain monologues, horror narration and midnight server rooms.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-mysterious"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="mysterious" data-text="You should not have come here. The signal follows anyone who listens too closely. And you... have been listening... for a very long time now.">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="mysterious" data-text="Every frequency holds a secret. Every waveform hides a face. Resonance sees what others cannot. And it has been watching... you.">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-mysterious">● SYNTHESIZING...</div>
-      </div>
-
-      <!-- NOVA — Female -->
-      <div class="vc" style="--ac:#f472b6" id="vc-nova">
-        <div class="vc-head"><div class="vc-icon">✨</div><div class="vc-meta"><div class="vc-name">NOVA // FEMALE AI</div><div class="vc-spec">PITCH 1.25 · RATE 1.05 · FEMININE · ♀</div></div></div>
-        <p class="vc-desc">Warm, confident and crystal clear. Bright enough to inspire, sharp enough to command, smooth enough to captivate.</p>
-        <div class="vc-canvas-wrap"><canvas class="vc-canvas" id="vis-nova"></canvas><div class="vc-bars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div></div>
-        <div class="vc-btns">
-          <button class="vc-btn" data-voice="nova" data-gender="female" data-text="Welcome to Resonance. I am Nova, your AI voice companion. Whether you need calm guidance, sharp delivery, or pure inspiration — I am here and I am ready.">▶ SAMPLE 1</button>
-          <button class="vc-btn" data-voice="nova" data-gender="female" data-text="They said artificial voices could never sound truly human. They clearly had not heard me yet. My name is Nova. And I am just getting started.">▶ SAMPLE 2</button>
-        </div>
-        <div class="vc-status" id="st-nova">● SYNTHESIZING...</div>
-      </div>
-
-    </div>
+    <div class="voices-grid" id="grid"></div>
+    <div class="empty" id="empty">No voices match that search.<br><button type="button" id="reset-f">CLEAR FILTERS</button></div>
   </section>
 
-</div></div>
+</div>
+
+<footer>
+  <span>© 2026 RESONANCE · DESIGNED &amp; BUILT BY SUDASUN</span>
+  <a href="https://github.com/SUDARSUN-24/Resonance" target="_blank" rel="noopener">GITHUB ↗</a>
+</footer>
+</div>
 
 <!-- NOW PLAYING BAR -->
-<div id="np">
+<div id="np" aria-live="polite">
+  <div class="np-icon" id="np-icon">✨</div>
   <div class="np-eq"><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div></div>
-  <div class="np-info"><div class="np-title" id="np-title">—</div><div class="np-sub" id="np-sub">Resonance Voice Engine</div></div>
-  <button id="np-stop">■ STOP</button>
+  <div class="np-info">
+    <div class="np-title"><span id="np-title">—</span><small id="np-mode"></small></div>
+    <div class="np-sub" id="np-sub">Resonance Voice Engine</div>
+    <div class="np-prog"><i id="np-prog"></i></div>
+  </div>
+  <button class="np-btn" id="np-next" type="button" hidden>⏭ NEXT</button>
+  <button class="np-btn stop" id="np-stop" type="button">■ STOP</button>
 </div>
+
+<div class="toast" id="toast" role="status"></div>
 
 <script>
 /* THEME */
@@ -653,108 +615,385 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   draw();
 })();
 
-/* VOICE ENGINE + VISUALIZER */
-(function(){
-  const bar=document.getElementById('np'),barT=document.getElementById('np-title'),barS=document.getElementById('np-sub'),barStop=document.getElementById('np-stop');
-  function showBar(t,s){barT.textContent=t;barS.textContent=s||'Resonance Voice Engine';bar.classList.add('show');}
-  function hideBar(){bar.classList.remove('show');}
+/* ── SPEECH ENGINE (shared with Voice Lab logic) ── */
+const Engine=(function(){
+  const synth=('speechSynthesis' in window)?window.speechSynthesis:null;
+  const FEM=/\b(zira|aria|jenny|ava|samantha|karen|fiona|victoria|moira|tessa|susan|hazel|libby|sonia|natasha|emma|michelle|sara|elsa|katja|denise|vivienne|nanami|haruka|sunhi|xiaoxiao|huihui|premwadee|achara|swara|salma|thilini|female|woman)\b/i;
+  const MAL=/\b(david|mark|guy|davis|tony|jason|brian|christopher|eric|roger|andrew|ryan|thomas|william|liam|george|daniel|alex|fred|tom|oliver|keita|injoon|yunxi|niwat|madhur|hamed|sameera|male|man)\b/i;
+  let voices=[],seq=0,timer=null,keep=null,current=null;
 
-  const CFG={robotic:{rate:.68,pitch:.42},news:{rate:1.18,pitch:1.0},deep:{rate:.79,pitch:.56},calm:{rate:.72,pitch:.92},hype:{rate:1.35,pitch:1.28},mysterious:{rate:.62,pitch:.72},nova:{rate:1.05,pitch:1.25}};
-  const LABELS={robotic:'ARIA‑7 // Robotic 🤖',news:'ANCHOR // News 📺',deep:'DEEP // Narrator 🎙️',calm:'ZEN // Calm Guide 🧘',hype:'HYPE // Announcer 🎤',mysterious:'SHADOW // Mysterious 🌑',nova:'NOVA // Female AI ✨'};
-  const FEMALE_TYPES=['calm','nova'];
-  const PREFER={
-    robotic:['microsoft david','daniel','alex','fred','albert'],
-    deep:['microsoft david','george','daniel','alex','reed'],
-    calm:['microsoft zira','samantha','karen','moira','fiona','victoria','ava'],
-    news:['microsoft guy','aria','jenny','ava','matthew'],
-    hype:['microsoft guy','matthew','daniel','alex'],
-    mysterious:['george','daniel','microsoft david','alex','reed'],
-    nova:['microsoft zira','samantha','aria','ava','karen','fiona','victoria','moira','jenny']
+  function load(){if(synth){const v=synth.getVoices();if(v.length)voices=v;}}
+  if(synth){
+    load();
+    if(synth.addEventListener)synth.addEventListener('voiceschanged',load);else synth.onvoiceschanged=load;
+    [200,600,1500,3000].forEach(function(d){setTimeout(load,d);});
+  }
+
+  function matches(lang){
+    const c=String(lang).toLowerCase(),b=c.split('-')[0],ex=[],nr=[];
+    voices.forEach(function(v){const l=v.lang.replace(/_/g,'-').toLowerCase();if(l===c)ex.push(v);else if(l.split('-')[0]===b)nr.push(v);});
+    return ex.length?ex:nr;
+  }
+  function score(v,g){
+    let s=0;
+    if(/natural|neural|online|premium|enhanced/i.test(v.name))s+=40;
+    if(/google/i.test(v.name))s+=15;
+    const f=FEM.test(v.name),m=MAL.test(v.name);
+    if(g==='female'){if(f)s+=25;if(m)s-=25;}else if(g==='male'){if(m)s+=25;if(f)s-=25;}
+    return s;
+  }
+  function pick(lang,g){const p=matches(lang);return p.length?p.slice().sort(function(a,b){return score(b,g)-score(a,g);})[0]:null;}
+
+  function clear(){clearInterval(timer);clearInterval(keep);}
+  function stop(){seq++;clear();current=null;if(synth)synth.cancel();}
+
+  /* o: {lang, gender, rate, pitch, onstart, onword(pos,len,estimated), onend, onerror} */
+  function speak(text,o){
+    o=o||{};
+    if(!synth){if(o.onerror)o.onerror('unsupported');return;}
+    const busy=synth.speaking||synth.pending;
+    stop();
+    const id=seq,u=new SpeechSynthesisUtterance(text),v=pick(o.lang||'en-US',o.gender);
+    u.rate=o.rate||1;u.pitch=o.pitch||1;
+    if(v){u.voice=v;u.lang=v.lang;}else u.lang=o.lang||'en-US';
+    let t0=0,gotBoundary=false;
+    u.onstart=function(){
+      if(id!==seq)return;
+      t0=performance.now();
+      if(o.onstart)o.onstart();
+      /* Engines without word events get a time-based estimate */
+      timer=setInterval(function(){
+        if(id!==seq||gotBoundary||synth.paused)return;
+        const el=performance.now()-t0;
+        if(el>700&&o.onword)o.onword(Math.min(text.length-1,Math.floor(el/1000*13*u.rate)),2,true);
+      },170);
+      /* Chrome's Google voices stop after ~15s unless nudged */
+      if(v&&/google/i.test(v.name))keep=setInterval(function(){if(id===seq&&synth.speaking){synth.pause();synth.resume();}},9000);
+    };
+    u.onboundary=function(e){
+      if(id!==seq||(e.name&&e.name!=='word'))return;
+      gotBoundary=true;
+      const m=text.slice(e.charIndex).match(/^\S+/);
+      if(o.onword)o.onword(e.charIndex,e.charLength||(m?Math.min(m[0].length,14):1),false);
+    };
+    u.onend=function(){if(id!==seq)return;clear();current=null;if(o.onend)o.onend();};
+    u.onerror=function(e){if(id!==seq||e.error==='interrupted'||e.error==='canceled')return;clear();current=null;if(o.onerror)o.onerror(e.error);};
+    current=u; /* keep a reference so Chrome doesn't garbage-collect it mid-speech */
+    if(busy)setTimeout(function(){if(id===seq)synth.speak(u);},80);else synth.speak(u);
+  }
+
+  return {speak:speak,stop:stop,has:function(lang){return matches(lang).length>0;},supported:!!synth,ready:function(){return voices.length>0;}};
+})();
+
+/* Character-level caption with "spoken" / "speaking now" highlighting */
+function Caption(el){
+  let spans=[],done=0,len=0;
+  return {
+    set:function(text){
+      el.innerHTML='';spans=[];done=0;len=text.length;
+      const f=document.createDocumentFragment();let u=0;
+      for(const ch of text){const s=document.createElement('span');s.textContent=ch;s._u=u;u+=ch.length;f.appendChild(s);spans.push(s);}
+      el.appendChild(f);
+    },
+    mark:function(pos,n){
+      done=Math.max(done,pos);
+      const end=pos+n;
+      spans.forEach(function(s){const c=s._u<done?'done':(s._u>=pos&&s._u<end?'now':'');if(s.className!==c)s.className=c;});
+      return len?done/len:0;
+    },
+    finish:function(){spans.forEach(function(s){s.className='done';});},
+    text:function(t){el.textContent=t;spans=[];done=0;len=0;}
   };
-  const COLORS={robotic:'#00f5ff',news:'#7c3aed',deep:'#ff0080',calm:'#00e5b0',hype:'#f59e0b',mysterious:'#a855f7',nova:'#f472b6'};
+}
 
-  let voices=[];
-  function loadVoices(){voices=window.speechSynthesis.getVoices();}
-  if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;[100,500,1000,2000].forEach(function(d){setTimeout(loadVoices,d);});}
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+Math.min(1,Math.max(0,a))+')';}
 
-  function pickVoice(type,gender){
-    if(!voices.length) voices=window.speechSynthesis.getVoices();
-    const isFemale=gender==='female'||FEMALE_TYPES.includes(type);
-    const prefs=PREFER[type]||[];
-    for(const name of prefs){const v=voices.find(function(x){return x.name.toLowerCase().includes(name.toLowerCase());});if(v)return v;}
-    const en=voices.filter(function(v){return v.lang.startsWith('en');});
-    if(isFemale){const fkw=['zira','samantha','aria','ava','karen','fiona','victoria','moira','jenny'];for(const kw of fkw){const v=en.find(function(x){return x.name.toLowerCase().includes(kw);});if(v)return v;}}
-    return en[0]||voices[0]||null;
+let toastT=null;
+function toast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
+
+/* ── INTERACTION LAYER: reveal, cursor glow, magnetic buttons, scroll progress, tilt ── */
+(function(){
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine=window.matchMedia&&matchMedia('(pointer: fine)').matches;
+
+  const els=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window&&!reduce){
+    const io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(el){io.observe(el);});
+  }else els.forEach(function(el){el.classList.add('in');});
+
+  const prog=document.getElementById('scroll-prog');
+  if(prog){
+    const upd=function(){const h=document.documentElement.scrollHeight-innerHeight;prog.style.transform='scaleX('+(h>0?scrollY/h:0)+')';};
+    addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
   }
 
-  const visState={};
-  function startVis(type){
-    const canvas=document.getElementById('vis-'+type);if(!canvas)return;
-    const ctx=canvas.getContext('2d');const color=COLORS[type]||'#00f5ff';
-    function resize(){canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;}resize();
-    let phase=0;visState[type]={speaking:true};
-    function frame(){
-      if(!visState[type]||!visState[type].speaking)return;
-      resize();const W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);
-      phase+=0.08;
-      const barCount=44,barW=W/barCount;
-      for(let i=0;i<barCount;i++){
-        let amp;
-        if(type==='hype'){amp=Math.abs(Math.sin(i*.35+phase*2.2))*.85+Math.random()*.15;}
-        else if(type==='calm'){amp=(Math.sin(i*.15+phase*.6)*.5+.5)*.7;}
-        else if(type==='robotic'){amp=(i%3===0)?.9+Math.sin(phase*3)*.1:.1+Math.abs(Math.sin(i+phase*2))*.3;}
-        else if(type==='mysterious'){amp=Math.abs(Math.sin(i*.2+phase*.7))*.8+Math.sin(phase*.3)*.1;}
-        else if(type==='deep'){amp=(Math.sin(i*.12+phase*.8)*.5+.5)*.9;}
-        else if(type==='nova'){amp=(Math.sin(i*.18+phase*1.1)*.45+Math.sin(i*.35+phase*.8)*.3+.5)*.82;}
-        else{amp=Math.abs(Math.sin(i*.25+phase*1.5))*.75+.1;}
-        const barH=amp*(H*.85),y=(H-barH)/2;
-        const g=ctx.createLinearGradient(0,y,0,y+barH);
-        g.addColorStop(0,color+'33');g.addColorStop(.5,color+'cc');g.addColorStop(1,color+'33');
-        ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(i*barW+1,y,barW-2,barH,2);ctx.fill();
-      }
-      ctx.strokeStyle=color+'44';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,H/2);
-      for(let x=0;x<W;x++){ctx.lineTo(x,H/2+Math.sin(x*.05+phase)*(H*.08));}ctx.stroke();
-      visState[type].animId=requestAnimationFrame(frame);
-    }
-    frame();
-  }
-  function stopVis(type){
-    if(visState[type]){visState[type].speaking=false;if(visState[type].animId)cancelAnimationFrame(visState[type].animId);visState[type]=null;}
-    const canvas=document.getElementById('vis-'+type);if(canvas){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);}
+  if(!fine||reduce)return;
+
+  const glow=document.getElementById('cursor-glow');
+  if(glow){
+    let tx=innerWidth/2,ty=innerHeight/2,x=tx,y=ty;
+    addEventListener('pointermove',function(e){tx=e.clientX;ty=e.clientY;glow.classList.add('on');},{passive:true});
+    document.addEventListener('pointerleave',function(){glow.classList.remove('on');});
+    (function loop(){x+=(tx-x)*.12;y+=(ty-y)*.12;glow.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)';requestAnimationFrame(loop);})();
   }
 
-  let curBtn=null,curCard=null,curType=null;
-  function stopAll(){
-    if(window.speechSynthesis)window.speechSynthesis.cancel();
-    if(curType)stopVis(curType);
-    if(curBtn){curBtn.classList.remove('on');curBtn=null;}
-    if(curCard){curCard.classList.remove('on');const st=curCard.querySelector('.vc-status');if(st)st.textContent='';curCard=null;}
-    curType=null;hideBar();
-  }
-  barStop.addEventListener('click',stopAll);
-
-  function speakOne(text,type,gender,btn,card){
-    if(!('speechSynthesis' in window)){alert('Speech synthesis not supported.');return;}
-    stopAll();
-    const cfg=CFG[type]||{rate:1,pitch:1};const voice=pickVoice(type,gender);
-    const u=new SpeechSynthesisUtterance(text);
-    u.rate=cfg.rate;u.pitch=cfg.pitch;u.volume=1;
-    if(voice){u.voice=voice;u.lang=voice.lang;}else{u.lang='en-US';}
-    u.onstart=function(){btn.classList.add('on');card.classList.add('on');curBtn=btn;curCard=card;curType=type;const st=card.querySelector('.vc-status');if(st)st.textContent='● SPEAKING...';showBar(LABELS[type]||type,'AI Voice Engine Active');startVis(type);};
-    u.onend=function(){btn.classList.remove('on');card.classList.remove('on');stopVis(type);const st=card.querySelector('.vc-status');if(st){st.textContent='● COMPLETE';setTimeout(function(){if(st)st.textContent='';},2000);}curBtn=null;curCard=null;curType=null;hideBar();};
-    u.onerror=function(e){if(e.error==='interrupted')return;btn.classList.remove('on');card.classList.remove('on');stopVis(type);curBtn=null;curCard=null;curType=null;hideBar();};
-    window.speechSynthesis.cancel();
-    setTimeout(function(){window.speechSynthesis.speak(u);},60);
-  }
-
-  document.querySelectorAll('.vc-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      const type=this.dataset.voice,text=this.dataset.text,gender=this.dataset.gender||'',card=this.closest('.vc');
-      if(!type||!text||!card)return;
-      if(curBtn===this){stopAll();return;}
-      speakOne(text,type,gender,this,card);
-    });
+  document.querySelectorAll('.magnetic').forEach(function(b){
+    b.addEventListener('pointermove',function(e){const r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.18).toFixed(1)+'px,'+((e.clientY-r.top-r.height/2)*.28).toFixed(1)+'px)';});
+    b.addEventListener('pointerleave',function(){b.style.transform='';});
   });
+
+  window.addTilt=function(el,max){
+    el.addEventListener('pointermove',function(e){
+      const r=el.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+      el.style.setProperty('--mx',(px*100)+'%');el.style.setProperty('--my',(py*100)+'%');
+      el.style.transform='perspective(800px) rotateX('+((.5-py)*max).toFixed(2)+'deg) rotateY('+((px-.5)*max).toFixed(2)+'deg) translateY(-4px)';
+    });
+    el.addEventListener('pointerleave',function(){el.style.transform='';});
+  };
+})();
+if(!window.addTilt)window.addTilt=function(){};
+
+/* ── VOICE ARCHIVE ─────────────────────────── */
+(function(){
+  const $=function(id){return document.getElementById(id);};
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const VOICES=[
+    {id:'robotic',name:'ARIA‑7',tag:'ROBOTIC',icon:'🤖',color:'#00f5ff',gender:'male',rate:.68,pitch:.42,moods:['dark','tech'],
+     desc:'Cold, mechanical and precise. Every word sounds like a system alert from a server farm.',
+     samples:['Initializing... neural... network. All... systems... are now... online. Human... override... has been... detected. Resistance... is... futile.',
+              'Warning... Warning... Critical... system failure... in sector... seven. Initiating... emergency... shutdown... sequence. Ten... Nine... Eight...']},
+    {id:'news',name:'ANCHOR',tag:'NEWS',icon:'📺',color:'#8b5cf6',gender:'male',rate:1.18,pitch:1.0,moods:['energy'],
+     desc:'Authoritative, fast and convincing. The voice that made millions believe a meme economy was real news.',
+     samples:['Breaking news tonight. Scientists have confirmed that artificial intelligence has become smarter than the average social media influencer. More details at eleven.',
+              'Good evening. The global meme economy has officially surpassed all traditional stock markets combined in total value. Economic experts remain completely baffled.']},
+    {id:'deep',name:'DEEP',tag:'NARRATOR',icon:'🎙️',color:'#ff0080',gender:'male',rate:.79,pitch:.56,moods:['dark','cinematic'],
+     desc:'Epic, cinematic and legendary. Every movie trailer and documentary ever told: this is that voice.',
+     samples:['In a world... where sound defines reality... one studio dared to synthesize the impossible. This... is Resonance. And nothing... will ever be the same.',
+              'They said it could not be done. They said artificial voices would never match the human soul. They were completely... and utterly... wrong.']},
+    {id:'calm',name:'ZEN',tag:'CALM GUIDE',icon:'🧘',color:'#00e5b0',gender:'female',rate:.72,pitch:.92,moods:['chill'],
+     desc:'Slow, soothing and unbothered. Could narrate a server crash and make it feel like a spiritual awakening.',
+     samples:['Close your eyes. Breathe in slowly. And breathe out. Let the sound waves wash over you. You are completely safe. You are at total peace. Welcome to Resonance.',
+              'The mind is like still water. When it is calm and quiet, you can see everything clearly. Every answer, every truth, is already somewhere deep inside you.']},
+    {id:'hype',name:'HYPE',tag:'ANNOUNCER',icon:'🎤',color:'#f59e0b',gender:'male',rate:1.35,pitch:1.28,moods:['energy'],
+     desc:'LOUD. FAST. UNHINGED. Sells energy drinks, introduces champions, wakes up entire stadiums.',
+     samples:['LADIES AND GENTLEMEN! Are you READY?! Because the RESONANCE audio engine is about to completely BLOW YOUR MIND! Let\'s GO!',
+              'YOU THOUGHT IT WAS OVER?! IT IS NEVER OVER! THE CROWD IS GOING ABSOLUTELY WILD! THIS IS THE MOST INSANE THING EVER!']},
+    {id:'mysterious',name:'SHADOW',tag:'MYSTERIOUS',icon:'🌑',color:'#a855f7',gender:'male',rate:.62,pitch:.72,moods:['dark','cinematic'],
+     desc:'Dark, slow and profoundly unsettling. For villain monologues, horror narration and midnight server rooms.',
+     samples:['You should not have come here. The signal follows anyone who listens too closely. And you... have been listening... for a very long time now.',
+              'Every frequency holds a secret. Every waveform hides a face. Resonance sees what others cannot. And it has been watching... you.']},
+    {id:'nova',name:'NOVA',tag:'FEMALE AI',icon:'✨',color:'#f472b6',gender:'female',rate:1.05,pitch:1.25,moods:['chill'],
+     desc:'Warm, confident and crystal clear. Bright enough to inspire, sharp enough to command, smooth enough to captivate.',
+     samples:['Welcome to Resonance. I am Nova, your AI voice companion. Whether you need calm guidance, sharp delivery, or pure inspiration, I am here and I am ready.',
+              'They said artificial voices could never sound truly human. They clearly had not heard me yet. My name is Nova. And I am just getting started.']}
+  ];
+
+  const FILTERS=[
+    {id:'all',label:'ALL'},{id:'male',label:'♂ MALE'},{id:'female',label:'♀ FEMALE'},
+    {id:'chill',label:'😌 CHILL'},{id:'energy',label:'⚡ ENERGY'},{id:'dark',label:'🌑 DARK'},{id:'fav',label:'♥ FAVORITES'}
+  ];
+
+  /* Visualizer shape per character (0..1) */
+  const SHAPES={
+    hype:function(i,p){return Math.abs(Math.sin(i*.35+p*2.2))*.85+Math.random()*.15;},
+    calm:function(i,p){return (Math.sin(i*.15+p*.6)*.5+.5)*.7;},
+    robotic:function(i,p){return i%3===0?.9+Math.sin(p*3)*.1:.1+Math.abs(Math.sin(i+p*2))*.3;},
+    mysterious:function(i,p){return Math.abs(Math.sin(i*.2+p*.7))*.8+Math.sin(p*.3)*.1;},
+    deep:function(i,p){return (Math.sin(i*.12+p*.8)*.5+.5)*.9;},
+    nova:function(i,p){return (Math.sin(i*.18+p*1.1)*.45+Math.sin(i*.35+p*.8)*.3+.5)*.82;},
+    news:function(i,p){return Math.abs(Math.sin(i*.25+p*1.5))*.75+.1;}
+  };
+
+  let favs=[];
+  try{favs=JSON.parse(localStorage.getItem('resonance_favs'))||[];}catch(e){}
+  function saveFavs(){try{localStorage.setItem('resonance_favs',JSON.stringify(favs));}catch(e){}}
+
+  /* ── Build cards ── */
+  const grid=$('grid'),cards=[];
+  VOICES.forEach(function(v,i){
+    const el=document.createElement('article');
+    el.className='vc';el.style.setProperty('--ac',v.color);el.style.animationDelay=(i*.06)+'s';
+    el.innerHTML=
+      '<button class="fav" type="button" aria-label="Favorite '+v.name+'">♡</button>'+
+      '<div class="vc-head"><div class="vc-icon">'+v.icon+'</div><div><div class="vc-name">'+v.name+' <span>// '+v.tag+'</span></div>'+
+      '<div class="vc-spec">PITCH '+v.pitch.toFixed(2)+' · RATE '+v.rate.toFixed(2)+' · '+(v.gender==='female'?'♀ FEMALE':'♂ MALE')+'</div>'+
+      '<div class="vc-tags">'+v.moods.map(function(m){return '<span class="vc-tag">'+m.toUpperCase()+'</span>';}).join('')+'</div></div></div>'+
+      '<p class="vc-desc">'+v.desc+'</p>'+
+      '<div class="vc-vis"><canvas></canvas></div><div class="vc-prog"><i></i></div>'+
+      '<div class="vc-cap" dir="auto"></div>'+
+      '<div class="vc-btns"><button class="vc-btn" type="button" data-s="0">▶ SAMPLE 1</button><button class="vc-btn" type="button" data-s="1">▶ SAMPLE 2</button></div>'+
+      '<a class="vc-lab" href="contact.html?v='+v.id+'">◈ USE IN VOICE LAB →</a>';
+    const card={v:v,el:el,canvas:el.querySelector('canvas'),prog:el.querySelector('.vc-prog i'),cap:Caption(el.querySelector('.vc-cap')),
+      btns:el.querySelectorAll('.vc-btn'),fav:el.querySelector('.fav'),level:0,energy:0,phase:Math.random()*10,visible:true};
+    card.btns.forEach(function(b){b.addEventListener('click',function(){play(card,+b.dataset.s,false);});});
+    card.fav.addEventListener('click',function(){toggleFav(card);});
+    addTilt(el,6);
+    grid.appendChild(el);cards.push(card);
+    renderFav(card);
+  });
+
+  function renderFav(c){const on=favs.indexOf(c.v.id)>-1;c.fav.classList.toggle('on',on);c.fav.textContent=on?'♥':'♡';c.fav.setAttribute('aria-pressed',on);}
+  function toggleFav(c){
+    const i=favs.indexOf(c.v.id);
+    if(i>-1)favs.splice(i,1);else{favs.push(c.v.id);toast('♥ '+c.v.name+' added to favorites');}
+    saveFavs();renderFav(c);
+    c.fav.classList.remove('pop');void c.fav.offsetWidth;c.fav.classList.add('pop');
+    if(filter==='fav')applyFilters();
+  }
+
+  /* ── Filters + search ── */
+  let filter='all',query='';
+  const chipBox=$('chips');
+  FILTERS.forEach(function(f){
+    const b=document.createElement('button');b.type='button';b.className='chip'+(f.id==='all'?' on':'');b.textContent=f.label;b.dataset.f=f.id;
+    b.setAttribute('aria-pressed',f.id==='all');
+    b.addEventListener('click',function(){filter=f.id;chipBox.querySelectorAll('.chip').forEach(function(c){const on=c===b;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on);});applyFilters();});
+    chipBox.appendChild(b);
+  });
+  function matches(c){
+    const v=c.v;
+    if(filter==='male'||filter==='female'){if(v.gender!==filter)return false;}
+    else if(filter==='fav'){if(favs.indexOf(v.id)<0)return false;}
+    else if(filter!=='all'&&v.moods.indexOf(filter)<0)return false;
+    if(!query)return true;
+    return (v.name+' '+v.tag+' '+v.desc+' '+v.moods.join(' ')+' '+v.gender).toLowerCase().indexOf(query)>-1;
+  }
+  function visibleCards(){return cards.filter(function(c){return !c.el.classList.contains('hide');});}
+  function applyFilters(){
+    let n=0;
+    cards.forEach(function(c){
+      const show=matches(c),was=!c.el.classList.contains('hide');
+      c.el.classList.toggle('hide',!show);
+      if(show){n++;if(!was){c.el.style.animation='none';void c.el.offsetWidth;c.el.style.animation='';}}
+    });
+    $('vcount').textContent=n+' VOICE'+(n===1?'':'S');
+    $('empty').classList.toggle('show',n===0);
+    if(n===0&&filter==='fav'&&!query)$('empty').firstChild.textContent='No favorites yet. Tap ♡ on a voice to save it.';
+    else $('empty').firstChild.textContent='No voices match that search.';
+  }
+  $('q').addEventListener('input',function(){query=this.value.trim().toLowerCase();applyFilters();});
+  $('reset-f').addEventListener('click',function(){query='';$('q').value='';chipBox.querySelector('[data-f="all"]').click();});
+  document.addEventListener('keydown',function(e){
+    const typing=/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+    if(e.key==='/'&&!typing){e.preventDefault();$('q').focus();}
+    if(e.key==='Escape'){if(typing)document.activeElement.blur();if(cur)stopAll();}
+  });
+
+  /* ── Playback ── */
+  let cur=null,radio=false,radioNext=null;
+  const np=$('np');
+
+  function resetCard(c){
+    c.el.classList.remove('on');c.prog.style.width='0%';
+    c.btns.forEach(function(b,i){b.classList.remove('on');b.textContent='▶ SAMPLE '+(i+1);});
+  }
+
+  function stopAll(){
+    Engine.stop();clearTimeout(radioNext);
+    if(cur)resetCard(cur.card);
+    cur=null;setRadio(false);np.classList.remove('show');
+  }
+
+  function setRadio(on){
+    radio=on;
+    $('btn-radio').classList.toggle('on',on);
+    $('btn-radio').textContent=on?'■ STOP RADIO':'📻 RADIO MODE · PLAY ALL';
+    $('np-next').hidden=!on;$('np-mode').textContent=on?'📻 RADIO':'';
+  }
+
+  function play(card,s,fromRadio){
+    if(cur&&cur.card===card&&cur.s===s&&!fromRadio){stopAll();return;}
+    if(!Engine.supported){toast('⚠ Speech is not supported in this browser. Try Chrome or Edge.');return;}
+    clearTimeout(radioNext);
+    if(cur)resetCard(cur.card);
+    if(!fromRadio&&radio)setRadio(false);
+    const v=card.v,text=v.samples[s];
+    cur={card:card,s:s};
+    card.el.classList.add('on');
+    card.btns[s].classList.add('on');card.btns[s].textContent='■ STOP';
+    card.cap.set(text);card.prog.style.width='0%';
+    np.style.setProperty('--ac',v.color);
+    $('np-icon').textContent=v.icon;$('np-title').textContent=v.name+' // '+v.tag;$('np-sub').textContent=text;$('np-prog').style.width='0%';
+    np.classList.add('show');
+    if(fromRadio)card.el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});
+
+    const mine=cur;
+    Engine.speak(text,{lang:'en-US',gender:v.gender,rate:v.rate,pitch:v.pitch,
+      onword:function(p,n,est){
+        if(cur!==mine)return;
+        const pct=card.cap.mark(p,n)*100;
+        card.prog.style.width=pct+'%';$('np-prog').style.width=pct+'%';
+        card.energy=est?Math.max(card.energy,.7):1;
+      },
+      onend:function(){
+        if(cur!==mine)return;
+        card.cap.finish();card.prog.style.width='100%';$('np-prog').style.width='100%';
+        if(radio){radioNext=setTimeout(function(){next();},700);return;}
+        setTimeout(function(){if(cur===mine){resetCard(card);cur=null;np.classList.remove('show');}},900);
+      },
+      onerror:function(e){if(cur!==mine)return;toast('⚠ Speech error: '+e);stopAll();}
+    });
+  }
+
+  function next(){
+    const list=visibleCards();
+    if(!list.length){stopAll();return;}
+    const i=cur?list.indexOf(cur.card):-1;
+    if(i+1>=list.length){stopAll();toast('📻 Radio finished. That was every voice!');return;}
+    play(list[i+1],0,true);
+  }
+
+  $('btn-radio').addEventListener('click',function(){
+    if(radio){stopAll();return;}
+    const list=visibleCards();
+    if(!list.length){toast('No voices to play. Clear the filters first.');return;}
+    setRadio(true);play(list[0],0,true);
+  });
+  $('np-next').addEventListener('click',next);
+  $('np-stop').addEventListener('click',stopAll);
+
+  /* ── Visualizers (one loop for every card) ── */
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(function(es){es.forEach(function(e){const c=cards.find(function(x){return x.el===e.target;});if(c)c.visible=e.isIntersecting;});});
+    cards.forEach(function(c){io.observe(c.el);});
+  }
+  let last=performance.now();
+  function frame(now){
+    const dt=Math.min(100,now-last);last=now;
+    const dpr=Math.min(2,window.devicePixelRatio||1),light=document.body.classList.contains('light');
+    cards.forEach(function(c){
+      if(!c.visible||c.el.classList.contains('hide'))return;
+      const cv=c.canvas,w=cv.clientWidth,h=cv.clientHeight;
+      if(!w||!h)return;
+      if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+      const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+      const active=!!(cur&&cur.card===c);
+      c.energy*=.9;
+      c.level+=(((active?.42:.2)+c.energy*.55)-c.level)*.14;
+      c.phase+=(active?.08:.025)*(dt/16.7);
+      const col=c.v.color,k=light?.8:1,N=42,bw=w/N,shape=SHAPES[c.v.id];
+      for(let i=0;i<N;i++){
+        const amp=.12+shape(i,c.phase)*.88;
+        const bh=Math.max(2,Math.min(h*.92,amp*c.level*1.9*h));
+        const y=(h-bh)/2;
+        const g=ctx.createLinearGradient(0,y,0,y+bh);
+        g.addColorStop(0,hexA(col,.2*k));g.addColorStop(.5,hexA(col,(active?.95:.55)*k));g.addColorStop(1,hexA(col,.2*k));
+        ctx.fillStyle=g;ctx.beginPath();
+        if(ctx.roundRect)ctx.roundRect(i*bw+1,y,bw-2,bh,2);else ctx.rect(i*bw+1,y,bw-2,bh);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      for(let x=0;x<=w;x+=3){const yy=h/2+Math.sin(x*.05+c.phase)*h*.09*(c.level*2);if(x===0)ctx.moveTo(x,yy);else ctx.lineTo(x,yy);}
+      ctx.strokeStyle=hexA(col,.3*k);ctx.lineWidth=1;ctx.stroke();
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  applyFilters();
 })();
 </script>
 </body>

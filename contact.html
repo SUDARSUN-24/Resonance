@@ -1259,7 +1259,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   function readUrl(){
     const q=new URLSearchParams(location.search);
     if(!q.toString())return;
-    if(VOICES[q.get('v')])state.voice=q.get('v');
+    if(VOICES[q.get('v')]){state.voice=q.get('v');state.rate=VOICES[state.voice].rate;state.pitch=VOICES[state.voice].pitch;}
     if(q.get('l'))state.lang=q.get('l');
     if(EMOTIONS[q.get('e')])state.emotion=q.get('e');
     if(q.get('r')&&!isNaN(q.get('r')))state.rate=clamp(parseFloat(q.get('r')),.4,2);
