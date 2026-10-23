@@ -82,8 +82,7 @@ resonance/
 ├── admin.php           # 🛠️ Admin panel
 ├── save_request.php    # 🔌 API endpoint: saves a voice request (JSON POST)
 ├── db.php              # 🗄️ Database connection (PDO)
-├── setup_db.sql        # Creates resonance_db and the voice_requests table
-└── *.jpg               # 🖼️ Images
+└── setup_db.sql        # Creates resonance_db and the voice_requests table
 ```
 
 ---
