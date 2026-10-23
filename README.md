@@ -52,7 +52,6 @@ Real-time speech synthesis with live controls:
 | 🏠 `index.html` | Studio | Home page and introduction |
 | 🎧 `services.html` | Tracks | Voice tracks showcase |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
-| 👨‍💻 `about.html` | Crew | About the creator |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
 
 ---
@@ -73,7 +72,6 @@ Real-time speech synthesis with live controls:
 ```
 resonance/
 ├── index.html          # 🏠 Home / Studio
-├── about.html          # 👨‍💻 Crew
 ├── services.html       # 🎧 Voice Tracks
 ├── contact.html        # 🎙️ Voice Lab
 ├── style.css           # Styles (pages currently use inline <style>)
