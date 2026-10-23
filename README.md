@@ -47,6 +47,14 @@ Real-time speech synthesis with live controls:
 - 🕘 **Recent takes** — replay your last 8 generations with their exact settings
 - 🔗 **Share a take** — copy a link that opens the lab with your voice, settings and text
 
+### 🧬 My Voice — Clone Studio
+- 🎙️ **Record or upload** — up to 15 seconds from your mic (with a line to read aloud) or any audio file
+- 🧬 **Voice DNA** — measures your pitch, range, pace, energy and brightness, drawn as a radar chart
+- 🏆 **Voice twin** — ranks how closely you match each of the 7 Resonance characters
+- 🗣️ **Speak as me** — tunes a browser voice to your pitch and pace so it can say anything you type
+- 🎛️ **Voice changer** — Robot, Chipmunk, Monster, Alien, Old Radio, Phone, Cathedral, Canyon Echo and Reverse, with a live-mic mode and WAV download
+- 🔒 **Private** — your recording is processed in the browser and never uploaded
+
 ### 🎵 More
 - 🏠 **Interactive home** — a voice orb you can talk through, typewriter headline, clickable world greetings, spotlight cards and scroll animations
 - 🎧 **Voice archive** — search, mood filters and ♥ favorites, word-by-word captions, reactive visualizers and 📻 radio mode that plays every voice
@@ -62,6 +70,7 @@ Real-time speech synthesis with live controls:
 | --- | --- | --- |
 | 🏠 `index.html` | Studio | Interactive home: try any voice on the orbiting voice ring, click greetings in 22 languages |
 | 🎧 `services.html` | Tracks | Voice archive with search, filters, favorites, live captions and radio mode |
+| 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 10 voice-changer effects |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
 
@@ -85,6 +94,7 @@ resonance/
 ├── index.html          # 🏠 Home / Studio
 ├── services.html       # 🎧 Voice Tracks
 ├── contact.html        # 🎙️ Voice Lab
+├── clone.html          # 🧬 My Voice (clone studio)
 ├── style.css           # Styles (pages currently use inline <style>)
 ├── script.js           # Speech synthesis logic (pages currently use inline <script>)
 ├── sound.js            # Web Audio synth + tracks (pages currently use inline <script>)

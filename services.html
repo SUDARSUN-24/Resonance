@@ -471,6 +471,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
     <a href="index.html">STUDIO</a>
     <a href="services.html" class="cur">TRACKS</a>
     <a href="contact.html">VOICE LAB</a>
+    <a href="clone.html">MY VOICE</a>
   </div>
   <button class="btn-theme" id="theme-btn">
     <span class="ticon" id="ticon">🌙</span>
@@ -682,7 +683,7 @@ const Engine=(function(){
     if(busy)setTimeout(function(){if(id===seq)synth.speak(u);},80);else synth.speak(u);
   }
 
-  return {speak:speak,stop:stop,has:function(lang){return matches(lang).length>0;},supported:!!synth,ready:function(){return voices.length>0;}};
+  return {pick:pick,speak:speak,stop:stop,has:function(lang){return matches(lang).length>0;},supported:!!synth,ready:function(){return voices.length>0;}};
 })();
 
 /* Character-level caption with "spoken" / "speaking now" highlighting */
