@@ -3,9 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A futuristic AI voice studio in your browser: 7 voice characters, 45+ languages, live captions and a voice clone studio.">
+<meta name="theme-color" content="#020209">
+<link rel="canonical" href="https://resonancesun.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RESONANCE">
+<meta property="og:title" content="RESONANCE | AI Audio Studio">
+<meta property="og:description" content="A futuristic AI voice studio in your browser: 7 voice characters, 45+ languages, live captions and a voice clone studio.">
+<meta property="og:url" content="https://resonancesun.netlify.app/">
+<meta property="og:image" content="https://resonancesun.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RESONANCE — AI Voice Studio">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RESONANCE | AI Audio Studio">
+<meta name="twitter:description" content="A futuristic AI voice studio in your browser: 7 voice characters, 45+ languages, live captions and a voice clone studio.">
+<meta name="twitter:image" content="https://resonancesun.netlify.app/og-image.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Resonance">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>RESONANCE | AI Audio Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap"></noscript>
 <style>
 
 /* ═══════════════════════════════════════════════
@@ -20,7 +43,7 @@
   --brd2:   rgba(255,255,255,.08);
   --t:      #e2e8f0;
   --t2:     #94a3b8;
-  --mu:     #64748b;
+  --mu:     #8b97ab;
   --c:      #00f5ff;
   --v:      #7c3aed;
   --p:      #ff0080;
@@ -46,7 +69,7 @@ body.light {
   --brd2:   rgba(0,0,0,.08);
   --t:      #0f172a;
   --t2:     #334155;
-  --mu:     #64748b;
+  --mu:#5b6779;
   --c:      #0284c7;
   --v:      #6d28d9;
   --p:      #db2777;
@@ -693,9 +716,38 @@ body.light .nhr::after { display:none; }
 body.light .sec-tag { color:var(--v); }
 .sec-title { font-family:'Orbitron',monospace; font-size:clamp(1.5rem,2.5vw,2.1rem); font-weight:900; color:var(--t); margin-bottom:.4rem; transition:color .4s; }
 .sec-sub { color:var(--mu); font-size:.9rem; font-weight:300; line-height:1.7; max-width:560px; margin-bottom:2.8rem; }
+
+/* ═══════════════════════════════════════
+   PERFORMANCE (LITE) MODE
+═══════════════════════════════════════ */
+body.lite #cv,body.lite .bg-scan,body.lite .ring,body.lite .aurora,body.lite .cursor-glow{display:none !important;}
+body.lite .bg-photo,body.lite .bg-grid,body.lite .sline,body.lite .sdot,body.lite .corner,body.lite .dstrip,body.lite .logo,body.lite .hero-badge,body.lite .clock-pill,body.lite .h-line1,body.lite .hero h1 .hl1{animation:none !important;}
+body.lite nav,body.lite .panel,body.lite .vc,body.lite .toolbar,body.lite .try,body.lite #np,body.lite .nav-links{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+
+/* ═══════════════════════════════════════
+   ACCESSIBILITY + NAV TOOLS + INSTALL
+═══════════════════════════════════════ */
+.skip{position:fixed;left:16px;top:-60px;z-index:1000;padding:.7rem 1rem;border-radius:8px;background:var(--c);color:#020209;font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:2px;text-decoration:none;transition:top .2s;}
+.skip:focus{top:12px;}
+:focus-visible{outline:2px solid var(--c);outline-offset:3px;}
+body.light :focus-visible{outline-color:var(--v);}
+.nav-tools{display:flex;align-items:center;gap:.5rem;}
+.install-chip{position:fixed;left:16px;bottom:16px;z-index:150;display:flex;align-items:center;border-radius:999px;border:1px solid var(--brd);background:var(--nav-bg);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.35);transform:translateY(160%);transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
+.install-chip.show{transform:none;}
+.install-chip button{background:none;border:none;color:var(--t);cursor:pointer;font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:1.5px;padding:.8rem .5rem .8rem 1.1rem;}
+.install-chip .ic-x{color:var(--mu);padding:.8rem 1.1rem .8rem .5rem;}
+.install-chip .ic-go:hover{color:var(--c);}
+@media(max-width:600px){#tlabel,#fx-label{display:none;}.btn-theme{padding:7px 11px;}}
+
+/* Legible text on phones */
+@media(max-width:600px){
+  .vp-sub,.lang-meta,.take-text,.fx-d,.twin-d,.np-sub{font-size:12px;}
+  .field-label,.btn-link,.sec-label,.save-details summary,.fields-row label,.ds-top,.prompt-top,.rec-status,.vc-spec,.vc-lab,.try-head,.sec-eye,.mq-hint{font-size:12px;letter-spacing:1.5px;}
+}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
 <script>
 try{ if(localStorage.getItem('resonance_theme')==='light') document.body.classList.add('light'); }catch(e){}
@@ -707,7 +759,7 @@ try{ if(localStorage.getItem('resonance_theme')==='light') document.body.classLi
 <div class="bg-orbs"></div>
 <div class="bg-grid"></div>
 <div class="bg-scan"></div>
-<canvas id="cv"></canvas>
+<canvas id="cv" aria-hidden="true"></canvas>
 
 <!-- DECORATIONS -->
 <div class="side l">
@@ -733,23 +785,29 @@ try{ if(localStorage.getItem('resonance_theme')==='light') document.body.classLi
 <!-- NAV -->
 <nav>
   <a href="index.html" class="logo">RESONANCE</a>
-  <button class="mobile-btn" id="mob-btn">☰</button>
+  <button class="mobile-btn" id="mob-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">☰</button>
   <div class="nav-links" id="nav-links">
     <a href="index.html" class="cur">STUDIO</a>
     <a href="services.html">TRACKS</a>
     <a href="contact.html">VOICE LAB</a>
     <a href="clone.html">MY VOICE</a>
   </div>
-  <button class="btn-theme" id="theme-btn">
-    <span class="ticon" id="ticon">🌙</span>
-    <span id="tlabel">DARK</span>
-  </button>
+  <div class="nav-tools">
+    <button class="btn-theme btn-fx" id="fx-btn" type="button" aria-pressed="true" aria-label="Toggle visual effects">
+      <span class="ticon" id="fx-icon">✨</span>
+      <span id="fx-label">FX</span>
+    </button>
+    <button class="btn-theme" id="theme-btn" type="button" aria-label="Toggle light and dark theme">
+      <span class="ticon" id="ticon">🌙</span>
+      <span id="tlabel">DARK</span>
+    </button>
+  </div>
 </nav>
 
 <div class="scroll-prog" id="scroll-prog"></div>
 <div class="cursor-glow" id="cursor-glow"></div>
 
-<div class="page">
+<div class="page" id="main">
 
   <!-- HERO -->
   <div class="hero">
@@ -938,7 +996,7 @@ document.getElementById('mob-btn').addEventListener('click', function(){
   spawnStar();
   setInterval(spawnStar, 1200);
 
-  function draw(){
+  function draw(){if(document.body.classList.contains('lite')){cx.clearRect(0,0,W,H);setTimeout(function(){requestAnimationFrame(draw);},500);return;}
     const isLight = document.body.classList.contains('light');
     cx.clearRect(0, 0, W, H);
 
@@ -1319,6 +1377,82 @@ if(!window.addTilt)window.addTilt=function(){};
 
   selectVoice(0);
   requestAnimationFrame(frame);
+})();
+
+/* ── SITE: performance mode, install app, accessibility ── */
+(function(){
+  const body=document.body,KEY='resonance_fx';
+  const say=typeof toast==='function'?toast:function(m){const t=document.getElementById('toast');if(!t)return;t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2600);};
+  const btn=document.getElementById('fx-btn'),icon=document.getElementById('fx-icon'),label=document.getElementById('fx-label');
+  let pref='auto',slow=false;
+  try{pref=localStorage.getItem(KEY)||'auto';slow=sessionStorage.getItem('resonance_slow')==='1';}catch(e){}
+
+  /* Lite by default on reduced-motion, data-saver or low-power devices */
+  function autoLite(){
+    const mm=function(q){return !!(window.matchMedia&&matchMedia(q).matches);},c=navigator.connection;
+    return mm('(prefers-reduced-motion: reduce)')||!!(c&&c.saveData)||(navigator.hardwareConcurrency>0&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory>0&&navigator.deviceMemory<=4);
+  }
+  function apply(){
+    const lite=pref==='lite'||(pref==='auto'&&(slow||autoLite()));
+    body.classList.toggle('lite',lite);
+    if(btn){
+      icon.textContent=lite?'⚡':'✨';label.textContent=lite?'LITE':'FX';
+      btn.setAttribute('aria-pressed',String(!lite));
+      btn.title=(lite?'Lite effects':'Full effects')+(pref==='auto'?' (automatic)':'')+'. Click to switch.';
+    }
+  }
+  apply();
+  if(btn)btn.addEventListener('click',function(){
+    pref=body.classList.contains('lite')?'full':'lite';
+    try{localStorage.setItem(KEY,pref);}catch(e){}
+    apply();
+    say(pref==='lite'?'⚡ Lite effects: smoother and easier on your battery':'✨ Full effects on');
+  });
+
+  /* Watch the frame rate for a few seconds and drop to lite if the device struggles */
+  if(pref==='auto'&&!body.classList.contains('lite')){
+    const times=[];let last=0,start=0;
+    const tick=function(now){
+      if(document.hidden){last=0;requestAnimationFrame(tick);return;}
+      if(!start)start=now;
+      if(last)times.push(now-last);
+      last=now;
+      if(now-start<6000){requestAnimationFrame(tick);return;}
+      times.sort(function(a,b){return a-b;});
+      if((times[Math.floor(times.length/2)]||16)>30){
+        slow=true;try{sessionStorage.setItem('resonance_slow','1');}catch(e){}
+        apply();say('⚡ Switched to lite effects for smoother performance');
+      }
+    };
+    setTimeout(function(){requestAnimationFrame(tick);},1500);
+  }
+
+  /* Menu button state for screen readers */
+  const mob=document.getElementById('mob-btn'),links=document.getElementById('nav-links');
+  if(mob&&links)mob.addEventListener('click',function(){mob.setAttribute('aria-expanded',String(links.classList.contains('open')));});
+
+  /* Offline support */
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+    addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});
+  }
+
+  /* Install-app button (browsers that support it) */
+  let deferred=null;
+  addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();deferred=e;
+    try{if(localStorage.getItem('resonance_install_dismissed'))return;}catch(err){}
+    if(document.getElementById('install-chip'))return;
+    const chip=document.createElement('div');chip.className='install-chip';chip.id='install-chip';
+    chip.innerHTML='<button type="button" class="ic-go">📲 INSTALL RESONANCE</button><button type="button" class="ic-x" aria-label="Dismiss install suggestion">✕</button>';
+    body.appendChild(chip);
+    setTimeout(function(){chip.classList.add('show');},800);
+    chip.querySelector('.ic-go').addEventListener('click',function(){
+      chip.remove();if(!deferred)return;
+      deferred.prompt();deferred.userChoice.then(function(){deferred=null;});
+    });
+    chip.querySelector('.ic-x').addEventListener('click',function(){chip.remove();try{localStorage.setItem('resonance_install_dismissed','1');}catch(err){}});
+  });
+  addEventListener('appinstalled',function(){const c=document.getElementById('install-chip');if(c)c.remove();say('📲 Resonance installed! Find it on your home screen.');});
 })();
 </script>
 </body>
