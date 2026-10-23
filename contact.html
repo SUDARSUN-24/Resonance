@@ -413,10 +413,10 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 
 <!-- NAV -->
 <nav>
-  <a href="../index.html" class="logo">RESONANCE</a>
+  <a href="index.html" class="logo">RESONANCE</a>
   <button class="mobile-btn" id="mob-btn">☰</button>
   <div class="nav-links" id="nav-links">
-    <a href="../index.html">STUDIO</a>
+    <a href="index.html">STUDIO</a>
     <a href="services.html">TRACKS</a>
     <a href="about.html">CREW</a>
     <a href="contact.html" class="cur">VOICE LAB</a>
@@ -866,7 +866,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
       text_input:    text.trim(),
       char_count:    text.trim().length
     };
-    fetch('../save_request.php',{
+    fetch('save_request.php',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload)
