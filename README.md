@@ -61,6 +61,13 @@ Real-time speech synthesis with live controls:
 - ♿ **Accessible** — keyboard focus outlines, screen-reader labels, skip link and readable contrast (Lighthouse: 100 accessibility, best practices & SEO)
 - 🔗 **Link previews** — share any page and it shows a proper image and description
 
+### 🔐 Owner Dashboard (`/admin.html`)
+- 🔑 **Owner-only login** — one password stored as a Netlify environment variable, never in the code
+- 📊 **Live stats** — generations, page views, Voice DNA scans and producers, with ▲▼ vs the previous period
+- 📈 **Charts** — daily generations & views, top voices, languages, emotions, pages, voice twins and visitor countries
+- 🗂️ **Requests table** — search, filter, sort, expand, **▶ replay in the original voice**, delete, export to CSV
+- 🕵️ **Privacy-friendly** — page views are anonymous counts; IPs are never stored (only a salted hash for rate limits)
+
 ### 🎵 More
 - 🏠 **Interactive home** — a voice orb you can talk through, typewriter headline, clickable world greetings, spotlight cards and scroll animations
 - 🎧 **Voice archive** — search, mood filters and ♥ favorites, word-by-word captions, reactive visualizers and 📻 radio mode that plays every voice
@@ -88,8 +95,9 @@ Real-time speech synthesis with live controls:
 | --- | --- |
 | 🎨 Frontend | HTML5, CSS3, vanilla JavaScript |
 | 🔊 Audio | Web Speech API (`speechSynthesis`), Web Audio API |
-| ⚙️ Backend | PHP (PDO) |
-| 🗄️ Database | MySQL / MariaDB |
+| ⚙️ Backend | Netlify Functions (Node.js) · legacy PHP version for XAMPP |
+| 🗄️ Storage | Netlify Blobs · legacy MySQL / MariaDB |
+| 🔐 Admin | Password login, signed HttpOnly session cookie, lockout after 5 tries |
 
 ---
 
@@ -112,7 +120,11 @@ resonance/
 ├── style.css           # Styles (pages currently use inline <style>)
 ├── script.js           # Speech synthesis logic (pages currently use inline <script>)
 ├── sound.js            # Web Audio synth + tracks (pages currently use inline <script>)
-├── admin.php           # 🛠️ Admin panel
+├── admin.html          # 🔐 Owner dashboard (Netlify backend)
+├── netlify/functions/  # ⚙️ API: requests, track, auth, admin
+├── netlify/lib/        # ⚙️ Shared helpers (storage, auth)
+├── package.json        # 📦 Backend dependency (@netlify/blobs)
+├── admin.php           # 🛠️ Legacy admin panel (XAMPP)
 ├── save_request.php    # 🔌 API endpoint: saves a voice request (JSON POST)
 ├── db.php              # 🗄️ Database connection (PDO)
 └── setup_db.sql        # Creates resonance_db and the voice_requests table
@@ -133,7 +145,18 @@ The text-to-speech features run entirely in the browser — no setup needed.
 2. Open `index.html` in a modern browser. 🌐
    > 💡 Chrome or Edge recommended for the widest voice selection.
 
-### 🗄️ Full setup (save requests + admin panel)
+### 🔐 Backend on Netlify (recommended)
+
+The backend runs automatically on Netlify, with no database to set up. One step is needed to unlock the dashboard:
+
+1. In Netlify, open the site → **Site configuration** → **Environment variables** → **Add a variable**.
+2. Key: `ADMIN_PASSWORD`, value: a strong password only you know.
+3. **Deploys** → **Trigger deploy** → **Deploy site**.
+4. Visit **`/admin.html`** on your site and log in.
+
+> 💡 Changing `ADMIN_PASSWORD` signs out every existing session. Five wrong passwords lock that visitor out for 15 minutes.
+
+### 🗄️ Legacy setup with PHP + MySQL (XAMPP)
 
 1. 📦 Install a local PHP + MySQL stack such as [XAMPP](https://www.apachefriends.org/).
 2. 📂 Copy the project folder into your web root (XAMPP: `htdocs/resonance`).
@@ -149,15 +172,23 @@ The text-to-speech features run entirely in the browser — no setup needed.
 ### ☁️ Live site
 Hosted on Netlify at **https://resonancesun.netlify.app** — every push to `main` deploys automatically.
 
-### 🔒 Securing the admin panel
+### 🔒 Securing the legacy admin panel
 
-`admin.php` has **no login by default**. Before deploying publicly, enable the optional password check at the top of `admin.php`.
+`admin.php` (XAMPP version only) has **no login by default**. If you run it, enable the optional password check at the top of `admin.php`. The Netlify dashboard (`admin.html`) is always password-protected.
 
 ---
 
 ## 🔌 API
 
-### `POST /save_request.php`
+| Endpoint | Access | Purpose |
+| --- | --- | --- |
+| `POST /api/requests` | Public (20 per 10 min) | Save a Voice Lab generation (same JSON as below) |
+| `POST /api/track` | Public | Anonymous counters: `{ "type": "view", "page": "/contact.html" }` or `{ "type": "scan", "twin": "nova" }` |
+| `POST /api/auth/login` · `logout` · `GET /api/auth/me` | Public | Owner login session |
+| `GET /api/admin/overview?days=30` | Owner only | Requests and daily stats |
+| `DELETE /api/admin/requests?id=…` | Owner only | Delete a request |
+
+### `POST /save_request.php` (legacy) and `POST /api/requests`
 
 **Request body (JSON):**
 

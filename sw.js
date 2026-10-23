@@ -1,7 +1,7 @@
 /* RESONANCE service worker — offline cache
    Pages: network first (so updates show up straight away), cache as fallback.
    Static files: cache first. Fonts & images: stale-while-revalidate. */
-const VERSION = 'resonance-v1';
+const VERSION = 'resonance-v2';
 const RUNTIME = 'resonance-runtime-v1';
 const CORE = [
   './', 'index.html', 'services.html', 'contact.html', 'clone.html', '404.html',
@@ -27,7 +27,7 @@ self.addEventListener('fetch', function (e) {
   const url = new URL(req.url);
 
   if (url.origin === location.origin) {
-    if (/\.(php|sql)$/.test(url.pathname)) return;
+    if (url.pathname.startsWith('/api/') || url.pathname === '/admin.html' || /\.(php|sql)$/.test(url.pathname)) return;
     if (req.mode === 'navigate') {
       e.respondWith(
         fetch(req).then(function (res) {

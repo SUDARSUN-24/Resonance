@@ -1,4 +1,15 @@
-# Netlify settings for RESONANCE (static site — no build step)
+# Netlify settings for RESONANCE (static site + serverless backend)
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Owner dashboard: never framed by other sites, never cached
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    Cache-Control = "no-store"
 
 # The service worker must never be cached, so new versions roll out immediately
 [[headers]]
