@@ -420,6 +420,15 @@ body.light :focus-visible{outline-color:var(--v);}
   .vp-sub,.lang-meta,.take-text,.fx-d,.twin-d,.np-sub{font-size:12px;}
   .field-label,.btn-link,.sec-label,.save-details summary,.fields-row label,.ds-top,.prompt-top,.rec-status,.vc-spec,.vc-lab,.try-head,.sec-eye,.mq-hint{font-size:12px;letter-spacing:1.5px;}
 }
+
+/* Six nav links: tighten, then switch to the ☰ menu before they crowd */
+@media(max-width:1240px){.nav-links{gap:1.5rem;}.nav-links a{font-size:.68rem;letter-spacing:1.5px;}}
+@media(max-width:1080px){
+  .mobile-btn{display:block;}
+  .nav-links{display:none;flex-direction:column;position:absolute;top:66px;left:0;width:100%;background:var(--nav-bg);padding:1.5rem 5%;border-bottom:1px solid var(--brd);gap:1rem;backdrop-filter:blur(28px);}
+  .nav-links.open{display:flex;}
+  .nav-links a{font-size:.75rem;letter-spacing:2px;}
+}
 </style>
 </head>
 <body>
@@ -453,6 +462,8 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
     <a href="services.html">TRACKS</a>
     <a href="contact.html" class="cur">VOICE LAB</a>
     <a href="clone.html">MY VOICE</a>
+    <a href="story.html">STORY</a>
+    <a href="play.html">PLAY</a>
   </div>
   <div class="nav-tools">
     <button class="btn-theme btn-fx" id="fx-btn" type="button" aria-pressed="true" aria-label="Toggle visual effects">
@@ -1365,6 +1376,27 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   $('btn-share').addEventListener('click',shareTake);
   $('btn-clear').addEventListener('click',function(){takes=[];store(TAKES,takes);renderTakes();});
 
+  /* ═══════════ DICTATE (speech to text) ═══════════ */
+  (function(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR)return;
+    const btn=document.createElement('button');btn.type='button';btn.className='tpl';btn.textContent='🎙️ Dictate';
+    btn.title='Speak instead of typing (in the selected language)';
+    $('tpl-row').insertBefore(btn,$('tpl-row').firstChild);
+    let rec=null,base='';
+    function stop(){if(rec){try{rec.stop();}catch(e){}}}
+    btn.addEventListener('click',function(){
+      if(rec){stop();return;}
+      rec=new SR();rec.lang=state.lang;rec.continuous=true;rec.interimResults=true;
+      const ta=$('inp-text');base=ta.value.trim()?ta.value.trim()+' ':'';
+      rec.onstart=function(){btn.textContent='● Listening… tap to stop';btn.style.borderColor='var(--p)';btn.style.color='var(--p)';};
+      rec.onresult=function(e){let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;ta.value=(base+t).slice(0,MAX_CHARS);updateStats();};
+      rec.onerror=function(e){if(e.error==='not-allowed')toast('🎙️ Microphone blocked. Allow mic access to dictate.');else if(e.error==='network')toast('🌐 Dictation needs an internet connection.');};
+      rec.onend=function(){rec=null;btn.textContent='🎙️ Dictate';btn.style.borderColor='';btn.style.color='';$('inp-text').dispatchEvent(new Event('input'));};
+      try{rec.start();}catch(err){rec=null;}
+    });
+  })();
+
   /* ═══════════ INIT ═══════════ */
   readUrl();
   $('auto-detect').checked=state.autoDetect!==false;
@@ -1442,7 +1474,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     if(!/^https?:$/.test(location.protocol))return;
     try{fetch('/api/track',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(ev),keepalive:true}).catch(function(){});}catch(e){}
   };
-  if(['/','/index.html','/services.html','/contact.html','/clone.html','/index','/services','/contact','/clone'].indexOf(location.pathname)>-1)rsTrack({type:'view',page:location.pathname});
+  if(['/','/index.html','/services.html','/contact.html','/clone.html','/story.html','/play.html','/index','/services','/contact','/clone','/story','/play'].indexOf(location.pathname)>-1)rsTrack({type:'view',page:location.pathname});
 
   /* Offline support */
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){

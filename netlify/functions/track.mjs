@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════
 //  POST /api/track — anonymous counters (public)
-//  { type: 'view', page } or { type: 'scan', twin }
+//  { type: 'view', page } · { type: 'scan', twin } · { type: 'story' } · { type: 'game', mode }
 //  Stores counts only: no IPs, no cookies, no user IDs
 // ═══════════════════════════════════════════════
 
@@ -21,6 +21,11 @@ export default async (req, context) => {
     } else if (d.type === 'scan') {
       if (!VOICES.includes(d.twin)) throw new HttpError(422, 'Unknown twin');
       kind = `scan.${d.twin}`;
+    } else if (d.type === 'story') {
+      kind = 'story';
+    } else if (d.type === 'game') {
+      if (!['twister', 'world'].includes(d.mode)) throw new HttpError(422, 'Unknown game mode');
+      kind = `game.${d.mode}`;
     } else {
       throw new HttpError(422, 'Unknown event type');
     }

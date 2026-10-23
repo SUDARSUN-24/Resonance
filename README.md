@@ -61,10 +61,26 @@ Real-time speech synthesis with live controls:
 - ♿ **Accessible** — keyboard focus outlines, screen-reader labels, skip link and readable contrast (Lighthouse: 100 accessibility, best practices & SEO)
 - 🔗 **Link previews** — share any page and it shows a proper image and description
 
+### 🎭 Story Studio (`/story.html`)
+- ✍️ **Write any script**: `NOVA: Hello!`, `DEEP (dramatic): In a world...`, `[pause 2]`, `# Scene title`. Use any character names you like
+- 🎬 **Auto-casting**: every character gets a voice (change it anytime), plus 6 ready-made stories
+- 🗣️ **Live performance**: talking avatars, a speech bubble that follows the speaker, word-by-word captions, moods, speed control
+- ⏯️ **Scene list**: tap any line to start from there · 🔗 share links · ⬇ download the script
+
+### 🎮 Play: Speak to Win (`/play.html`)
+- 👅 **Tongue Twister**: 5 rounds in Easy / Medium / Hard, scored on accuracy and speed with live word-by-word feedback
+- 🌍 **World Tour**: hear a phrase in one of 14 languages, say it back, get scored on pronunciation
+- 🏆 **Live leaderboard**: all-time and weekly boards, with medals, confetti and share-your-score
+- 🎙️ Uses your browser's speech recognition (Chrome, Edge or Safari)
+
+### 🎙️ Dictation
+- The Voice Lab has a **🎙️ Dictate** button: speak instead of typing, then let any character say it back
+
 ### 🔐 Owner Dashboard (`/admin.html`)
 - 🔑 **Owner-only login** — one password stored as a Netlify environment variable, never in the code
 - 📊 **Live stats** — generations, page views, Voice DNA scans and producers, with ▲▼ vs the previous period
 - 📈 **Charts** — daily generations & views, top voices, languages, emotions, pages, voice twins and visitor countries
+- 🎮 **Play & leaderboard**: games and stories counted; remove rude names or suspicious scores in one click
 - 🗂️ **Requests table** — search, filter, sort, expand, **▶ replay in the original voice**, delete, export to CSV
 - 🕵️ **Privacy-friendly** — page views are anonymous counts; IPs are never stored (only a salted hash for rate limits)
 
@@ -83,6 +99,8 @@ Real-time speech synthesis with live controls:
 | --- | --- | --- |
 | 🏠 `index.html` | Studio | Interactive home: try any voice on the orbiting voice ring, click greetings in 22 languages |
 | 🎧 `services.html` | Tracks | Voice archive with search, filters, favorites, live captions and radio mode |
+| 🎭 `story.html` | Story | Multi-voice story and podcast performer |
+| 🎮 `play.html` | Play | Tongue Twister and World Tour challenges + leaderboard |
 | 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 10 voice-changer effects |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
@@ -109,6 +127,8 @@ resonance/
 ├── services.html       # 🎧 Voice Tracks
 ├── contact.html        # 🎙️ Voice Lab
 ├── clone.html          # 🧬 My Voice (clone studio)
+├── story.html          # 🎭 Story Studio
+├── play.html           # 🎮 Speak to Win challenges
 ├── 404.html            # 🛰️ Custom "signal lost" page
 ├── manifest.webmanifest# 📲 App manifest (name, icons, shortcuts)
 ├── sw.js               # 📴 Service worker (offline cache)
@@ -185,7 +205,10 @@ Hosted on Netlify at **https://resonancesun.netlify.app** — every push to `mai
 | `POST /api/requests` | Public (20 per 10 min) | Save a Voice Lab generation (same JSON as below) |
 | `POST /api/track` | Public | Anonymous counters: `{ "type": "view", "page": "/contact.html" }` or `{ "type": "scan", "twin": "nova" }` |
 | `POST /api/auth/login` · `logout` · `GET /api/auth/me` | Public | Owner login session |
-| `GET /api/admin/overview?days=30` | Owner only | Requests and daily stats |
+| `GET /api/leaderboard?mode=twister&period=week` | Public | Top 20 scores (`twister` or `world`, `all` or `week`) |
+| `POST /api/leaderboard` | Public (10 per 10 min) | Submit a score: `{ name, mode, score, accuracy, difficulty }` |
+| `GET /api/admin/overview?days=30` | Owner only | Requests, daily stats and leaderboards |
+| `DELETE /api/admin/leaderboard?id=…` | Owner only | Remove a leaderboard entry |
 | `DELETE /api/admin/requests?id=…` | Owner only | Delete a request |
 
 ### `POST /save_request.php` (legacy) and `POST /api/requests`

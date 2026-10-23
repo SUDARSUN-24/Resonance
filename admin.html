@@ -165,6 +165,13 @@ body.light .card{box-shadow:0 2px 14px rgba(15,23,42,.05);}
 .bar-f{height:100%;width:0;border-radius:0 4px 4px 0;background:var(--s1);transition:width .8s cubic-bezier(.2,.7,.2,1);}
 .bar-v{font-size:.82rem;color:var(--t);font-variant-numeric:tabular-nums;white-space:nowrap;}
 .bar-v small{color:var(--mu);margin-left:.3rem;}
+.lbm-tabs{display:flex;gap:.4rem;}
+.lbm{display:flex;flex-direction:column;gap:.4rem;max-height:330px;overflow-y:auto;}
+.lbm-row{display:grid;grid-template-columns:2rem minmax(0,1fr) auto auto;align-items:center;gap:.6rem;padding:.5rem .6rem;border-radius:10px;border:1px solid var(--brd2);}
+.lbm-row .rk{font-size:.8rem;color:var(--mu);text-align:center;font-variant-numeric:tabular-nums;}
+.lbm-row .nm{font-size:.88rem;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lbm-row .nm small{display:block;font-size:.72rem;color:var(--mu);}
+.lbm-row .sc{font-size:.9rem;font-weight:600;color:var(--t);font-variant-numeric:tabular-nums;}
 .empty{padding:1.6rem .5rem;text-align:center;font-size:.86rem;color:var(--mu);}
 .empty a{color:var(--c);}
 
@@ -333,6 +340,15 @@ tr.detail td{padding:0 .6rem 1rem;border-bottom:1px solid var(--grid);}
     <article class="card"><div class="card-head"><div><h2>VIEWS BY PAGE</h2><div class="sub">Where visitors go</div></div></div><div class="bars" id="b-pages"></div></article>
     <article class="card"><div class="card-head"><div><h2>VOICE TWINS</h2><div class="sub">My Voice DNA results</div></div></div><div class="bars" id="b-twins"></div></article>
     <article class="card"><div class="card-head"><div><h2>VISITOR COUNTRIES</h2><div class="sub">From page views</div></div></div><div class="bars" id="b-countries"></div></article>
+  </section>
+
+  <section class="row2">
+    <article class="card"><div class="card-head"><div><h2>PLAY &amp; STORY</h2><div class="sub">Games played and stories performed</div></div></div><div class="bars" id="b-play"></div></article>
+    <article class="card">
+      <div class="card-head"><div><h2>LEADERBOARD</h2><div class="sub">Remove rude names or suspicious scores</div></div>
+        <div class="seg lbm-tabs" role="group" aria-label="Leaderboard"><button type="button" data-lbm="twister" aria-pressed="true">👅 TWISTER</button><button type="button" data-lbm="world" aria-pressed="false">🌍 WORLD</button></div></div>
+      <div class="lbm" id="lbm"></div>
+    </article>
   </section>
 
   <section class="card">
@@ -513,12 +529,14 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
     return {cur:d.slice(-n),prev:data.days==='all'?null:d.slice(0,d.length-n)};
   }
   function totals(rows){
-    const t={gens:0,views:0,scans:0,viewsBy:{},scansBy:{},countries:{}};
+    const t={gens:0,views:0,scans:0,stories:0,viewsBy:{},scansBy:{},countries:{},games:{}};
     rows.forEach(function(r){
       t.gens+=r.gens||0;t.views+=sumObj(r.views||{});t.scans+=sumObj(r.scans||{});
       for(const k in r.views||{})t.viewsBy[k]=(t.viewsBy[k]||0)+r.views[k];
       for(const k in r.scans||{})t.scansBy[k]=(t.scansBy[k]||0)+r.scans[k];
       for(const k in r.countries||{})t.countries[k]=(t.countries[k]||0)+r.countries[k];
+      t.stories+=r.stories||0;
+      for(const k in r.games||{})t.games[k]=(t.games[k]||0)+r.games[k];
     });
     return t;
   }
@@ -545,6 +563,10 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
     renderBars($('b-pages'),Object.entries(cur.viewsBy).map(function(e){const m=PAGES[e[0]]||[e[0],'•'];return {label:m[0],icon:m[1],value:e[1]};}),cur.views,'views','No page views recorded yet.');
     renderBars($('b-twins'),Object.entries(cur.scansBy).map(function(e){const v=VOICES[e[0]]||[e[0],'•','#888'];return {label:v[0],icon:v[1],dot:v[2],value:e[1]};}),cur.scans,'scans','No Voice DNA scans yet. <a href="/clone.html">Try My Voice</a>.');
     renderBars($('b-countries'),fold(Object.entries(cur.countries).map(function(e){return {label:countryName(e[0]),sub:e[0],value:e[1]};}),6),sumObj(cur.countries),'views','No country data yet.');
+
+    const play=[{label:'Stories',icon:'🎭',value:cur.stories},{label:'Twister games',icon:'👅',value:cur.games.twister||0},{label:'World Tour',icon:'🌍',value:cur.games.world||0}].filter(function(x){return x.value>0;});
+    renderBars($('b-play'),play,play.reduce(function(s,x){return s+x.value;},0),'plays','No games or stories yet. Try <a href="/play.html">Play</a> or <a href="/story.html">Story Studio</a>.');
+    renderLbm();
 
     $('stored-note').textContent=fmt.format(data.totalStored)+' request'+(data.totalStored===1?'':'s')+' stored'+(data.truncated?' · showing newest 2,000':'');
     fillFilters();renderTable();
@@ -802,6 +824,35 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
   $('f-lang').addEventListener('change',function(){page=0;renderTable();});
   $('prev').addEventListener('click',function(){page--;renderTable();});
   $('next').addEventListener('click',function(){page++;renderTable();});
+
+  /* ═══════════ LEADERBOARD MODERATION ═══════════ */
+  let lbmTab='twister';
+  document.querySelectorAll('[data-lbm]').forEach(function(b){
+    b.addEventListener('click',function(){lbmTab=b.dataset.lbm;document.querySelectorAll('[data-lbm]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});renderLbm();});
+  });
+  function renderLbm(){
+    const box=$('lbm');box.innerHTML='';
+    const list=(data.leaderboard&&data.leaderboard[lbmTab])||[];
+    if(!list.length){const e=el('div','empty');e.innerHTML='No scores yet on this board.';box.appendChild(e);return;}
+    list.forEach(function(e,i){
+      const row=el('div','lbm-row');
+      row.appendChild(el('div','rk',i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)));
+      const nm=el('div','nm',e.name);nm.appendChild(el('small',null,[e.difficulty,e.accuracy+'% accuracy',e.country,ago(e.created_at)].filter(Boolean).join(' · ')));row.appendChild(nm);
+      row.appendChild(el('div','sc',fmt.format(e.score)));
+      const del=el('button','act del','✕');del.type='button';del.setAttribute('aria-label','Remove '+e.name+' from the leaderboard');
+      del.addEventListener('click',function(){
+        if(!del.classList.contains('confirm')){del.classList.add('confirm');del.textContent='REMOVE?';setTimeout(function(){if(del.isConnected){del.classList.remove('confirm');del.textContent='✕';}},3000);return;}
+        del.disabled=true;
+        api('/api/admin/leaderboard?id='+encodeURIComponent(e.id),{method:'DELETE'}).then(function(res){
+          if(res.status===401){showLogin('Your session expired. Please log in again.',true);return;}
+          if(!res.ok){toast('⚠ Could not remove: '+(res.body.error||res.status));del.disabled=false;return;}
+          data.leaderboard[lbmTab]=data.leaderboard[lbmTab].filter(function(x){return x.id!==e.id;});
+          toast('🗑 Removed '+e.name+' from the leaderboard');renderLbm();
+        });
+      });
+      row.appendChild(del);box.appendChild(row);
+    });
+  }
 
   /* ═══════════ CSV EXPORT ═══════════ */
   $('export').addEventListener('click',function(){

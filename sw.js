@@ -1,10 +1,10 @@
 /* RESONANCE service worker — offline cache
    Pages: network first (so updates show up straight away), cache as fallback.
    Static files: cache first. Fonts & images: stale-while-revalidate. */
-const VERSION = 'resonance-v2';
+const VERSION = 'resonance-v3';
 const RUNTIME = 'resonance-runtime-v1';
 const CORE = [
-  './', 'index.html', 'services.html', 'contact.html', 'clone.html', '404.html',
+  './', 'index.html', 'services.html', 'contact.html', 'clone.html', 'story.html', 'play.html', '404.html',
   'manifest.webmanifest', 'favicon.svg',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'
 ];
