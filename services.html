@@ -1107,6 +1107,13 @@ if(!window.addTilt)window.addTilt=function(){};
   const mob=document.getElementById('mob-btn'),links=document.getElementById('nav-links');
   if(mob&&links)mob.addEventListener('click',function(){mob.setAttribute('aria-expanded',String(links.classList.contains('open')));});
 
+  /* Anonymous page-view counter (shown in the owner's dashboard) */
+  window.rsTrack=function(ev){
+    if(!/^https?:$/.test(location.protocol))return;
+    try{fetch('/api/track',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(ev),keepalive:true}).catch(function(){});}catch(e){}
+  };
+  if(['/','/index.html','/services.html','/contact.html','/clone.html','/index','/services','/contact','/clone'].indexOf(location.pathname)>-1)rsTrack({type:'view',page:location.pathname});
+
   /* Offline support */
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
     addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});

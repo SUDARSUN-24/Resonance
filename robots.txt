@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin.php
+Disallow: /admin.html
 
 Sitemap: https://resonancesun.netlify.app/sitemap.xml

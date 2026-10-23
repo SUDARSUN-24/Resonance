@@ -801,6 +801,7 @@ if(!window.addTilt)window.addTilt=function(){};
       return;
     }
     dna=a;
+    if(window.rsTrack)rsTrack({type:'scan',twin:a.matches[0].c.id});
     setRecStatus('✓ '+b.duration.toFixed(1)+'s CAPTURED · VOICE DNA READY','ok');
     renderDNA(true);
     unlock('p-dna');unlock('p-speak');
@@ -1307,6 +1308,13 @@ if(!window.addTilt)window.addTilt=function(){};
   /* Menu button state for screen readers */
   const mob=document.getElementById('mob-btn'),links=document.getElementById('nav-links');
   if(mob&&links)mob.addEventListener('click',function(){mob.setAttribute('aria-expanded',String(links.classList.contains('open')));});
+
+  /* Anonymous page-view counter (shown in the owner's dashboard) */
+  window.rsTrack=function(ev){
+    if(!/^https?:$/.test(location.protocol))return;
+    try{fetch('/api/track',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(ev),keepalive:true}).catch(function(){});}catch(e){}
+  };
+  if(['/','/index.html','/services.html','/contact.html','/clone.html','/index','/services','/contact','/clone'].indexOf(location.pathname)>-1)rsTrack({type:'view',page:location.pathname});
 
   /* Offline support */
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){

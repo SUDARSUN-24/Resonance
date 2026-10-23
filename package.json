@@ -1,0 +1,9 @@
+{
+  "name": "resonance",
+  "private": true,
+  "description": "RESONANCE AI voice studio: static site + Netlify Functions backend",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.6"
+  }
+}
