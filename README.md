@@ -55,6 +55,12 @@ Real-time speech synthesis with live controls:
 - 🎛️ **Voice changer** — Robot, Chipmunk, Monster, Alien, Old Radio, Phone, Cathedral, Canyon Echo and Reverse, with a live-mic mode and WAV download
 - 🔒 **Private** — your recording is processed in the browser and never uploaded
 
+### 📲 App, Speed & Polish
+- 📲 **Installable app (PWA)** — add Resonance to your home screen or desktop; pages keep working offline
+- ⚡ **Performance mode** — heavy background effects switch to *lite* automatically on slower devices (or tap ✨ FX / ⚡ LITE in the menu)
+- ♿ **Accessible** — keyboard focus outlines, screen-reader labels, skip link and readable contrast (Lighthouse: 100 accessibility, best practices & SEO)
+- 🔗 **Link previews** — share any page and it shows a proper image and description
+
 ### 🎵 More
 - 🏠 **Interactive home** — a voice orb you can talk through, typewriter headline, clickable world greetings, spotlight cards and scroll animations
 - 🎧 **Voice archive** — search, mood filters and ♥ favorites, word-by-word captions, reactive visualizers and 📻 radio mode that plays every voice
@@ -95,6 +101,14 @@ resonance/
 ├── services.html       # 🎧 Voice Tracks
 ├── contact.html        # 🎙️ Voice Lab
 ├── clone.html          # 🧬 My Voice (clone studio)
+├── 404.html            # 🛰️ Custom "signal lost" page
+├── manifest.webmanifest# 📲 App manifest (name, icons, shortcuts)
+├── sw.js               # 📴 Service worker (offline cache)
+├── netlify.toml        # ☁️ Netlify headers + hides PHP files
+├── favicon.svg         # 🎨 App icon (vector)
+├── icons/              # 🎨 PNG app icons
+├── og-image.png        # 🔗 Link-preview image
+├── robots.txt / sitemap.xml
 ├── style.css           # Styles (pages currently use inline <style>)
 ├── script.js           # Speech synthesis logic (pages currently use inline <script>)
 ├── sound.js            # Web Audio synth + tracks (pages currently use inline <script>)
@@ -130,7 +144,10 @@ The text-to-speech features run entirely in the browser — no setup needed.
    - Site → `http://localhost/resonance/`
    - Admin → `http://localhost/resonance/admin.php`
 
-> ⚠️ **Note:** GitHub Pages only serves static files, so the PHP features (saving requests and the admin panel) won't work there. Use a host that supports PHP and MySQL for the full experience.
+> ⚠️ **Note:** Static hosts like Netlify and GitHub Pages can't run PHP, so saving requests and the admin panel only work on a PHP + MySQL host. On Netlify, `netlify.toml` hides the PHP files so their source isn't publicly readable.
+
+### ☁️ Live site
+Hosted on Netlify at **https://resonancesun.netlify.app** — every push to `main` deploys automatically.
 
 ### 🔒 Securing the admin panel
 
