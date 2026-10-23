@@ -48,7 +48,8 @@ Real-time speech synthesis with live controls:
 - 🔗 **Share a take** — copy a link that opens the lab with your voice, settings and text
 
 ### 🎵 More
-- 🎧 **Voice Tracks** — showcase page with playable demo tracks and Web Audio API synth effects
+- 🏠 **Interactive home** — a voice orb you can talk through, typewriter headline, clickable world greetings, spotlight cards and scroll animations
+- 🎧 **Voice archive** — search, mood filters and ♥ favorites, word-by-word captions, reactive visualizers and 📻 radio mode that plays every voice
 - 💾 **Save requests** — Voice Lab submissions are stored in MySQL through a PHP endpoint
 - 🛠️ **Admin panel** — view, filter, paginate and delete saved requests, with summary stats
 - 🌌 **Futuristic UI** — Orbitron & Outfit fonts with a fully responsive layout
@@ -59,8 +60,8 @@ Real-time speech synthesis with live controls:
 
 | File | Page | Description |
 | --- | --- | --- |
-| 🏠 `index.html` | Studio | Home page and introduction |
-| 🎧 `services.html` | Tracks | Voice tracks showcase |
+| 🏠 `index.html` | Studio | Interactive home: try any voice on the orbiting voice ring, click greetings in 22 languages |
+| 🎧 `services.html` | Tracks | Voice archive with search, filters, favorites, live captions and radio mode |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
 
