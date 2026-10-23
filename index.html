@@ -738,6 +738,7 @@ try{ if(localStorage.getItem('resonance_theme')==='light') document.body.classLi
     <a href="index.html" class="cur">STUDIO</a>
     <a href="services.html">TRACKS</a>
     <a href="contact.html">VOICE LAB</a>
+    <a href="clone.html">MY VOICE</a>
   </div>
   <button class="btn-theme" id="theme-btn">
     <span class="ticon" id="ticon">🌙</span>
@@ -764,7 +765,7 @@ try{ if(localStorage.getItem('resonance_theme')==='light') document.body.classLi
       <p class="hero-desc">A futuristic AI voice studio that lives in your browser. Seven voice characters, 45+ languages and live captions. Type it, tune it, hear it instantly.</p>
       <div class="cta">
         <a class="btn-p magnetic" href="services.html">▶ EXPLORE VOICES</a>
-        <a class="btn-s magnetic" href="contact.html">◈ START CLONING</a>
+        <a class="btn-s magnetic" href="clone.html">◈ CLONE MY VOICE</a>
       </div>
       <div class="stats" id="stats">
         <div class="stat" style="--sc:var(--c)"><span class="snum" data-to="7">7</span><span class="slbl">VOICES</span></div>
@@ -1058,7 +1059,7 @@ const Engine=(function(){
     if(busy)setTimeout(function(){if(id===seq)synth.speak(u);},80);else synth.speak(u);
   }
 
-  return {speak:speak,stop:stop,has:function(lang){return matches(lang).length>0;},supported:!!synth,ready:function(){return voices.length>0;}};
+  return {pick:pick,speak:speak,stop:stop,has:function(lang){return matches(lang).length>0;},supported:!!synth,ready:function(){return voices.length>0;}};
 })();
 
 /* Character-level caption with "spoken" / "speaking now" highlighting */
