@@ -23,6 +23,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Resonance">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -206,7 +207,7 @@ body.light .name-in{background:#f8faff;border-color:#e2e8f0;}
 .privacy{margin-top:.9rem;font-size:.75rem;color:var(--mu);line-height:1.5;}
 
 /* Daily challenge */
-.daily{--dc:#f59e0b;position:relative;margin-bottom:1.4rem;padding:1.1rem 1.2rem;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--dc) 50%,transparent);background:radial-gradient(ellipse at 0% 0%,rgba(245,158,11,.16),transparent 60%),var(--card);}
+.daily{--dc:#f59e0b;position:relative;margin-bottom:1.4rem;scroll-margin-top:84px;padding:1.1rem 1.2rem;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--dc) 50%,transparent);background:radial-gradient(ellipse at 0% 0%,rgba(245,158,11,.16),transparent 60%),var(--card);}
 body.light .daily{--dc:#b45309;background:radial-gradient(ellipse at 0% 0%,rgba(217,119,6,.09),transparent 60%),#fff;}
 .daily-top{display:flex;align-items:center;gap:.4rem .7rem;flex-wrap:wrap;margin-bottom:.7rem;font-family:'Orbitron',monospace;font-size:.58rem;letter-spacing:2.5px;color:var(--dc);}
 .daily-date{color:var(--mu);letter-spacing:1.5px;}
@@ -1098,7 +1099,7 @@ if(!window.addTilt)window.addTilt=function(){};
     const avg=Math.round(results.reduce(function(s,r){return s+r.acc;},0)/results.length*100);
     let res,body={};
     try{res=await fetch('/api/leaderboard',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:name,mode:mode,score:total,accuracy:avg,difficulty:mode==='twister'?diff:null})});body=await res.json();}
-    catch(e){res={ok:false};body={error:'The leaderboard only works on the live site.'};}
+    catch(e){res={ok:false};body={error:navigator.onLine===false?'You’re offline. Reconnect to submit your score.':'The leaderboard only works on the live site.'};}
     btn.textContent='🏆 SUBMIT TO LEADERBOARD';
     if(!res.ok){btn.disabled=false;toast('⚠ '+(body.error||'Could not submit'));return;}
     btn.hidden=true;$('final-nick').hidden=true;submitted=true;
@@ -1122,7 +1123,7 @@ if(!window.addTilt)window.addTilt=function(){};
     let data=null;
     try{const r=await fetch('/api/leaderboard?mode='+lbMode+'&period='+lbPeriod);if(r.ok)data=await r.json();}catch(e){}
     box.style.opacity='';box.innerHTML='';
-    if(!data){box.innerHTML='<div class="lb-empty">The leaderboard lives on the live site.</div>';return;}
+    if(!data){box.innerHTML='<div class="lb-empty">'+(navigator.onLine===false?'📴 You’re offline. The leaderboard loads when you reconnect.':'The leaderboard lives on the live site.')+'</div>';return;}
     $('lb-when').textContent=lbPeriod==='week'?'LAST 7 DAYS':'ALL TIME';
     if(!data.entries.length){box.innerHTML='<div class="lb-empty">No scores yet. Be the first legend! 🏆</div>';return;}
     data.entries.forEach(function(e,i){
@@ -1135,6 +1136,7 @@ if(!window.addTilt)window.addTilt=function(){};
     });
   }
   setLb('twister','all');
+  addEventListener('online',loadLb);
 
   /* ── Confetti ── */
   const cv=$('confetti'),cx=cv.getContext('2d');let parts=[],raf=null;
