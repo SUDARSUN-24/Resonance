@@ -51,7 +51,8 @@ test('track accepts every game mode the Play page sends', async () => {
   const modes = [...read('play.html').matchAll(/kind:'([a-z]+)'/g)].map((m) => m[1]);
   assert.ok(modes.includes('practice'));
   assert.match(read('play.html'), /mode:duo\?'duo'/, 'pass and play is tracked as duo');
-  for (const mode of new Set([...modes, 'duo'])) {
+  assert.match(read('play.html'), /isChallenge\?'challenge'/, 'challenge games are tracked as challenge');
+  for (const mode of new Set([...modes, 'duo', 'challenge'])) {
     const res = await track(post({ type: 'game', mode }), { geo: {} });
     assert.notEqual(res.status, 422, `track rejects game mode ${mode}`);
   }
@@ -60,4 +61,5 @@ test('track accepts every game mode the Play page sends', async () => {
 test('the owner dashboard counts language practice sessions', () => {
   assert.match(read('admin.html'), /cur\.games\.practice/);
   assert.match(read('admin.html'), /cur\.games\.duo/);
+  assert.match(read('admin.html'), /cur\.games\.challenge/);
 });

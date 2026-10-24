@@ -564,7 +564,7 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
     renderBars($('b-twins'),Object.entries(cur.scansBy).map(function(e){const v=VOICES[e[0]]||[e[0],'•','#888'];return {label:v[0],icon:v[1],dot:v[2],value:e[1]};}),cur.scans,'scans','No Voice DNA scans yet. <a href="/clone.html">Try My Voice</a>.');
     renderBars($('b-countries'),fold(Object.entries(cur.countries).map(function(e){return {label:countryName(e[0]),sub:e[0],value:e[1]};}),6),sumObj(cur.countries),'views','No country data yet.');
 
-    const play=[{label:'Stories',icon:'🎭',value:cur.stories},{label:'Twister games',icon:'👅',value:cur.games.twister||0},{label:'World Tour',icon:'🌍',value:cur.games.world||0},{label:'Language practice',icon:'🗣️',value:cur.games.practice||0},{label:'Pass & play duels',icon:'⚔️',value:cur.games.duo||0}].filter(function(x){return x.value>0;});
+    const play=[{label:'Stories',icon:'🎭',value:cur.stories},{label:'Twister games',icon:'👅',value:cur.games.twister||0},{label:'World Tour',icon:'🌍',value:cur.games.world||0},{label:'Language practice',icon:'🗣️',value:cur.games.practice||0},{label:'Pass & play duels',icon:'⚔️',value:cur.games.duo||0},{label:'Challenge links played',icon:'🔗',value:cur.games.challenge||0}].filter(function(x){return x.value>0;});
     renderBars($('b-play'),play,play.reduce(function(s,x){return s+x.value;},0),'plays','No games or stories yet. Try <a href="/play.html">Play</a> or <a href="/story.html">Story Studio</a>.');
     renderLbm();
 

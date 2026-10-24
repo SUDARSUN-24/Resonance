@@ -262,6 +262,14 @@ body.light .daily{--dc:#b45309;background:radial-gradient(ellipse at 0% 0%,rgba(
 .daily-note{font-size:.82rem;color:var(--t2);line-height:1.5;}
 .daily-warn{margin-top:.8rem;font-size:.78rem;color:var(--dc);line-height:1.5;}
 .btn-daily{background:linear-gradient(135deg,#b45309,#be185d);box-shadow:0 8px 26px rgba(245,158,11,.28);}
+/* Challenge a friend */
+.daily.challenge{--dc:#ff4fa3;background:radial-gradient(ellipse at 0% 0%,rgba(255,0,128,.16),transparent 60%),var(--card);}
+body.light .daily.challenge{--dc:#be185d;background:radial-gradient(ellipse at 0% 0%,rgba(219,39,119,.08),transparent 60%),#fff;}
+.ch-box{max-width:560px;margin:1.2rem auto 0;text-align:left;}
+.ch-box .opts{margin-bottom:.8rem;}
+.ch-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.45rem;}
+.ch-row .name-in{flex:1 1 220px;min-width:0;font-size:.8rem;}
+.ch-msg{min-height:1.2rem;margin-top:.45rem;font-size:.8rem;color:var(--t2);}
 @media(max-width:600px){.daily{padding:1rem;}.streak-pill{margin-left:0;}.daily-top{font-size:12px;letter-spacing:1.5px;}.streak-pill{font-size:11px;}}
 
 /* Game */
@@ -495,6 +503,15 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <!-- SETUP -->
       <section class="panel" id="setup">
         <div class="panel-line"></div>
+        <div class="daily challenge" id="challenge" hidden>
+          <div class="daily-top"><span>⚔️ YOU’VE BEEN CHALLENGED</span></div>
+          <h2 class="daily-text" id="ch-title"></h2>
+          <div class="daily-sub" id="ch-sub"></div>
+          <div class="daily-row">
+            <button class="btn-big btn-daily" id="btn-ch-accept" type="button">▶ ACCEPT CHALLENGE</button>
+            <button class="btn-ghost" id="btn-ch-dismiss" type="button">✕ NOT NOW</button>
+          </div>
+        </div>
         <div class="daily" id="daily">
           <div class="daily-top">
             <span>📅 DAILY CHALLENGE</span><span class="daily-date" id="daily-date"></span>
@@ -629,6 +646,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <button class="btn-ghost" id="btn-card" type="button" aria-expanded="false" aria-controls="card-box">🖼️ SCORE CARD</button>
             <button class="btn-big" id="btn-tricky" type="button" hidden>🎯 PRACTISE THE TRICKY ONES</button>
             <button class="btn-big" id="btn-rematch" type="button" hidden>⚔️ REMATCH</button>
+            <button class="btn-big" id="btn-challenge" type="button" hidden aria-expanded="false" aria-controls="ch-box">⚔️ CHALLENGE A FRIEND</button>
             <button class="btn-ghost" id="btn-again" type="button">↺ PLAY AGAIN</button>
           </div>
           <div class="submitted" id="submitted" role="status"></div>
@@ -639,6 +657,20 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
               <button class="btn-big" id="btn-card-share" type="button">📤 SHARE IMAGE</button>
             </div>
             <p class="privacy">The card is drawn in your browser. Nothing is uploaded unless you share it.</p>
+          </div>
+          <div class="ch-box" id="ch-box" hidden>
+            <div class="opts">
+              <label class="opt-l" for="ch-name">YOUR NAME</label>
+              <input class="name-in" id="ch-name" maxlength="16" placeholder="So your friend knows who it’s from" autocomplete="nickname">
+            </div>
+            <label class="opt-l" for="ch-link">CHALLENGE LINK</label>
+            <div class="ch-row">
+              <input class="name-in" id="ch-link" readonly>
+              <button class="btn-big" id="btn-ch-copy" type="button">📋 COPY</button>
+              <button class="btn-ghost" id="btn-ch-share" type="button">📤 SHARE</button>
+            </div>
+            <div class="ch-msg" id="ch-msg" role="status"></div>
+            <p class="privacy">🔒 The link holds your name, these five twisters and your scores. Nothing is uploaded: whoever opens it plays the same twisters and sees who won.</p>
           </div>
         </div>
       </section>
@@ -684,6 +716,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 
 <script src="progress.js"></script>
 <script src="phrases.js"></script>
+<script src="challenge.js"></script>
 
 <script>
 /* THEME */
@@ -965,6 +998,9 @@ window.RSShareCard=(function(){
     return a.concat(TWISTERS[d].map(function(t){return {lang:'en-US',text:t,flag:'📅',name:'DAILY CHALLENGE · TONGUE TWISTER',kind:'twister',label:'👅 Tongue twister'};}));
   },[]).concat(WORLD.map(function(w){return Object.assign({},w,{name:'DAILY CHALLENGE · '+w.name,kind:'world',label:w.flag+' '+w.name+' · “'+w.mean+'”'});}));
   const MULT={easy:1,medium:1.25,hard:1.5};
+  /* Challenge links: the friend's twisters and scores travel in the link, nothing is uploaded */
+  const CH=window.RSChallenge||null,CH_GAME={twisters:TWISTERS,max:{easy:1000*MULT.easy,medium:1000*MULT.medium,hard:1000*MULT.hard}};
+  let incoming=null,isChallenge=false,against=null;
   const CHAR_LEVEL=/^(th|ja|zh|ko|lo|km|my|si)/;
   const NUMS={'0':'zero','1':'one','2':'two','3':'three','4':'four','5':'five','6':'six','7':'seven','8':'eight','9':'nine','10':'ten','11':'eleven','12':'twelve','33':'thirty three','6th':'sixth','1st':'first','3rd':'third'};
 
@@ -1042,14 +1078,14 @@ window.RSShareCard=(function(){
   renderBadges();
 
   /* ── Setup choices ── */
-  document.querySelectorAll('.mode').forEach(function(b){
-    b.addEventListener('click',function(){
-      mode=b.dataset.mode;
-      document.querySelectorAll('.mode').forEach(function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
-      setupView();
-      if(mode==='practice')renderPractice();else setLb(mode,lbPeriod);
-    });
-  });
+  function selectMode(m){
+    mode=m;
+    document.querySelectorAll('.mode').forEach(function(x){const on=x.dataset.mode===m;x.classList.toggle('on',on);x.setAttribute('aria-pressed',String(on));});
+    setupView();
+    if(mode==='practice')renderPractice();else setLb(mode,lbPeriod);
+  }
+  document.querySelectorAll('.mode').forEach(function(b){b.addEventListener('click',function(){selectMode(b.dataset.mode);});});
+  function selectDiff(d){diff=d;document.querySelectorAll('#diffs .chip').forEach(function(x){x.classList.toggle('on',x.dataset.d===d);});}
   function setupView(){
     const two=mode==='twister'&&players===2;
     $('diff-row').hidden=mode!=='twister';
@@ -1066,6 +1102,30 @@ window.RSShareCard=(function(){
       setupView();
     });
   });
+
+  /* ── Incoming challenge link ── */
+  function clearHash(){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+  function renderChallenge(){
+    $('challenge').hidden=!incoming;
+    if(!incoming)return;
+    $('ch-title').textContent=(incoming.n||'Your friend')+' challenged you!';
+    $('ch-sub').textContent='5 tongue twisters · '+incoming.d+' · score to beat: '+incoming.total.toLocaleString()+(SR?'':'. To play, open this link in Chrome, Edge or Safari: apps like WhatsApp or Instagram open links in a browser that can’t listen.');
+    $('btn-ch-accept').disabled=!SR;
+  }
+  function readChallenge(){
+    const code=CH?CH.fromHash(location.hash):null;
+    if(code===null)return false;
+    const c=CH.decode(code,CH_GAME);
+    if(!c.ok){
+      clearHash();
+      toast(c.why==='outdated'?'⚠ This challenge is from an older version of the game. Ask your friend for a new link!':'⚠ This challenge link is broken. Ask your friend to send it again.');
+      return false;
+    }
+    incoming=c;renderChallenge();return true;
+  }
+  $('btn-ch-dismiss').addEventListener('click',function(){incoming=null;clearHash();renderChallenge();});
+  $('btn-ch-accept').addEventListener('click',function(){const c=incoming;incoming=null;clearHash();renderChallenge();startGame(false,null,c);});
+  addEventListener('hashchange',function(){if(readChallenge()&&!$('setup').hidden)$('challenge').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
 
   /* ── Language practice setup ── */
   function topicStats(L,T){
@@ -1126,8 +1186,8 @@ window.RSShareCard=(function(){
   }
   function bestText(x){return 'Your best: '+x.best+'%'+(x.stars?' '+'⭐'.repeat(x.stars):'')+(x.stars>=MASTERED?' · mastered':'');}
   /* Leaderboard and badges only count full 5-round games of the two ranked modes */
-  function ranked(){return !isDaily&&mode!=='practice';}
-  function modeLabel(){return isDaily?'Daily Challenge':mode==='twister'?'Tongue Twister · '+diff:mode==='practice'?played.lang.name+' practice · '+played.topic.name:'World Tour';}
+  function ranked(){return !isDaily&&!isChallenge&&mode!=='practice';}
+  function modeLabel(){return isDaily?'Daily Challenge':isChallenge?'Challenge · Tongue Twister · '+diff:mode==='twister'?'Tongue Twister · '+diff:mode==='practice'?played.lang.name+' practice · '+played.topic.name:'World Tour';}
   document.querySelectorAll('#diffs .chip').forEach(function(b){
     b.addEventListener('click',function(){diff=b.dataset.d;document.querySelectorAll('#diffs .chip').forEach(function(x){x.classList.toggle('on',x===b);});});
   });
@@ -1170,16 +1230,20 @@ window.RSShareCard=(function(){
 
   /* ── Game flow ── */
   function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
-  function startGame(daily,phrases){
+  function startGame(daily,phrases,ch){
     if(!SR)return;
-    isDaily=!!(daily&&P);
-    if(isDaily){dailyKey=P.todayKey();rounds=[DAILY[P.dailyIndex(dailyKey,DAILY.length)]];}
+    isDaily=!!(daily&&P);isChallenge=!!ch&&!isDaily;
+    if(isChallenge){
+      selectMode('twister');selectDiff(ch.d);against=ch;
+      rounds=ch.i.map(function(k){return {lang:'en-US',text:TWISTERS[ch.d][k],idx:k,flag:'⚔️',name:'CHALLENGE · '+(ch.n||'YOUR FRIEND').toUpperCase()+' · '+ch.d.toUpperCase(),kind:'twister'};});
+    }
+    else if(isDaily){dailyKey=P.todayKey();rounds=[DAILY[P.dailyIndex(dailyKey,DAILY.length)]];}
     else if(mode==='practice'){if(!pLang)return;if(!pTopic)renderPractice();played={lang:pLang,topic:pTopic};rounds=practiceRounds(phrases||pTopic.phrases);}
     else rounds=mode==='twister'
-      ?shuffle(TWISTERS[diff]).slice(0,5).map(function(t){return {lang:'en-US',text:t,flag:'👅',name:'TONGUE TWISTER · '+diff.toUpperCase(),kind:'twister'};})
+      ?shuffle(TWISTERS[diff].map(function(t,k){return k;})).slice(0,5).map(function(k){return {lang:'en-US',text:TWISTERS[diff][k],idx:k,flag:'👅',name:'TONGUE TWISTER · '+diff.toUpperCase(),kind:'twister'};})
       :shuffle(WORLD).slice(0,5).map(function(w){return Object.assign({kind:'world'},w);});
     ri=0;results=[];total=0;submitted=false;gameId++;
-    duo=!isDaily&&mode==='twister'&&players===2;
+    duo=!isDaily&&!isChallenge&&mode==='twister'&&players===2;
     if(duo){
       duoNames=[$('p1-name').value.trim()||'Player 1',$('p2-name').value.trim()||'Player 2'];
       if(duoNames[0].toLowerCase()===duoNames[1].toLowerCase())duoNames[1]+=' 2';
@@ -1188,7 +1252,7 @@ window.RSShareCard=(function(){
     }
     $('setup').hidden=true;$('final').hidden=true;$('pass').hidden=true;$('game').hidden=false;
     $('rounds').innerHTML='';rounds.forEach(function(){const d=document.createElement('div');d.className='rd';d.appendChild(document.createElement('i'));$('rounds').appendChild(d);});
-    if(window.rsTrack)rsTrack({type:'game',mode:duo?'duo':rounds[0].kind});
+    if(window.rsTrack)rsTrack({type:'game',mode:duo?'duo':isChallenge?'challenge':rounds[0].kind});
     if(duo){showPass();return;}
     showRound();
     $('game').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
@@ -1372,8 +1436,12 @@ window.RSShareCard=(function(){
 
   /* ── Final screen ── */
   function showFinal(){
-    $('btn-card').hidden=duo;$('btn-rematch').hidden=!duo;
+    $('btn-card').hidden=duo||isChallenge;$('btn-rematch').hidden=!duo;closeChallengeBox();
+    /* Solo twister games can be sent as a challenge; a challenge can be sent back */
+    $('btn-challenge').hidden=!(CH&&mode==='twister'&&!isDaily&&!duo);
+    $('btn-challenge').textContent=isChallenge?'⚔️ CHALLENGE '+(against.n?against.n.toUpperCase():'THEM')+' BACK':'⚔️ CHALLENGE A FRIEND';
     if(duo){showDuoFinal();return;}
+    if(isChallenge){showChallengeFinal();return;}
     $('game').hidden=true;$('final').hidden=false;
     const max=rounds.length*1000*(!isDaily&&mode==='twister'?MULT[diff]:1),f=total/max;
     const tiers=[[.85,'👑','LEGEND'],[.7,'🥇','SPEECH WIZARD'],[.5,'🥈','SILVER TONGUE'],[.3,'🥉','WORD WRANGLER'],[0,'🐣','ROOKIE']];
@@ -1408,12 +1476,14 @@ window.RSShareCard=(function(){
     if(P&&ranked())P.record('game',{mode:mode,diff:diff,fraction:f});
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
-  function showDuoFinal(){
+  /* Head-to-head results: used by pass and play and by challenge links. Returns the winner (0, 1) or -1 for a tie */
+  function showVersus(names,ptsA,ptsB,o){
     $('game').hidden=true;$('pass').hidden=true;$('final').hidden=false;closeCard();
-    const a=duoTotal[0],b=duoTotal[1],win=a===b?-1:a>b?0:1,top=Math.max(a,b);
-    $('final-badge').textContent=win<0?'🤝':'🏆';
-    $('final-title').textContent=win<0?'IT’S A TIE!':duoNames[win].toUpperCase()+' WINS!';
-    $('final-sub').textContent='Pass & play · Tongue Twister · '+diff+' · '+duoNames[0]+' '+a.toLocaleString()+' – '+b.toLocaleString()+' '+duoNames[1];
+    const sum=function(x){return x.reduce(function(s,v){return s+(v||0);},0);};
+    const a=sum(ptsA),b=sum(ptsB),win=a===b?-1:a>b?0:1,top=Math.max(a,b);
+    $('final-badge').textContent=o.badge(win);
+    $('final-title').textContent=o.title(win);
+    $('final-sub').textContent=o.sub+' · '+names[0]+' '+a.toLocaleString()+' – '+b.toLocaleString()+' '+names[1];
     const rows=$('final-rows');rows.innerHTML='';
     const row=function(cls,label,x,y){
       const d=document.createElement('div');d.className='fr duo'+(cls?' '+cls:'');
@@ -1421,17 +1491,79 @@ window.RSShareCard=(function(){
       [x,y].forEach(function(v,i){const n=document.createElement('span');n.className='n'+(cls!=='head'&&x!==y&&v===Math.max(x,y)?' win':'');n.textContent=cls==='head'?v:(typeof v==='number'?v.toLocaleString():'–');d.appendChild(n);});
       rows.appendChild(d);
     };
-    row('head','',duoNames[0].toUpperCase(),duoNames[1].toUpperCase());
-    rounds.forEach(function(r,i){row('',r.text,(duoRes[0][i]||{}).pts||0,(duoRes[1][i]||{}).pts||0);});
+    row('head','',names[0].toUpperCase(),names[1].toUpperCase());
+    rounds.forEach(function(r,i){row('',r.text,ptsA[i]||0,ptsB[i]||0);});
     row('sum','Total',a,b);
     $('btn-submit').hidden=true;$('final-nick').hidden=true;$('btn-tricky').hidden=true;
-    $('submitted').textContent=win<0?'Dead level. Rematch to settle it!':'Pass-and-play scores stay on this device. Solo games count for badges and the leaderboard.';
+    $('submitted').textContent=o.note(win);
     const el=$('final-score'),t0=performance.now();
     (function tick(now){const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(top*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(tick);})(t0);
-    burst(180);
+    if(o.party(win))burst(180);
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+    return win;
+  }
+  function pts(list){return rounds.map(function(r,i){return list[i]?list[i].pts:0;});}
+  function showDuoFinal(){
+    showVersus(duoNames,pts(duoRes[0]),pts(duoRes[1]),{
+      sub:'Pass & play · Tongue Twister · '+diff,
+      badge:function(w){return w<0?'🤝':'🏆';},
+      title:function(w){return w<0?'IT’S A TIE!':duoNames[w].toUpperCase()+' WINS!';},
+      note:function(w){return w<0?'Dead level. Rematch to settle it!':'Pass-and-play scores stay on this device. Solo games count for badges and the leaderboard.';},
+      party:function(){return true;}
+    });
     $('btn-rematch').focus({preventScroll:true});
   }
+  /* "You", unless you have a name that differs from the challenger's (opening your own link shows "You") */
+  function youName(){const n=CH&&CH.cleanName($('nick').value);return n&&(!against||!against.n||n.toLowerCase()!==against.n.toLowerCase())?n:'You';}
+  function showChallengeFinal(){
+    const them=against.n||'Your friend';
+    showVersus([them,youName()],against.s,pts(results),{
+      sub:'Challenge · Tongue Twister · '+diff,
+      badge:function(w){return w<0?'🤝':w===1?'🏆':'🥈';},
+      title:function(w){return w<0?'IT’S A TIE!':w===1?'YOU WIN!':them.toUpperCase()+' WINS!';},
+      note:function(w){return w<0?'Dead level! Challenge them back to settle it.':w===1?'You beat '+them+'! Send your result back so they know.':them+' takes this one. Challenge them back for a rematch.';},
+      party:function(w){return w===1;}
+    });
+    if(P)P.record('game',{mode:'twister',diff:diff,fraction:total/(rounds.length*1000*MULT[diff])});
+    $('btn-challenge').focus({preventScroll:true});
+  }
+
+  /* ── Send a challenge link ── */
+  function closeChallengeBox(){$('ch-box').hidden=true;$('btn-challenge').setAttribute('aria-expanded','false');}
+  function challengeLink(){
+    const name=CH.cleanName($('ch-name').value),raw=$('ch-name').value.trim();
+    const code=name?CH.encode({d:diff,i:rounds.map(function(r){return r.idx;}),s:pts(results),n:name},CH_GAME):null;
+    $('ch-link').value=code?CH.link(location.href,code):'';
+    $('btn-ch-copy').disabled=$('btn-ch-share').disabled=!code;
+    const msg=code?'Send this link to a friend. They play the same twisters and see who won.':raw.length>=2||/[^\p{L}\p{N} _.\-]/u.test(raw)?'⚠ Please use 2–16 letters or numbers, and keep it friendly.':'✎ Add your name to make your link.';
+    if($('ch-msg').textContent!==msg)$('ch-msg').textContent=msg; /* a status region: only announce changes */
+    if(name){try{localStorage.setItem('resonance_nick',name);}catch(e){}$('nick').value=name;$('final-nick').value=name;}
+    return code?$('ch-link').value:null;
+  }
+  $('btn-challenge').addEventListener('click',function(){
+    if(!$('ch-box').hidden){closeChallengeBox();return;}
+    closeCard();
+    $('ch-name').value=($('final-nick').value||$('nick').value||'').trim();
+    challengeLink();
+    $('ch-box').hidden=false;this.setAttribute('aria-expanded','true');
+    $('ch-box').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+    ($('btn-ch-copy').disabled?$('ch-name'):$('btn-ch-copy')).focus({preventScroll:true});
+  });
+  $('ch-name').addEventListener('input',challengeLink);
+  async function copyLink(url){
+    try{await navigator.clipboard.writeText(url);}
+    catch(e){$('ch-link').select();try{document.execCommand('copy');}catch(err){$('ch-msg').textContent='Select the link above and copy it.';return;}}
+    $('ch-msg').textContent='📋 Copied! Paste it into a message to a friend.';
+  }
+  $('btn-ch-copy').addEventListener('click',function(){const url=challengeLink();if(url)copyLink(url);});
+  $('btn-ch-share').addEventListener('click',async function(){
+    const url=challengeLink();if(!url)return;
+    if(navigator.share){
+      try{await navigator.share({title:'Resonance challenge',text:'I scored '+total.toLocaleString()+' on these 5 tongue twisters. Can you beat me? 🎙️',url:url});return;}
+      catch(e){if(e.name==='AbortError')return;}
+    }
+    copyLink(url);
+  });
   $('btn-rematch').addEventListener('click',function(){startGame(false);}); /* same players, new twisters */
   $('btn-again').addEventListener('click',function(){
     $('final').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();
@@ -1442,6 +1574,7 @@ window.RSShareCard=(function(){
     startGame(false,played.topic.phrases.filter(function(p){return keys.indexOf(p.text)>-1;}));
   });
   function shareText(){
+    if(isChallenge){const a=pts(results).reduce(function(x,y){return x+y;},0),b=against.total,them=against.n||'my friend';return a>b?'I beat '+them+' '+a.toLocaleString()+' to '+b.toLocaleString()+' in a Resonance tongue twister challenge 🎙️🔥':a===b?'I tied with '+them+' on '+a.toLocaleString()+' in a Resonance tongue twister challenge 🎙️🤝':them+' beat me '+b.toLocaleString()+' to '+a.toLocaleString()+' in a Resonance tongue twister challenge. Rematch incoming 🎙️';}
     if(duo){const a=duoTotal[0],b=duoTotal[1];return a===b?duoNames[0]+' and '+duoNames[1]+' tied on '+a.toLocaleString()+' in a Resonance tongue twister duel 🎙️🤝':duoNames[a>b?0:1]+' beat '+duoNames[a>b?1:0]+' '+Math.max(a,b).toLocaleString()+' to '+Math.min(a,b).toLocaleString()+' in a Resonance tongue twister duel 🎙️🔥';}
     if(mode==='practice'&&!isDaily)return 'I scored '+total.toLocaleString()+' practising '+played.lang.name+' ('+played.topic.name.toLowerCase()+') on Resonance 🗣️ Want to learn with me?';
     return 'I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';
@@ -1459,6 +1592,7 @@ window.RSShareCard=(function(){
   function cardName(){return 'resonance-score-'+total+'.png';}
   $('btn-card').addEventListener('click',async function(){
     if(!$('card-box').hidden){closeCard();return;}
+    closeChallengeBox();
     const btn=this,label=btn.textContent;btn.disabled=true;btn.textContent='DRAWING…';
     try{
       const nick=($('final-nick').value||$('nick').value||'').trim();
@@ -1534,6 +1668,7 @@ window.RSShareCard=(function(){
   }
   setLb('twister','all');
   addEventListener('online',loadLb);
+  if(readChallenge())setTimeout(function(){$('challenge').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});},400);
 
   /* ── Confetti ── */
   const cv=$('confetti'),cx=cv.getContext('2d');let parts=[],raf=null;
