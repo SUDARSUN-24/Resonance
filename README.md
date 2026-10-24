@@ -72,6 +72,7 @@ Real-time speech synthesis with live controls:
 - 👅 **Tongue Twister**: 5 rounds in Easy / Medium / Hard, scored on accuracy and speed with live word-by-word feedback
 - 🌍 **World Tour**: hear a phrase in one of 14 languages, say it back, get scored on pronunciation
 - 🗣️ **Language Practice**: 64 everyday Thai phrases in 8 topics (greetings, food, shopping, getting around…). Each phrase plays first, with a pronunciation guide, a slower replay and the meaning; say it back and it's scored like World Tour. Choose the ครับ (khrap) or ค่ะ (kha) polite ending. Your best score per phrase is saved in the browser, topics show what you've mastered, and you can replay just the tricky ones. More languages can be added in `phrases.js`
+- ⚔️ **Pass & play**: two players, one device. Take turns on the same tongue twisters, hand the phone over between turns, and see round-by-round scores on the winner screen (stays on the device, not sent to the leaderboard)
 - 🏆 **Live leaderboard**: all-time and weekly boards, with medals, confetti and share-your-score
 - 🎙️ Uses your browser's speech recognition (Chrome, Edge or Safari)
 

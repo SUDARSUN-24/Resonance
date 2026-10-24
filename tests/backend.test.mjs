@@ -50,7 +50,8 @@ test('track rejects unknown pages and event types before storing anything', asyn
 test('track accepts every game mode the Play page sends', async () => {
   const modes = [...read('play.html').matchAll(/kind:'([a-z]+)'/g)].map((m) => m[1]);
   assert.ok(modes.includes('practice'));
-  for (const mode of new Set(modes)) {
+  assert.match(read('play.html'), /mode:duo\?'duo'/, 'pass and play is tracked as duo');
+  for (const mode of new Set([...modes, 'duo'])) {
     const res = await track(post({ type: 'game', mode }), { geo: {} });
     assert.notEqual(res.status, 422, `track rejects game mode ${mode}`);
   }
@@ -58,4 +59,5 @@ test('track accepts every game mode the Play page sends', async () => {
 
 test('the owner dashboard counts language practice sessions', () => {
   assert.match(read('admin.html'), /cur\.games\.practice/);
+  assert.match(read('admin.html'), /cur\.games\.duo/);
 });
