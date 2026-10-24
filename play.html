@@ -30,6 +30,10 @@
 <title>Play: Speak to Win | RESONANCE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <script>/* Web fonts load after the first frame, so text shows straight away in a fallback font (display=swap) */(function(){var done=0;function go(){if(done)return;done=1;var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap';document.head.appendChild(l);}requestAnimationFrame(function(){setTimeout(go,0);});setTimeout(go,2500);})();</script><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap"></noscript>
+<!-- Small shared scripts load before the first paint, so content they fill in does not jump the page (layout shift) -->
+<script src="progress.js"></script>
+<script src="phrases.js"></script>
+<script src="challenge.js"></script>
 <style>
 
 /* ═══════════════════════════════════════
@@ -716,9 +720,6 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="progress.js"></script>
-<script src="phrases.js"></script>
-<script src="challenge.js"></script>
 
 <script>
 /* THEME */
