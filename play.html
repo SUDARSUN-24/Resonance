@@ -205,6 +205,29 @@ body.light .name-in{background:#f8faff;border-color:#e2e8f0;}
 .name-in:focus{outline:none;border-color:var(--c);}
 .support{margin-top:1rem;padding:.8rem 1rem;border-radius:10px;border:1px dashed var(--g);color:var(--g);font-size:.84rem;line-height:1.5;}
 .privacy{margin-top:.9rem;font-size:.75rem;color:var(--mu);line-height:1.5;}
+/* Language practice */
+.mode.wide{grid-column:1/-1;display:flex;align-items:center;gap:1rem;}
+.mode.wide .mode-ico{margin:0;flex:none;}
+.mode.wide .mode-n,.mode.wide .mode-d{display:block;}
+.mode[data-mode=practice]{--mc:#f59e0b;}
+body.light .mode[data-mode=practice]{--mc:#b45309;}
+.chip-native{font-family:'Outfit',sans-serif;font-size:.85rem;letter-spacing:0;margin-right:.35rem;vertical-align:-1px;}
+.prac{margin-bottom:1.2rem;}
+.prac .chips{flex-wrap:wrap;}
+.prac-total{font-size:.78rem;color:var(--t2);}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:.6rem;margin:.6rem 0 0;}
+.topic{--mc:#f59e0b;text-align:left;padding:.8rem .9rem;border-radius:12px;border:1.5px solid var(--brd2);background:var(--card);color:var(--t);cursor:pointer;min-width:0;font-family:'Outfit',sans-serif;transition:border-color .2s,box-shadow .2s;}
+body.light .topic{--mc:#b45309;background:#fff;}
+.topic:hover{border-color:color-mix(in srgb,var(--mc) 55%,transparent);}
+.topic.on{border-color:var(--mc);box-shadow:0 0 0 1px var(--mc);}
+.topic-ico{font-size:1.3rem;line-height:1;}
+.topic-n{display:block;font-weight:600;font-size:.88rem;margin-top:.35rem;}
+.topic-native{display:block;font-size:.78rem;color:var(--mu);}
+.topic-bar{display:block;height:4px;border-radius:4px;background:var(--brd2);margin-top:.55rem;overflow:hidden;}
+.topic-bar i{display:block;height:100%;background:var(--mc);}
+.topic-p{display:block;font-size:.7rem;color:var(--t2);margin-top:.3rem;}
+.ph-best{margin-top:.45rem;font-size:.75rem;color:var(--t2);}
+@media(prefers-reduced-motion:reduce){.topic{transition:none;}}
 
 /* Daily challenge */
 .daily{--dc:#f59e0b;position:relative;margin-bottom:1.4rem;scroll-margin-top:84px;padding:1.1rem 1.2rem;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--dc) 50%,transparent);background:radial-gradient(ellipse at 0% 0%,rgba(245,158,11,.16),transparent 60%),var(--card);}
@@ -475,6 +498,11 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <span class="mode-ico">🌍</span><div class="mode-n">WORLD TOUR</div>
             <div class="mode-d">5 phrases in 5 languages. Listen, then say it back. Pronunciation = points.</div>
           </button>
+          <button class="mode wide" type="button" data-mode="practice" aria-pressed="false" id="mode-practice">
+            <span class="mode-ico">🗣️</span>
+            <span><span class="mode-n">LANGUAGE PRACTICE</span>
+            <span class="mode-d">Learn useful phrases by topic. Hear each one, say it back, and track every phrase you master.</span></span>
+          </button>
         </div>
         <div class="opts" id="diff-row">
           <span class="opt-l">DIFFICULTY</span>
@@ -484,7 +512,22 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <button class="chip" type="button" data-d="hard">HARD</button>
           </div>
         </div>
-        <div class="opts">
+        <div class="prac" id="prac" hidden>
+          <div class="opts">
+            <span class="opt-l" id="prac-lang-l">LANGUAGE</span>
+            <div class="chips" id="prac-langs" role="group" aria-labelledby="prac-lang-l"></div>
+            <span class="prac-total" id="prac-total"></span>
+          </div>
+          <div class="opts" id="prac-polite-row" hidden>
+            <span class="opt-l" id="prac-polite-l"></span>
+            <div class="chips" id="prac-polite" role="group" aria-labelledby="prac-polite-l"></div>
+          </div>
+          <span class="opt-l" id="prac-topic-l">TOPIC</span>
+          <div class="topics" id="prac-topics" role="group" aria-labelledby="prac-topic-l"></div>
+          <div class="support" id="prac-voice" hidden></div>
+          <p class="privacy">📈 Your best score for every phrase is saved in this browser only. Nothing is uploaded.</p>
+        </div>
+        <div class="opts" id="nick-row">
           <label class="opt-l" for="nick">PLAYER NAME</label>
           <input class="name-in" id="nick" maxlength="16" placeholder="Your name for the leaderboard" autocomplete="nickname">
         </div>
@@ -503,6 +546,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
           <div class="ph-text" id="ph-text" dir="auto"></div>
           <div class="ph-hint" id="ph-hint"></div>
           <div class="ph-mean" id="ph-mean"></div>
+          <div class="ph-best" id="ph-best" hidden></div>
         </div>
         <div class="mic-zone">
           <button class="mic" id="mic" type="button" aria-label="Start speaking">🎙️</button>
@@ -513,6 +557,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
         <div id="result"></div>
         <div class="game-actions">
           <button class="btn-ghost" id="btn-hear" type="button">🔊 HEAR IT</button>
+          <button class="btn-ghost" id="btn-slow" type="button" hidden>🐢 SLOWER</button>
           <button class="btn-ghost" id="btn-retry" type="button" hidden>↺ TRY AGAIN</button>
           <button class="btn-big" id="btn-next" type="button" hidden>NEXT ROUND ▸</button>
           <button class="btn-ghost" id="btn-quit" type="button">✕ QUIT</button>
@@ -533,6 +578,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <button class="btn-big" id="btn-submit" type="button">🏆 SUBMIT TO LEADERBOARD</button>
             <button class="btn-ghost" id="btn-share" type="button">🔗 SHARE</button>
             <button class="btn-ghost" id="btn-card" type="button" aria-expanded="false" aria-controls="card-box">🖼️ SCORE CARD</button>
+            <button class="btn-big" id="btn-tricky" type="button" hidden>🎯 PRACTISE THE TRICKY ONES</button>
             <button class="btn-ghost" id="btn-again" type="button">↺ PLAY AGAIN</button>
           </div>
           <div class="submitted" id="submitted" role="status"></div>
@@ -587,6 +633,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 <div class="toast" id="toast" role="status"></div>
 
 <script src="progress.js"></script>
+<script src="phrases.js"></script>
 
 <script>
 /* THEME */
@@ -872,6 +919,11 @@ window.RSShareCard=(function(){
   const NUMS={'0':'zero','1':'one','2':'two','3':'three','4':'four','5':'five','6':'six','7':'seven','8':'eight','9':'nine','10':'ten','11':'eleven','12':'twelve','33':'thirty three','6th':'sixth','1st':'first','3rd':'third'};
 
   const P=window.RSProgress||null;
+  /* Language practice: phrase lists from phrases.js */
+  const LANGS=(window.RSPhrases||[]).filter(function(l){return l&&l.topics&&l.topics.length;});
+  const MASTERED=2; /* stars needed (80%+) to count a phrase as mastered */
+  let pLang=LANGS[0]||null,pTopic=null,played=null;
+  if(!LANGS.length)$('mode-practice').hidden=true;
   let mode='twister',diff='medium',rounds=[],ri=0,results=[],total=0,submitted=false,lbMode='twister',lbPeriod='all',isDaily=false,dailyKey=null;
   let rec=null,listening=false,attemptDone=true,gameId=0,retries=1,tStart=0,tSpeech=0,tLast=0,finalText='',interimText='',silenceT=null,maxT=null,timerAnim=null;
   let myIds=[];try{myIds=JSON.parse(localStorage.getItem('resonance_lb_ids'))||[];}catch(e){}
@@ -942,9 +994,74 @@ window.RSShareCard=(function(){
       mode=b.dataset.mode;
       document.querySelectorAll('.mode').forEach(function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
       $('diff-row').hidden=mode!=='twister';
-      setLb(mode,lbPeriod);
+      $('prac').hidden=mode!=='practice';
+      $('nick-row').hidden=mode==='practice';
+      $('btn-start').textContent=mode==='practice'?'▶ START PRACTICE':'▶ START GAME';
+      if(mode==='practice')renderPractice();else setLb(mode,lbPeriod);
     });
   });
+
+  /* ── Language practice setup ── */
+  function topicStats(L,T){
+    const got=P?P.practiceGet(L.code):{};let m=0;
+    T.phrases.forEach(function(p){const x=got[p.text];if(x&&x.stars>=MASTERED)m++;});
+    return {mastered:m,total:T.phrases.length};
+  }
+  function politeChoice(L){
+    if(!L.polite)return null;
+    const saved=P?P.pref('polite.'+L.code):null;
+    return L.polite.choices.some(function(c){return c.id===saved;})?saved:L.polite.choices[0].id;
+  }
+  function chip(label,on,fn,native,lang){
+    const b=document.createElement('button');b.type='button';b.className='chip'+(on?' on':'');b.setAttribute('aria-pressed',String(on));
+    if(native){const n=document.createElement('span');n.className='chip-native';n.lang=lang;n.textContent=native;b.appendChild(n);}
+    b.appendChild(document.createTextNode(label));b.addEventListener('click',fn);return b;
+  }
+  function renderPractice(){
+    if(!pLang)return;
+    if(!pTopic||pLang.topics.indexOf(pTopic)<0){
+      const last=P?P.pref('practice.'+pLang.code):null;
+      pTopic=pLang.topics.find(function(t){return t.id===last;})||pLang.topics[0];
+    }
+    const langs=$('prac-langs');langs.innerHTML='';
+    LANGS.forEach(function(L){langs.appendChild(chip(L.flag+' '+L.name.toUpperCase(),L===pLang,function(){pLang=L;pTopic=null;renderPractice();}));});
+    const row=$('prac-polite-row'),pol=$('prac-polite');pol.innerHTML='';row.hidden=!pLang.polite;
+    if(pLang.polite){
+      $('prac-polite-l').textContent=pLang.polite.label;
+      const cur=politeChoice(pLang);
+      pLang.polite.choices.forEach(function(c){pol.appendChild(chip(c.label,c.id===cur,function(){if(P)P.pref('polite.'+pLang.code,c.id);renderPractice();},c.native,pLang.lang));});
+    }
+    const box=$('prac-topics');box.innerHTML='';let all=0,mastered=0;
+    pLang.topics.forEach(function(T){
+      const st=topicStats(pLang,T);all+=st.total;mastered+=st.mastered;
+      const b=document.createElement('button');b.type='button';b.className='topic'+(T===pTopic?' on':'');b.setAttribute('aria-pressed',String(T===pTopic));
+      const ic=document.createElement('span');ic.className='topic-ico';ic.setAttribute('aria-hidden','true');ic.textContent=T.icon;
+      const nm=document.createElement('span');nm.className='topic-n';nm.textContent=T.name;
+      const na=document.createElement('span');na.className='topic-native';na.lang=pLang.lang;na.textContent=T.native;
+      const bar=document.createElement('span');bar.className='topic-bar';bar.setAttribute('aria-hidden','true');const i=document.createElement('i');i.style.width=Math.round(st.mastered/st.total*100)+'%';bar.appendChild(i);
+      const pr=document.createElement('span');pr.className='topic-p';pr.textContent=st.mastered===st.total?'✓ All '+st.total+' mastered':st.mastered+' / '+st.total+' mastered';
+      [ic,nm,na,bar,pr].forEach(function(x){b.appendChild(x);});
+      b.addEventListener('click',function(){pTopic=T;if(P)P.pref('practice.'+pLang.code,T.id);renderPractice();});
+      box.appendChild(b);
+    });
+    $('prac-total').textContent=mastered+' of '+all+' phrases mastered';
+    const v=$('prac-voice');
+    v.hidden=!(Engine.ready()&&!Engine.has(pLang.lang));
+    v.textContent='🔈 This device has no '+pLang.name+' voice, so “Hear it” may be silent. You can still practise from the pronunciation guide, or add a '+pLang.name+' voice in your system’s speech settings.';
+  }
+  /* Voices load a moment after the page, so check the voice warning again */
+  setTimeout(function(){if(!$('prac').hidden)renderPractice();},3200);
+  function practiceRounds(phrases){
+    const L=pLang,T=pTopic,choice=politeChoice(L);
+    return phrases.map(function(p){
+      const f=L.polite?L.polite.form(p,choice):{text:p.text,roman:p.roman,alt:p.alt||[]};
+      return {kind:'practice',lang:L.lang,flag:L.flag,name:L.name.toUpperCase()+' · '+T.name.toUpperCase(),key:p.text,text:f.text,hint:f.roman,mean:p.mean,alt:f.alt,gender:f.gender};
+    });
+  }
+  function bestText(x){return 'Your best: '+x.best+'%'+(x.stars?' '+'⭐'.repeat(x.stars):'')+(x.stars>=MASTERED?' · mastered':'');}
+  /* Leaderboard and badges only count full 5-round games of the two ranked modes */
+  function ranked(){return !isDaily&&mode!=='practice';}
+  function modeLabel(){return isDaily?'Daily Challenge':mode==='twister'?'Tongue Twister · '+diff:mode==='practice'?played.lang.name+' practice · '+played.topic.name:'World Tour';}
   document.querySelectorAll('#diffs .chip').forEach(function(b){
     b.addEventListener('click',function(){diff=b.dataset.d;document.querySelectorAll('#diffs .chip').forEach(function(x){x.classList.toggle('on',x===b);});});
   });
@@ -987,10 +1104,11 @@ window.RSShareCard=(function(){
 
   /* ── Game flow ── */
   function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
-  function startGame(daily){
+  function startGame(daily,phrases){
     if(!SR)return;
     isDaily=!!(daily&&P);
     if(isDaily){dailyKey=P.todayKey();rounds=[DAILY[P.dailyIndex(dailyKey,DAILY.length)]];}
+    else if(mode==='practice'){if(!pLang)return;if(!pTopic)renderPractice();played={lang:pLang,topic:pTopic};rounds=practiceRounds(phrases||pTopic.phrases);}
     else rounds=mode==='twister'
       ?shuffle(TWISTERS[diff]).slice(0,5).map(function(t){return {lang:'en-US',text:t,flag:'👅',name:'TONGUE TWISTER · '+diff.toUpperCase(),kind:'twister'};})
       :shuffle(WORLD).slice(0,5).map(function(w){return Object.assign({kind:'world'},w);});
@@ -1012,6 +1130,12 @@ window.RSShareCard=(function(){
     else r.text.split(' ').forEach(function(w,i){if(i)ph.appendChild(document.createTextNode(' '));const s=document.createElement('span');s.className='w';s.textContent=w;ph.appendChild(s);});
     $('ph-hint').textContent=r.hint?'🗣️ '+r.hint:'';
     $('ph-mean').textContent=r.mean?'“'+r.mean+'”':'';
+    const prac=r.kind==='practice',best=prac&&P?P.practiceGet(played.lang.code)[r.key]:null;
+    $('ph-best').hidden=!prac;
+    $('ph-best').textContent=best?bestText(best):'New phrase';
+    $('btn-slow').hidden=!prac;
+    /* Practice plays each phrase first, so you hear it before you say it */
+    if(prac&&Engine.has(r.lang)){const myRound=ri,myGame=gameId;setTimeout(function(){if(myRound===ri&&myGame===gameId&&!listening&&!$('game').hidden)hear(.8);},350);}
     $('heard-text').textContent='…';$('result').innerHTML='';
     $('btn-next').hidden=true;$('btn-retry').hidden=true;$('mic').disabled=false;
     $('mic-tip').textContent='TAP THE MIC, WAIT FOR “GO”, THEN SPEAK';$('mic-tip').className='mic-tip';
@@ -1098,7 +1222,9 @@ window.RSShareCard=(function(){
     else pts=Math.round(1000*Math.pow(acc,1.5));
     const stars=acc>=.95?3:acc>=.8?2:acc>=.5?1:0;
     if(isDaily)P.completeDaily({score:pts,stars:stars},dailyKey);
-    if(P)P.record('round',{stars:stars,lang:tw?null:r.lang});
+    /* Polyglot counts World Tour languages only */
+    if(P)P.record('round',{stars:stars,lang:r.kind==='world'?r.lang:null});
+    const saved=r.kind==='practice'&&P?P.practiceSave(played.lang.code,r.key,acc,stars):null;
     if(!CHAR_LEVEL.test(r.lang)){
       const T=r.text.split(' ').map(function(w){return norm(w);}),h=hits(T,norm(said).split(' ').filter(Boolean));
       Array.prototype.forEach.call($('ph-text').querySelectorAll('.w'),function(s,i){s.classList.toggle('hit',!!h[i]);s.classList.toggle('miss',!h[i]&&norm(s.textContent)!=='');});
@@ -1115,23 +1241,26 @@ window.RSShareCard=(function(){
     [[Math.round(acc*100)+'%','ACCURACY'],[tw?wps.toFixed(1):secs.toFixed(1)+'s',tw?'WORDS / SEC':'TIME'],['+'+pts.toLocaleString(),'POINTS']].forEach(function(x){
       const d=document.createElement('div');d.className='res';const b=document.createElement('b');b.textContent=x[0];const sp=document.createElement('span');sp.textContent=x[1];d.appendChild(b);d.appendChild(sp);box.appendChild(d);
     });
-    const v=document.createElement('div');v.className='verdict';v.textContent=['🙈 KEEP PRACTISING','👍 GETTING THERE','🔥 NICE ONE!','🏆 PERFECT!'][stars];box.appendChild(v);
+    const v=document.createElement('div');v.className='verdict';v.textContent=['🙈 KEEP PRACTISING','👍 GETTING THERE','🔥 NICE ONE!','🏆 PERFECT!'][stars]+(saved&&saved.improved?' · NEW BEST':'');box.appendChild(v);
+    if(saved)$('ph-best').textContent=bestText(saved);
     res.appendChild(box);
     $('mic-tip').textContent=stars>=3?'FLAWLESS!':'';
     $('mic').disabled=true;
-    $('btn-retry').hidden=retries<1||stars>=3;
+    $('btn-retry').hidden=(retries<1&&r.kind!=='practice')||stars>=3; /* practice: retry as often as you like */
     $('btn-next').hidden=false;$('btn-next').textContent=ri===rounds.length-1?'SEE RESULTS ▸':'NEXT ROUND ▸';
     if(stars>=3)burst(60);
   }
   $('mic').addEventListener('click',listen);
   $('btn-retry').addEventListener('click',function(){retries--;const keep=retries;showRound();retries=keep;$('result').innerHTML='';});
   $('btn-next').addEventListener('click',function(){stopListen();if(ri<rounds.length-1){ri++;showRound();}else showFinal();});
-  $('btn-hear').addEventListener('click',function(){
+  function hear(rate){
     if(listening)return;
     const r=rounds[ri];
-    Engine.speak(r.text,{lang:r.lang,gender:'female',rate:r.kind==='twister'?(diff==='hard'&&!isDaily?1:.9):.8,pitch:1});
-  });
-  $('btn-quit').addEventListener('click',function(){gameId++;stopListen();Engine.stop();$('game').hidden=true;$('setup').hidden=false;renderDaily();});
+    Engine.speak(r.text,{lang:r.lang,gender:r.gender||'female',rate:rate||(r.kind==='twister'?(diff==='hard'&&!isDaily?1:.9):.8),pitch:1});
+  }
+  $('btn-hear').addEventListener('click',function(){hear();});
+  $('btn-slow').addEventListener('click',function(){hear(.55);});
+  $('btn-quit').addEventListener('click',function(){gameId++;stopListen();Engine.stop();$('game').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();});
   $('btn-start').addEventListener('click',function(){startGame(false);});
   $('btn-daily').addEventListener('click',function(){startGame(true);});
 
@@ -1144,7 +1273,7 @@ window.RSShareCard=(function(){
     $('final-badge').textContent=t[1];$('final-title').textContent=t[2];
     const avg=Math.round(results.reduce(function(s,r){return s+r.acc;},0)/results.length*100);
     lastFinal={emoji:t[1],title:t[2],accuracy:avg};closeCard();
-    $('final-sub').textContent=(isDaily?'Daily Challenge':mode==='twister'?'Tongue Twister · '+diff:'World Tour')+' · '+avg+'% '+(isDaily?'accuracy':'average accuracy');
+    $('final-sub').textContent=modeLabel()+' · '+avg+'% '+(isDaily?'accuracy':'average accuracy');
     const rows=$('final-rows');rows.innerHTML='';
     results.forEach(function(r){
       const d=document.createElement('div');d.className='fr';
@@ -1153,7 +1282,13 @@ window.RSShareCard=(function(){
       const c=document.createElement('b');c.textContent='+'+r.pts.toLocaleString();
       d.appendChild(a);d.appendChild(b);d.appendChild(c);rows.appendChild(d);
     });
-    $('submitted').textContent='';$('btn-submit').disabled=false;$('btn-submit').hidden=isDaily;$('final-nick').hidden=isDaily;$('final-nick').value=$('nick').value;
+    $('submitted').textContent='';$('btn-submit').disabled=false;$('btn-submit').hidden=!ranked();$('final-nick').hidden=!ranked();$('final-nick').value=$('nick').value;
+    $('btn-tricky').hidden=true;
+    if(mode==='practice'&&!isDaily){
+      const st=topicStats(played.lang,played.topic),tricky=results.filter(function(r){return r.stars<MASTERED;}).length;
+      $('submitted').textContent='📈 '+st.mastered+' of '+st.total+' '+played.topic.name.toLowerCase()+' phrases mastered · saved in this browser';
+      if(tricky){$('btn-tricky').hidden=false;$('btn-tricky').textContent='🎯 PRACTISE THE TRICKY '+(tricky===1?'ONE':tricky);}
+    }
     /* Daily scores are one round, so they stay off the 5-round leaderboard */
     if(isDaily){
       const s=P.streak(dailyKey);
@@ -1162,11 +1297,19 @@ window.RSShareCard=(function(){
     const el=$('final-score'),t0=performance.now();
     (function tick(now){const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(total*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(tick);})(t0);
     if(f>=.5)burst(180);
-    if(P&&!isDaily)P.record('game',{mode:mode,diff:diff,fraction:f});
+    if(P&&ranked())P.record('game',{mode:mode,diff:diff,fraction:f});
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
-  $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;renderDaily();});
-  function shareText(){return 'I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';}
+  $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();});
+  $('btn-tricky').addEventListener('click',function(){
+    const keys=rounds.filter(function(r,i){return results[i]&&results[i].stars<MASTERED;}).map(function(r){return r.key;});
+    pLang=played.lang;pTopic=played.topic;
+    startGame(false,played.topic.phrases.filter(function(p){return keys.indexOf(p.text)>-1;}));
+  });
+  function shareText(){
+    if(mode==='practice'&&!isDaily)return 'I scored '+total.toLocaleString()+' practising '+played.lang.name+' ('+played.topic.name.toLowerCase()+') on Resonance 🗣️ Want to learn with me?';
+    return 'I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';
+  }
   $('btn-share').addEventListener('click',function(){
     const text=shareText();
     const url=location.origin+location.pathname;
@@ -1185,7 +1328,7 @@ window.RSShareCard=(function(){
       const nick=($('final-nick').value||$('nick').value||'').trim();
       const cv=await RSShareCard.render({
         score:total,title:lastFinal.title,emoji:lastFinal.emoji,accuracy:lastFinal.accuracy,
-        mode:isDaily?'Daily challenge · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):mode==='twister'?'Tongue twister · '+diff:'World Tour',
+        mode:isDaily?'Daily challenge · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):modeLabel(),
         stars:results.map(function(r){return r.stars;}),streak:isDaily&&P?P.streak(dailyKey).count:0,name:nick.length>=2?nick:''
       });
       cardBlob=await new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error('toBlob'));},'image/png');});

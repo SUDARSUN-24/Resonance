@@ -71,6 +71,7 @@ Real-time speech synthesis with live controls:
 ### 🎮 Play: Speak to Win (`/play.html`)
 - 👅 **Tongue Twister**: 5 rounds in Easy / Medium / Hard, scored on accuracy and speed with live word-by-word feedback
 - 🌍 **World Tour**: hear a phrase in one of 14 languages, say it back, get scored on pronunciation
+- 🗣️ **Language Practice**: 64 everyday Thai phrases in 8 topics (greetings, food, shopping, getting around…). Each phrase plays first, with a pronunciation guide, a slower replay and the meaning; say it back and it's scored like World Tour. Choose the ครับ (khrap) or ค่ะ (kha) polite ending. Your best score per phrase is saved in the browser, topics show what you've mastered, and you can replay just the tricky ones. More languages can be added in `phrases.js`
 - 🏆 **Live leaderboard**: all-time and weekly boards, with medals, confetti and share-your-score
 - 🎙️ Uses your browser's speech recognition (Chrome, Edge or Safari)
 
@@ -108,7 +109,7 @@ Real-time speech synthesis with live controls:
 | 🏠 `index.html` | Studio | Interactive home: try any voice on the orbiting voice ring, click greetings in 22 languages |
 | 🎧 `services.html` | Tracks | Voice archive with search, filters, favorites, live captions and radio mode |
 | 🎭 `story.html` | Story | Multi-voice story and podcast performer |
-| 🎮 `play.html` | Play | Tongue Twister and World Tour challenges + leaderboard |
+| 🎮 `play.html` | Play | Tongue Twister, World Tour and Language Practice + leaderboard |
 | 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 11 voice-changer effects live or on a recording |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
 | 📖 `read.html` | Reader | Read any pasted text or .txt file aloud with live word highlighting |
@@ -139,6 +140,7 @@ resonance/
 ├── clone.html          # 🧬 My Voice (clone studio)
 ├── story.html          # 🎭 Story Studio
 ├── play.html           # 🎮 Speak to Win challenges
+├── phrases.js          # 🗣️ Language Practice phrase lists (Thai)
 ├── 404.html            # 🛰️ Custom "signal lost" page
 ├── manifest.webmanifest# 📲 App manifest (name, icons, shortcuts)
 ├── sw.js               # 📴 Service worker (offline cache)
