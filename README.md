@@ -52,7 +52,8 @@ Real-time speech synthesis with live controls:
 - 🧬 **Voice DNA** — measures your pitch, range, pace, energy and brightness, drawn as a radar chart
 - 🏆 **Voice twin** — ranks how closely you match each of the 7 Resonance characters
 - 🗣️ **Speak as me** — tunes a browser voice to your pitch and pace so it can say anything you type
-- 🎛️ **Voice changer** — Robot, Chipmunk, Monster, Alien, Old Radio, Phone, Cathedral, Canyon Echo and Reverse, with a live-mic mode and WAV download
+- 🎛️ **Voice changer** — Robot, Deep, Chipmunk, Monster, Alien, Old Radio, Phone, Cathedral, Canyon Echo and Reverse, with WAV download
+- 🎧 **Live mic** — every effect except Reverse works in real time (Deep, Chipmunk and Monster use a live pitch shifter), and ⏺ **Record take** saves your transformed voice as a WAV you can play back and download
 - 🔒 **Private** — your recording is processed in the browser and never uploaded
 
 ### 📲 App, Speed & Polish
@@ -101,7 +102,7 @@ Real-time speech synthesis with live controls:
 | 🎧 `services.html` | Tracks | Voice archive with search, filters, favorites, live captions and radio mode |
 | 🎭 `story.html` | Story | Multi-voice story and podcast performer |
 | 🎮 `play.html` | Play | Tongue Twister and World Tour challenges + leaderboard |
-| 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 10 voice-changer effects |
+| 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 11 voice-changer effects live or on a recording |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
 
