@@ -457,6 +457,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 
 <div class="toast" id="toast" role="status"></div>
 
+<script src="progress.js"></script>
 <script>
 /* THEME */
 (function(){
@@ -712,7 +713,7 @@ ZEN (whisper): And the whole sky lit up. Goodnight.`}
 
   /* ── State (drafts stay in this browser only) ── */
   const DRAFT='resonance_story';
-  let castMap={},parsed=[],idx=-1,playing=false,paused=false,speed=1,timer=null,activeTpl=-1;
+  let castMap={},parsed=[],idx=-1,playing=false,paused=false,speed=1,timer=null,activeTpl=-1,fromTop=false;
   function save(){try{localStorage.setItem(DRAFT,JSON.stringify({t:$('script').value,c:castMap}));}catch(e){}}
 
   /* ── Parser ── */
@@ -861,6 +862,7 @@ ZEN (whisper): And the whole sky lit up. Goodnight.`}
     if(!Engine.supported){toast('⚠ Speech is not supported in this browser. Try Chrome or Edge.');return;}
     idx=Math.max(0,Math.min(parsed.length-1,i));playing=true;paused=false;setPlayBtn();
     const sc=parsed.slice(0,idx+1).reverse().find(function(p){return p.type==='scene';});showScene(sc?sc.text:'Take one');
+    fromTop=i===0;
     if(i===0&&window.rsTrack)rsTrack({type:'story'});
     step();
   }
@@ -878,7 +880,11 @@ ZEN (whisper): And the whole sky lit up. Goodnight.`}
     playing=false;setPlayBtn();spotlight(null);idx=parsed.length-1;markLines();updateCount();
     $('bubble-who').textContent='';$('bubble').classList.add('idle');cap.text('🎬 That\'s a wrap! Press ▶ to perform it again.');
     idx=-1;
+    /* A full performance from the first line counts toward the Storyteller badge */
+    if(fromTop&&window.RSProgress)RSProgress.record('story');
+    fromTop=false;
   }
+  if(window.RSProgress)RSProgress.onUnlock(function(b){setTimeout(function(){toast('🎖️ Badge unlocked: '+b.icon+' '+b.name+'. See all badges on the Play page');},1200);});
   $('btn-play').addEventListener('click',togglePlay);
   $('btn-stop').addEventListener('click',function(){stopAll();$('bubble').classList.add('idle');$('bubble-who').textContent='';cap.text('Stopped. Press ▶ to start from the top.');});
   $('btn-next').addEventListener('click',function(){if(parsed.length)playFrom((idx<0?0:idx)+1);});
