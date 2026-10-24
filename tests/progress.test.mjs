@@ -224,3 +224,38 @@ test('old saved data from the daily-only version still loads', () => {
   assert.deepEqual(earned(P), ['daily'], 'progress already reached is awarded on load');
   assert.deepEqual(ids(P.record('story')), ['storyteller']);
 });
+
+test('practice progress keeps the best result per phrase and survives a reload', () => {
+  const store = memoryStorage();
+  let P = load(store);
+  assert.deepEqual({ ...P.practiceSave('th', 'สวัสดีครับ', 0.62, 1) }, { best: 62, stars: 1, tries: 1, improved: false });
+  assert.deepEqual({ ...P.practiceSave('th', 'สวัสดีครับ', 0.97, 3) }, { best: 97, stars: 3, tries: 2, improved: true });
+  assert.equal(P.practiceSave('th', 'สวัสดีครับ', 0.5, 1).best, 97, 'a worse try never lowers the best');
+  P.pref('polite.th', 'kha');
+  P = load(store); // reload the page
+  assert.deepEqual({ ...P.practiceGet('th')['สวัสดีครับ'] }, { best: 97, stars: 3, tries: 3 });
+  assert.equal(P.pref('polite.th'), 'kha');
+  assert.deepEqual({ ...P.practiceGet('ja') }, {});
+});
+
+test('practice progress rejects bad input and keeps badges and streak intact', () => {
+  const store = memoryStorage();
+  const P = load(store);
+  P.record('round', { stars: 3 });
+  assert.equal(P.practiceSave('TH!', 'x', 1, 3), null);
+  assert.equal(P.practiceSave('th', '', 1, 3), null);
+  assert.equal(P.practiceSave('th', 'x'.repeat(201), 1, 3), null);
+  assert.equal(P.practiceSave('th', 'ok', 7, 9).best, 100, 'accuracy and stars are clamped');
+  assert.equal(P.practiceGet('th').ok.stars, 3);
+  const saved = JSON.parse(store.data.resonance_progress);
+  assert.equal(saved.stats.perfect, 1);
+  assert.ok(saved.badges.flawless);
+});
+
+test('practice progress is capped so storage cannot grow without limit', () => {
+  const P = load();
+  let last;
+  for (let i = 0; i < 2001; i++) last = P.practiceSave('th', 'p' + i, 0.5, 1);
+  assert.equal(last, null, 'the 2001st phrase is not stored');
+  assert.equal(P.practiceSave('th', 'p5', 0.9, 2).best, 90, 'existing phrases still update');
+});

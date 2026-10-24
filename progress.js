@@ -17,7 +17,9 @@
       streak: { last: null, count: 0, best: 0, days: 0 },
       daily: { key: null, best: 0, stars: 0 },
       stats: { games: 0, perfect: 0, langs: [], stories: 0, hard: 0, legend: 0 },
-      badges: {}
+      badges: {},
+      practice: {},  // { th: { 'สวัสดีครับ': { b: best %, s: best stars, n: tries } } }
+      prefs: {}      // { 'polite.th': 'kha' }
     };
   }
   function load() {
@@ -26,8 +28,9 @@
     try {
       const d = JSON.parse(ls.getItem(KEY));
       if (d && d.v === 1) {
-        ['streak', 'daily', 'stats', 'badges'].forEach(function (k) { if (d[k]) Object.assign(st[k], d[k]); });
+        ['streak', 'daily', 'stats', 'badges', 'practice', 'prefs'].forEach(function (k) { if (d[k] && typeof d[k] === 'object') Object.assign(st[k], d[k]); });
         if (!Array.isArray(st.stats.langs)) st.stats.langs = [];
+        Object.keys(st.practice).forEach(function (k) { if (!st.practice[k] || typeof st.practice[k] !== 'object') delete st.practice[k]; });
       }
     } catch (e) {}
     return st;
@@ -143,6 +146,39 @@
     return state.daily.key === key ? { best: state.daily.best, stars: state.daily.stars } : null;
   }
 
+  /* ── Language practice: best result per phrase ── */
+  const MAX_PHRASES = 2000;
+  function practiceGet(code) {
+    const out = {}, p = state.practice[code] || {};
+    Object.keys(p).forEach(function (k) { const x = p[k]; out[k] = { best: x.b || 0, stars: x.s || 0, tries: x.n || 0 }; });
+    return out;
+  }
+  // Returns { best, stars, tries, improved } for the phrase after this try
+  function practiceSave(code, key, acc, stars) {
+    if (!/^[a-z]{2,3}$/.test(code) || typeof key !== 'string' || !key || key.length > 200) return null;
+    const p = state.practice[code] || (state.practice[code] = {});
+    let x = p[key];
+    if (!x) {
+      let n = 0;
+      Object.keys(state.practice).forEach(function (c) { n += Object.keys(state.practice[c]).length; });
+      if (n >= MAX_PHRASES) return null;
+      x = p[key] = { b: 0, s: 0, n: 0 };
+    }
+    const pct = Math.max(0, Math.min(100, Math.round(acc * 100))), was = x.b;
+    x.n++;
+    x.b = Math.max(x.b, pct);
+    x.s = Math.max(x.s, Math.max(0, Math.min(3, stars | 0)));
+    save();
+    return { best: x.b, stars: x.s, tries: x.n, improved: x.n > 1 && pct > was };
+  }
+  function pref(name, value) {
+    if (value === undefined) return state.prefs[name];
+    if (typeof value !== 'string' || value.length > 40) return state.prefs[name];
+    state.prefs[name] = value;
+    save();
+    return value;
+  }
+
   root.RSProgress = {
     persistent: !!ls,
     todayKey: todayKey,
@@ -153,6 +189,9 @@
     dailyResult: dailyResult,
     record: record,
     badges: badges,
+    practiceGet: practiceGet,
+    practiceSave: practiceSave,
+    pref: pref,
     onUnlock: function (fn) { listeners.push(fn); }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
