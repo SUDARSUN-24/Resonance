@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>Tracks | RESONANCE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap"></noscript>
+<script>/* Web fonts load after the first frame, so text shows straight away in a fallback font (display=swap) */(function(){var done=0;function go(){if(done)return;done=1;var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap';document.head.appendChild(l);}requestAnimationFrame(function(){setTimeout(go,0);});setTimeout(go,2500);})();</script><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap"></noscript>
 <style>
 
 /* ═══════════════════════════════════════
@@ -91,6 +91,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);overflo
   transition:filter .6s;
 }
 body.light .bg-photo{filter:brightness(.48) saturate(.32) hue-rotate(200deg);}
+/* Phones get a smaller, portrait crop of the same photo */
+@media(max-width:760px){.bg-photo{background-image:url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=50&w=600&h=1200&auto=format&fit=crop');}}
 @keyframes bgDrift{from{transform:scale(1.04);}to{transform:scale(1.09) translateX(-22px);}}
 
 .bg-wash{position:fixed;inset:0;z-index:1;pointer-events:none;background:var(--wash);transition:background .5s;}

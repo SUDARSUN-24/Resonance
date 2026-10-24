@@ -32,3 +32,16 @@ test('service worker never caches the API or the owner dashboard', () => {
   assert.match(sw, /url\.pathname\.startsWith\('\/api\/'\)/);
   assert.match(sw, /url\.pathname === '\/admin\.html'/);
 });
+
+// Lighthouse: web fonts must not hold up the first paint, and phones get a lighter background photo
+for (const page of pages) {
+  test(`${page}: web fonts load after the first frame, with a no-JavaScript fallback`, () => {
+    const html = readFileSync(new URL(page, ROOT), 'utf8');
+    assert.doesNotMatch(html.replace(/<noscript>[\s\S]*?<\/noscript>/g, ''), /<link[^>]+rel="(stylesheet|preload)"[^>]+href="https:\/\/fonts\.googleapis\.com/, 'no font stylesheet in the first paint');
+    const href = html.match(/l\.href='(https:\/\/fonts\.googleapis\.com\/css2[^']+)'/);
+    assert.ok(href, 'fonts are added by script after the first frame');
+    assert.ok(html.includes(`<noscript><link rel="stylesheet" href="${href[1]}"></noscript>`), 'same fonts without JavaScript');
+    const photo = html.match(/url\('https:\/\/images\.unsplash\.com\/photo-([0-9a-f-]+)\?q=80&w=1920/);
+    if (photo) assert.ok(html.includes(`@media(max-width:760px){.bg-photo{background-image:url('https://images.unsplash.com/photo-${photo[1]}?q=50&w=600&h=1200`), 'phones get the same photo, smaller');
+  });
+}
