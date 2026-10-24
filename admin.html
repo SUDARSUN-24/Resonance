@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Private owner dashboard for RESONANCE.">
 <meta name="theme-color" content="#020209">
 <title>Control Room | RESONANCE</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>/* Web fonts load after the first frame, so text shows straight away in a fallback font (display=swap) */(function(){var done=0;function go(){if(done)return;done=1;var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap';document.head.appendChild(l);}requestAnimationFrame(function(){setTimeout(go,0);});setTimeout(go,2500);})();</script><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap"></noscript>
 <style>
 /* ═══════════════════════════════════════
    TOKENS — site palette + validated chart colors
@@ -378,7 +379,7 @@ tr.detail td{padding:0 .6rem 1rem;border-bottom:1px solid var(--grid);}
   </section>
 </main>
 
-<div class="tip" id="tip" role="tooltip"></div>
+<div class="tip" id="tip" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
