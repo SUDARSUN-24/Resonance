@@ -286,6 +286,11 @@ body.light .final-title{color:var(--v);}
 .fr b{color:var(--t);font-variant-numeric:tabular-nums;}
 .submit-row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.6rem;}
 .submitted{color:#00e5b0;font-size:.9rem;margin-top:.6rem;}
+body.light .submitted{color:#047857;}
+.card-box{max-width:560px;margin:1.2rem auto 0;}
+.card-box img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--brd);box-shadow:0 14px 40px rgba(0,0,0,.4);background:#020209;}
+.card-actions{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.9rem;}
+a.btn-ghost{text-decoration:none;}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:250;}
 
 /* Leaderboard */
@@ -526,9 +531,18 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <input class="name-in" id="final-nick" maxlength="16" placeholder="Your name" aria-label="Player name for the leaderboard" style="flex:0 1 200px">
             <button class="btn-big" id="btn-submit" type="button">🏆 SUBMIT TO LEADERBOARD</button>
             <button class="btn-ghost" id="btn-share" type="button">🔗 SHARE</button>
+            <button class="btn-ghost" id="btn-card" type="button" aria-expanded="false" aria-controls="card-box">🖼️ SCORE CARD</button>
             <button class="btn-ghost" id="btn-again" type="button">↺ PLAY AGAIN</button>
           </div>
           <div class="submitted" id="submitted" role="status"></div>
+          <div class="card-box" id="card-box" hidden>
+            <img id="card-img" alt="" width="1200" height="630">
+            <div class="card-actions">
+              <a class="btn-ghost" id="btn-card-dl" href="#" download="resonance-score.png">⬇ DOWNLOAD</a>
+              <button class="btn-big" id="btn-card-share" type="button">📤 SHARE IMAGE</button>
+            </div>
+            <p class="privacy">The card is drawn in your browser. Nothing is uploaded unless you share it.</p>
+          </div>
         </div>
       </section>
     </div>
@@ -755,6 +769,71 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
   };
 })();
 if(!window.addTilt)window.addTilt=function(){};
+
+/* ── SHARE CARD: draws a 1200×630 score image on a canvas ──
+   Only gradients, shapes and text: a cross-site image would taint the canvas and block the download.
+   d: {score, title, emoji, mode, accuracy, stars:[0-3 per round], streak, name}
+   Try it from the console: RSShareCard.render({score:4210,title:'SPEECH WIZARD',emoji:'🥇',mode:'TONGUE TWISTER · HARD',accuracy:91,stars:[3,2,3,1,3]}) */
+window.RSShareCard=(function(){
+  const OR="Orbitron, 'Segoe UI', sans-serif",OU="Outfit, 'Segoe UI', sans-serif",EMO="'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif";
+  function glow(x,cx,cy,r,col){const g=x.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(cx-r,cy-r,r*2,r*2);}
+  function spaced(x,px){if('letterSpacing' in x)x.letterSpacing=px+'px';}
+  function fit(x,text,max){if(x.measureText(text).width<=max)return text;while(text.length>1&&x.measureText(text+'…').width>max)text=text.slice(0,-1);return text+'…';}
+  async function render(d){
+    const W=1200,H=630,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+    const x=cv.getContext('2d');
+    try{await Promise.all(['900 150px Orbitron','700 20px Orbitron','600 26px Outfit','400 24px Outfit'].map(function(f){return document.fonts.load(f);}));}catch(e){}
+    /* Background, glows, grid, frame */
+    x.fillStyle='#020209';x.fillRect(0,0,W,H);
+    glow(x,140,40,560,'rgba(124,58,237,.42)');glow(x,1120,620,520,'rgba(0,245,255,.22)');glow(x,640,720,420,'rgba(255,0,128,.16)');
+    x.strokeStyle='rgba(0,245,255,.05)';x.lineWidth=1;x.beginPath();
+    for(let i=60;i<W;i+=60){x.moveTo(i,0);x.lineTo(i,H);}for(let j=60;j<H;j+=60){x.moveTo(0,j);x.lineTo(W,j);}x.stroke();
+    const fg=x.createLinearGradient(0,0,W,H);fg.addColorStop(0,'rgba(0,245,255,.7)');fg.addColorStop(1,'rgba(124,58,237,.7)');
+    x.strokeStyle=fg;x.lineWidth=2;x.beginPath();if(x.roundRect)x.roundRect(24,24,W-48,H-48,22);else x.rect(24,24,W-48,H-48);x.stroke();
+    x.textBaseline='alphabetic';
+    /* Header */
+    const lg=x.createLinearGradient(72,0,420,0);lg.addColorStop(0,'#00f5ff');lg.addColorStop(1,'#7c3aed');
+    x.font='900 36px '+OR;spaced(x,8);x.fillStyle=lg;x.fillText('RESONANCE',72,104);
+    x.font='700 16px '+OR;spaced(x,6);x.fillStyle='#94a3b8';x.fillText('SPEAK TO WIN',74,138);
+    x.font='700 20px '+OR;spaced(x,4);x.fillStyle='#ff4fa3';x.fillText(fit(x,String(d.mode||'').toUpperCase(),640),74,214);
+    /* Score */
+    spaced(x,0);
+    const sg=x.createLinearGradient(0,240,0,380);sg.addColorStop(0,'#ffffff');sg.addColorStop(1,'#00f5ff');
+    x.font='900 150px '+OR;x.fillStyle=sg;x.fillText(Number(d.score||0).toLocaleString('en-US'),62,378);
+    x.font='700 18px '+OR;spaced(x,6);x.fillStyle='#94a3b8';x.fillText('POINTS',76,418);
+    /* Rank */
+    spaced(x,0);x.font='52px '+EMO;x.fillStyle='#fff';x.fillText(d.emoji||'🏆',70,496);
+    x.font='700 30px '+OR;spaced(x,4);x.fillStyle='#00f5ff';x.fillText(String(d.title||'').toUpperCase(),146,486);
+    spaced(x,0);x.font='600 24px '+OU;x.fillStyle='#e2e8f0';
+    const facts=[d.accuracy!=null?d.accuracy+'% accuracy':null,d.stars&&d.stars.length>1?d.stars.length+' rounds':null,d.streak>0?'🔥 '+d.streak+'-day streak':null,d.name?'by '+d.name:null].filter(Boolean).join('  ·  ');
+    x.fillText(fit(x,facts,680),148,526);
+    /* Footer */
+    x.font='700 17px '+OR;spaced(x,3);x.fillStyle='#00f5ff';x.fillText('RESONANCESUN.NETLIFY.APP/PLAY',74,580);
+    x.textAlign='right';x.fillStyle='#ff4fa3';x.fillText('CAN YOU BEAT ME?',W-74,580);x.textAlign='left';spaced(x,0);
+    /* Orb with a waveform made from the round results */
+    const ox=930,oy=262,stars=(d.stars&&d.stars.length?d.stars:[3]);
+    [[200,.08],[165,.14]].forEach(function(r){x.beginPath();x.arc(ox,oy,r[0],0,Math.PI*2);x.strokeStyle='rgba(0,245,255,'+r[1]+')';x.lineWidth=2;x.stroke();});
+    const og=x.createRadialGradient(ox-40,oy-50,10,ox,oy,135);og.addColorStop(0,'rgba(0,245,255,.55)');og.addColorStop(.55,'rgba(124,58,237,.45)');og.addColorStop(1,'rgba(2,2,9,.9)');
+    x.beginPath();x.arc(ox,oy,132,0,Math.PI*2);x.fillStyle=og;x.fill();x.strokeStyle='rgba(0,245,255,.6)';x.lineWidth=2;x.stroke();
+    const bars=21;
+    for(let i=0;i<bars;i++){
+      const s=stars[i%stars.length],wob=.55+.45*Math.abs(Math.sin(i*1.7+s));
+      const h=Math.max(10,(26+s*22)*wob*(1-Math.abs(i-(bars-1)/2)/bars));
+      x.fillStyle=i%3===0?'#ff4fa3':i%3===1?'#00f5ff':'#a78bfa';
+      x.fillRect(ox-(bars*9)/2+i*9,oy-h,5,h*2);
+    }
+    /* Stars per round */
+    x.font='24px '+EMO;x.textAlign='center';
+    const rowW=stars.length*92;
+    stars.forEach(function(s,i){
+      const cx=ox-rowW/2+46+i*92;
+      for(let k=0;k<3;k++){x.globalAlpha=k<s?1:.22;x.fillText('⭐',cx-26+k*26,500);}
+    });
+    x.globalAlpha=1;x.textAlign='left';
+    return cv;
+  }
+  return {render:render};
+})();
 
 /* ── SPEAK TO WIN ──────────────────────────── */
 (function(){
@@ -1063,6 +1142,7 @@ if(!window.addTilt)window.addTilt=function(){};
     const t=tiers.find(function(x){return f>=x[0];});
     $('final-badge').textContent=t[1];$('final-title').textContent=t[2];
     const avg=Math.round(results.reduce(function(s,r){return s+r.acc;},0)/results.length*100);
+    lastFinal={emoji:t[1],title:t[2],accuracy:avg};closeCard();
     $('final-sub').textContent=(isDaily?'Daily Challenge':mode==='twister'?'Tongue Twister · '+diff:'World Tour')+' · '+avg+'% '+(isDaily?'accuracy':'average accuracy');
     const rows=$('final-rows');rows.innerHTML='';
     results.forEach(function(r){
@@ -1085,11 +1165,48 @@ if(!window.addTilt)window.addTilt=function(){};
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
   $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;renderDaily();});
+  function shareText(){return 'I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';}
   $('btn-share').addEventListener('click',function(){
-    const text='I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';
+    const text=shareText();
     const url=location.origin+location.pathname;
     if(navigator.share)navigator.share({title:'Resonance Speak to Win',text:text,url:url}).catch(function(){});
     else if(navigator.clipboard)navigator.clipboard.writeText(text+' '+url).then(function(){toast('🔗 Copied! Paste it anywhere to challenge your friends.');});
+  });
+
+  /* ── Score card image ── */
+  let lastFinal=null,cardBlob=null,cardUrl=null;
+  function closeCard(){$('card-box').hidden=true;$('btn-card').setAttribute('aria-expanded','false');}
+  function cardName(){return 'resonance-score-'+total+'.png';}
+  $('btn-card').addEventListener('click',async function(){
+    if(!$('card-box').hidden){closeCard();return;}
+    const btn=this,label=btn.textContent;btn.disabled=true;btn.textContent='DRAWING…';
+    try{
+      const nick=($('final-nick').value||$('nick').value||'').trim();
+      const cv=await RSShareCard.render({
+        score:total,title:lastFinal.title,emoji:lastFinal.emoji,accuracy:lastFinal.accuracy,
+        mode:isDaily?'Daily challenge · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):mode==='twister'?'Tongue twister · '+diff:'World Tour',
+        stars:results.map(function(r){return r.stars;}),streak:isDaily&&P?P.streak(dailyKey).count:0,name:nick.length>=2?nick:''
+      });
+      cardBlob=await new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error('toBlob'));},'image/png');});
+      if(cardUrl)URL.revokeObjectURL(cardUrl);
+      cardUrl=URL.createObjectURL(cardBlob);
+      $('card-img').src=cardUrl;
+      $('card-img').alt='Score card: '+total.toLocaleString()+' points, '+lastFinal.title.toLowerCase()+', '+lastFinal.accuracy+'% accuracy';
+      $('btn-card-dl').href=cardUrl;$('btn-card-dl').download=cardName();
+      $('card-box').hidden=false;btn.setAttribute('aria-expanded','true');
+      $('card-box').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+    }catch(e){toast('⚠ Could not draw the score card in this browser');}
+    btn.disabled=false;btn.textContent=label;
+  });
+  $('btn-card-share').addEventListener('click',async function(){
+    if(!cardBlob)return;
+    const file=new File([cardBlob],cardName(),{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:'My Resonance score',text:shareText()});return;}
+      catch(e){if(e.name==='AbortError')return;}
+    }
+    $('btn-card-dl').click();
+    toast('⬇ Image sharing isn’t available here, so the card was downloaded instead.');
   });
   $('btn-submit').addEventListener('click',async function(){
     const name=$('final-nick').value.trim();
