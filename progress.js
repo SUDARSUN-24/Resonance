@@ -1,4 +1,4 @@
-/* RESONANCE progress — daily challenge and streak.
+/* RESONANCE progress — daily challenge, streak and badges.
    Saved in this browser only (localStorage), never sent anywhere.
    Classic script: pages read it as window.RSProgress. */
 (function (root) {
@@ -12,7 +12,13 @@
   } catch (e) { ls = null; }
 
   function blank() {
-    return { v: 1, streak: { last: null, count: 0, best: 0, days: 0 }, daily: { key: null, best: 0, stars: 0 } };
+    return {
+      v: 1,
+      streak: { last: null, count: 0, best: 0, days: 0 },
+      daily: { key: null, best: 0, stars: 0 },
+      stats: { games: 0, perfect: 0, langs: [], stories: 0, hard: 0, legend: 0 },
+      badges: {}
+    };
   }
   function load() {
     const st = blank();
@@ -20,8 +26,8 @@
     try {
       const d = JSON.parse(ls.getItem(KEY));
       if (d && d.v === 1) {
-        Object.assign(st.streak, d.streak);
-        Object.assign(st.daily, d.daily);
+        ['streak', 'daily', 'stats', 'badges'].forEach(function (k) { if (d[k]) Object.assign(st[k], d[k]); });
+        if (!Array.isArray(st.stats.langs)) st.stats.langs = [];
       }
     } catch (e) {}
     return st;
@@ -54,6 +60,60 @@
     return ((d * s) % n + n) % n;
   }
 
+  /* ── Badges ── */
+  const BADGES = [
+    { id: 'first-game', icon: '🎮', name: 'First Steps', desc: 'Finish your first 5-round game', val: function (s) { return s.stats.games; } },
+    { id: 'flawless', icon: '🌟', name: 'Flawless', desc: 'Score a perfect 3-star round', val: function (s) { return s.stats.perfect; } },
+    { id: 'daily', icon: '📅', name: 'Daily Habit', desc: 'Complete a daily challenge', val: function (s) { return s.streak.days; } },
+    { id: 'streak-3', icon: '🔥', name: 'On Fire', desc: 'Reach a 3-day streak', need: 3, val: function (s) { return s.streak.best; } },
+    { id: 'streak-7', icon: '⚡', name: 'Week Warrior', desc: 'Reach a 7-day streak', need: 7, val: function (s) { return s.streak.best; } },
+    { id: 'streak-30', icon: '💎', name: 'Unstoppable', desc: 'Reach a 30-day streak', need: 30, val: function (s) { return s.streak.best; } },
+    { id: 'polyglot', icon: '🌍', name: 'Polyglot', desc: 'Try all 14 World Tour languages', need: 14, val: function (s) { return s.stats.langs.length; } },
+    { id: 'hard-mode', icon: '🌶️', name: 'Hard Mode Hero', desc: 'Finish a Tongue Twister game on Hard', val: function (s) { return s.stats.hard; } },
+    { id: 'legend', icon: '👑', name: 'Legend', desc: 'Reach Legend rank in a 5-round game', val: function (s) { return s.stats.legend; } },
+    { id: 'storyteller', icon: '🎭', name: 'Storyteller', desc: 'Perform a story in Story Studio from start to finish', val: function (s) { return s.stats.stories; } }
+  ];
+  const listeners = [];
+
+  function badges() {
+    return BADGES.map(function (b) {
+      const need = b.need || 1;
+      return { id: b.id, icon: b.icon, name: b.name, desc: b.desc, need: need,
+        have: Math.min(need, b.val(state) || 0), earned: state.badges[b.id] || null };
+    });
+  }
+  // Award anything newly reached, tell listeners, return the new badges
+  function check() {
+    const fresh = [];
+    BADGES.forEach(function (b) {
+      if (!state.badges[b.id] && (b.val(state) || 0) >= (b.need || 1)) {
+        state.badges[b.id] = todayKey();
+        fresh.push({ id: b.id, icon: b.icon, name: b.name, desc: b.desc });
+      }
+    });
+    if (fresh.length) save();
+    fresh.forEach(function (b) { listeners.forEach(function (fn) { try { fn(b); } catch (e) {} }); });
+    return fresh;
+  }
+  /* Events: 'round' {stars, lang}, 'game' {mode, diff, fraction}, 'story' */
+  function record(type, d) {
+    d = d || {};
+    const st = state.stats;
+    if (type === 'round') {
+      if (d.stars >= 3) st.perfect++;
+      if (typeof d.lang === 'string' && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(d.lang) && st.langs.indexOf(d.lang) < 0 && st.langs.length < 64) st.langs.push(d.lang);
+    } else if (type === 'game') {
+      st.games++;
+      if (d.mode === 'twister' && d.diff === 'hard') st.hard++;
+      if (d.fraction >= 0.85) st.legend++;
+    } else if (type === 'story') {
+      st.stories++;
+    }
+    save();
+    return check();
+  }
+  check(); // quietly award anything already reached in saved progress
+
   /* ── Streak ── */
   function streak(key) {
     key = key || todayKey();
@@ -75,6 +135,7 @@
     state.daily.best = Math.max(state.daily.best, result.score || 0);
     state.daily.stars = Math.max(state.daily.stars, result.stars || 0);
     save();
+    check();
     return streak(key);
   }
   function dailyResult(key) {
@@ -89,6 +150,9 @@
     dailyIndex: dailyIndex,
     streak: streak,
     completeDaily: completeDaily,
-    dailyResult: dailyResult
+    dailyResult: dailyResult,
+    record: record,
+    badges: badges,
+    onUnlock: function (fn) { listeners.push(fn); }
   };
 })(typeof window !== 'undefined' ? window : globalThis);

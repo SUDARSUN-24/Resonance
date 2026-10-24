@@ -301,6 +301,28 @@ body.light .lb-row{background:#f8faff;}
 .lb-score small{display:block;font-size:.7rem;font-weight:400;color:var(--mu);}
 .lb-empty{padding:1.4rem .4rem;text-align:center;color:var(--mu);font-size:.86rem;}
 
+/* Badges */
+.side-col{display:flex;flex-direction:column;gap:1.4rem;min-width:0;}
+h2.sec-label{font-weight:400;}
+.bdg-count{margin-left:auto;color:var(--t);letter-spacing:1.5px;}
+.badges{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.bdg{--bc:#f59e0b;display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;align-items:center;gap:.7rem;padding:.55rem .7rem;border-radius:10px;border:1px solid var(--brd2);background:rgba(0,0,0,.12);}
+body.light .bdg{--bc:#b45309;background:#f8faff;}
+.bdg-ico{font-size:1.45rem;text-align:center;filter:grayscale(1);opacity:.35;}
+.bdg.on{border-color:color-mix(in srgb,var(--bc) 45%,transparent);background:radial-gradient(ellipse at 0% 50%,rgba(245,158,11,.12),transparent 70%),rgba(0,0,0,.12);}
+body.light .bdg.on{background:radial-gradient(ellipse at 0% 50%,rgba(217,119,6,.08),transparent 70%),#fff;}
+.bdg.on .bdg-ico{filter:none;opacity:1;}
+.bdg-txt b{display:block;font-size:.88rem;font-weight:600;color:var(--t);}
+.bdg-txt small{display:block;font-size:.76rem;color:var(--mu);line-height:1.4;}
+.bdg-bar{display:block;height:4px;border-radius:4px;background:var(--brd2);margin-top:.35rem;overflow:hidden;}
+.bdg-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--v),var(--c));}
+.bdg-st{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:1.5px;color:var(--mu);white-space:nowrap;text-align:right;}
+.bdg.on .bdg-st{color:var(--bc);}
+.bdg.new{animation:bdgPop 1s cubic-bezier(.34,1.56,.64,1);}
+@keyframes bdgPop{0%{transform:scale(.92);box-shadow:0 0 0 0 rgba(245,158,11,.55);}60%{transform:scale(1.03);}100%{transform:none;box-shadow:0 0 0 14px rgba(245,158,11,0);}}
+@media(prefers-reduced-motion:reduce){.bdg.new{animation:none;}}
+@media(max-width:600px){.bdg-st{font-size:11px;letter-spacing:1px;}}
+
 footer{position:relative;z-index:10;border-top:1px solid var(--brd2);padding:1.6rem 5%;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:2px;color:var(--mu);}
 footer a{color:var(--c);text-decoration:none;}
 body.light footer a{color:var(--v);}
@@ -510,6 +532,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       </section>
     </div>
 
+    <div class="side-col">
     <!-- LEADERBOARD -->
     <section class="panel">
       <div class="panel-line"></div>
@@ -526,6 +549,15 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       </div>
       <div class="lb" id="lb"><div class="lb-empty">Loading…</div></div>
     </section>
+
+    <!-- BADGES -->
+    <section class="panel" id="badges-panel" aria-labelledby="badges-h">
+      <div class="panel-line"></div>
+      <h2 class="sec-label" id="badges-h">🎖️ BADGES<span class="bdg-count" id="bdg-count"></span></h2>
+      <ul class="badges" id="badges"></ul>
+      <p class="privacy">🔒 Badges are saved in this browser only. Nothing is uploaded.</p>
+    </section>
+    </div>
 
   </main>
 
@@ -789,6 +821,40 @@ if(!window.addTilt)window.addTilt=function(){};
   renderDaily();
   setInterval(function(){if(!$('setup').hidden)renderDaily();},60000);
 
+  /* ── Badges ── */
+  const fresh={};
+  function renderBadges(){
+    if(!P){$('badges-panel').hidden=true;return;}
+    const list=P.badges(),box=$('badges');box.innerHTML='';
+    $('bdg-count').textContent=list.filter(function(b){return b.earned;}).length+' / '+list.length;
+    list.forEach(function(b){
+      const li=document.createElement('li');li.className='bdg'+(b.earned?' on':'')+(fresh[b.id]?' new':'');
+      const ic=document.createElement('span');ic.className='bdg-ico';ic.setAttribute('aria-hidden','true');ic.textContent=b.icon;
+      const tx=document.createElement('span');tx.className='bdg-txt';
+      const nm=document.createElement('b');nm.textContent=b.name;
+      const ds=document.createElement('small');ds.textContent=b.desc;
+      tx.appendChild(nm);tx.appendChild(ds);
+      if(!b.earned&&b.need>1){const bar=document.createElement('span');bar.className='bdg-bar';const i=document.createElement('i');i.style.width=Math.round(b.have/b.need*100)+'%';bar.appendChild(i);tx.appendChild(bar);}
+      const st=document.createElement('span');st.className='bdg-st';
+      st.textContent=b.earned?'EARNED '+new Date(b.earned+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}).toUpperCase():b.need>1?b.have+' / '+b.need:'LOCKED';
+      li.appendChild(ic);li.appendChild(tx);li.appendChild(st);box.appendChild(li);
+    });
+    Object.keys(fresh).forEach(function(k){delete fresh[k];}); /* animate each unlock once */
+  }
+  /* One toast at a time, so several unlocks at once are all seen */
+  const unlockQ=[];let unlockBusy=false;
+  function nextUnlock(){
+    if(!unlockQ.length){unlockBusy=false;return;}
+    unlockBusy=true;const b=unlockQ.shift();
+    toast('🎖️ Badge unlocked: '+b.icon+' '+b.name);
+    setTimeout(nextUnlock,2900);
+  }
+  if(P)P.onUnlock(function(b){
+    fresh[b.id]=true;unlockQ.push(b);if(!unlockBusy)nextUnlock();
+    renderBadges();
+  });
+  renderBadges();
+
   /* ── Setup choices ── */
   document.querySelectorAll('.mode').forEach(function(b){
     b.addEventListener('click',function(){
@@ -951,6 +1017,7 @@ if(!window.addTilt)window.addTilt=function(){};
     else pts=Math.round(1000*Math.pow(acc,1.5));
     const stars=acc>=.95?3:acc>=.8?2:acc>=.5?1:0;
     if(isDaily)P.completeDaily({score:pts,stars:stars},dailyKey);
+    if(P)P.record('round',{stars:stars,lang:tw?null:r.lang});
     if(!CHAR_LEVEL.test(r.lang)){
       const T=r.text.split(' ').map(function(w){return norm(w);}),h=hits(T,norm(said).split(' ').filter(Boolean));
       Array.prototype.forEach.call($('ph-text').querySelectorAll('.w'),function(s,i){s.classList.toggle('hit',!!h[i]);s.classList.toggle('miss',!h[i]&&norm(s.textContent)!=='');});
@@ -1013,6 +1080,7 @@ if(!window.addTilt)window.addTilt=function(){};
     const el=$('final-score'),t0=performance.now();
     (function tick(now){const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(total*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(tick);})(t0);
     if(f>=.5)burst(180);
+    if(P&&!isDaily)P.record('game',{mode:mode,diff:diff,fraction:f});
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
   $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;renderDaily();});

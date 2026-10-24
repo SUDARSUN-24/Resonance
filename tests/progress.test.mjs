@@ -132,3 +132,95 @@ test('missing localStorage (old browsers, sandboxed frames) does not throw', () 
   vm.runInNewContext(SRC, { window });
   assert.equal(window.RSProgress.persistent, false);
 });
+
+/* ── Badges ── */
+const WORLD_LANGS = ['es-ES', 'fr-FR', 'de-DE', 'it-IT', 'pt-BR', 'ja-JP', 'ko-KR', 'zh-CN', 'th-TH', 'hi-IN', 'ru-RU', 'id-ID', 'tr-TR', 'vi-VN'];
+// Arrays from the sandbox have their own prototype, so copy them for deepEqual
+const id = (b) => b.id;
+const ids = (list) => Array.from(list, id);
+const earned = (P) => ids(P.badges().filter((b) => b.earned));
+
+test('every badge starts locked with no progress', () => {
+  const P = load();
+  const list = P.badges();
+  assert.equal(list.length, 10);
+  assert.ok(list.every((b) => !b.earned && b.have === 0 && b.need >= 1 && b.name && b.desc && b.icon));
+  assert.equal(new Set(list.map(id)).size, list.length, 'ids are unique');
+});
+
+test('a perfect 3-star round unlocks Flawless once', () => {
+  const P = load();
+  assert.deepEqual(ids(P.record('round', { stars: 2 })), []);
+  assert.deepEqual(ids(P.record('round', { stars: 3 })), ['flawless']);
+  assert.deepEqual(ids(P.record('round', { stars: 3 })), [], 'not awarded twice');
+});
+
+test('Polyglot needs all 14 distinct World Tour languages', () => {
+  const P = load();
+  WORLD_LANGS.slice(0, 13).forEach((lang) => { P.record('round', { stars: 0, lang }); P.record('round', { stars: 0, lang }); });
+  const poly = P.badges().find((b) => b.id === 'polyglot');
+  assert.equal(poly.have, 13);
+  assert.equal(poly.earned, null);
+  assert.deepEqual(ids(P.record('round', { stars: 1, lang: 'vi-VN' })), ['polyglot']);
+});
+
+test('junk language values are ignored', () => {
+  const P = load();
+  P.record('round', { lang: '<script>' });
+  P.record('round', { lang: 42 });
+  P.record('round', { lang: null });
+  assert.equal(P.badges().find((b) => b.id === 'polyglot').have, 0);
+});
+
+test('game badges: first game, hard mode and legend', () => {
+  const P = load();
+  assert.deepEqual(ids(P.record('game', { mode: 'world', fraction: 0.4 })), ['first-game']);
+  assert.deepEqual(ids(P.record('game', { mode: 'twister', diff: 'medium', fraction: 0.9 })), ['legend']);
+  assert.deepEqual(ids(P.record('game', { mode: 'twister', diff: 'hard', fraction: 0.2 })), ['hard-mode']);
+});
+
+test('performing a story unlocks Storyteller', () => {
+  const P = load();
+  assert.deepEqual(ids(P.record('story')), ['storyteller']);
+});
+
+test('streak badges unlock from the daily challenge', () => {
+  const P = load();
+  const days = ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07'];
+  days.forEach((d) => P.completeDaily({ score: 1, stars: 0 }, d));
+  assert.deepEqual(earned(P).sort(), ['daily', 'streak-3', 'streak-7']);
+  assert.equal(P.badges().find((b) => b.id === 'streak-30').have, 7);
+});
+
+test('badges stay earned after the streak breaks', () => {
+  const P = load();
+  ['2026-10-01', '2026-10-02', '2026-10-03'].forEach((d) => P.completeDaily({ score: 1, stars: 0 }, d));
+  P.completeDaily({ score: 1, stars: 0 }, '2026-10-20');
+  assert.ok(earned(P).includes('streak-3'));
+});
+
+test('unlock listeners hear about each new badge', () => {
+  const P = load();
+  const heard = [];
+  P.onUnlock((b) => heard.push(b.id));
+  P.onUnlock(() => { throw new Error('a broken listener must not stop the others'); });
+  P.record('game', { mode: 'twister', diff: 'hard', fraction: 1 });
+  assert.deepEqual(heard.sort(), ['first-game', 'hard-mode', 'legend']);
+});
+
+test('badges and stats are saved and read back', () => {
+  const storage = memoryStorage();
+  load(storage).record('round', { stars: 3, lang: 'th-TH' });
+  const P = load(storage);
+  assert.ok(earned(P).includes('flawless'));
+  assert.equal(P.badges().find((b) => b.id === 'polyglot').have, 1);
+});
+
+test('old saved data from the daily-only version still loads', () => {
+  const old = JSON.stringify({ v: 1, streak: { last: '2026-10-24', count: 2, best: 2, days: 2 }, daily: { key: '2026-10-24', best: 900, stars: 3 } });
+  const P = load(memoryStorage({ resonance_progress: old }));
+  assert.equal(P.streak('2026-10-24').count, 2);
+  assert.equal(P.badges().length, 10);
+  assert.deepEqual(earned(P), ['daily'], 'progress already reached is awarded on load');
+  assert.deepEqual(ids(P.record('story')), ['storyteller']);
+});
