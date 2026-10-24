@@ -205,6 +205,21 @@ body.light .name-in{background:#f8faff;border-color:#e2e8f0;}
 .support{margin-top:1rem;padding:.8rem 1rem;border-radius:10px;border:1px dashed var(--g);color:var(--g);font-size:.84rem;line-height:1.5;}
 .privacy{margin-top:.9rem;font-size:.75rem;color:var(--mu);line-height:1.5;}
 
+/* Daily challenge */
+.daily{--dc:#f59e0b;position:relative;margin-bottom:1.4rem;padding:1.1rem 1.2rem;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--dc) 50%,transparent);background:radial-gradient(ellipse at 0% 0%,rgba(245,158,11,.16),transparent 60%),var(--card);}
+body.light .daily{--dc:#b45309;background:radial-gradient(ellipse at 0% 0%,rgba(217,119,6,.09),transparent 60%),#fff;}
+.daily-top{display:flex;align-items:center;gap:.4rem .7rem;flex-wrap:wrap;margin-bottom:.7rem;font-family:'Orbitron',monospace;font-size:.58rem;letter-spacing:2.5px;color:var(--dc);}
+.daily-date{color:var(--mu);letter-spacing:1.5px;}
+.streak-pill{margin-left:auto;display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .75rem;border-radius:999px;border:1px solid var(--brd2);color:var(--t);font-size:.52rem;letter-spacing:1.5px;}
+.streak-pill b{font-size:.85rem;color:var(--dc);}
+.daily-text{font-size:1.15rem;font-weight:600;line-height:1.45;color:var(--t);word-break:break-word;}
+.daily-sub{margin:.25rem 0 .9rem;font-size:.82rem;color:var(--mu);}
+.daily-row{display:flex;align-items:center;gap:.6rem 1rem;flex-wrap:wrap;}
+.daily-note{font-size:.82rem;color:var(--t2);line-height:1.5;}
+.daily-warn{margin-top:.8rem;font-size:.78rem;color:var(--dc);line-height:1.5;}
+.btn-daily{background:linear-gradient(135deg,#b45309,#be185d);box-shadow:0 8px 26px rgba(245,158,11,.28);}
+@media(max-width:600px){.daily{padding:1rem;}.streak-pill{margin-left:0;}.daily-top{font-size:12px;letter-spacing:1.5px;}.streak-pill{font-size:11px;}}
+
 /* Game */
 .rounds{display:flex;gap:.45rem;margin-bottom:1.2rem;}
 .rd{flex:1;height:6px;border-radius:6px;background:var(--brd2);overflow:hidden;position:relative;}
@@ -408,6 +423,19 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <!-- SETUP -->
       <section class="panel" id="setup">
         <div class="panel-line"></div>
+        <div class="daily" id="daily">
+          <div class="daily-top">
+            <span>📅 DAILY CHALLENGE</span><span class="daily-date" id="daily-date"></span>
+            <span class="streak-pill" id="streak-pill"><span aria-hidden="true">🔥</span><b id="streak-n">0</b> DAY STREAK</span>
+          </div>
+          <div class="daily-text" id="daily-text" dir="auto"></div>
+          <div class="daily-sub" id="daily-sub"></div>
+          <div class="daily-row">
+            <button class="btn-big btn-daily" id="btn-daily" type="button">▶ PLAY TODAY’S CHALLENGE</button>
+            <span class="daily-note" id="daily-note"></span>
+          </div>
+          <div class="daily-warn" id="daily-warn" hidden>⚠ This browser is blocking storage, so your streak and badges only last until you close the page.</div>
+        </div>
         <div class="sec-label">CHOOSE YOUR CHALLENGE</div>
         <div class="modes">
           <button class="mode on" type="button" data-mode="twister" style="--mc:#ff0080" aria-pressed="true">
@@ -509,6 +537,8 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status"></div>
+
+<script src="progress.js"></script>
 
 <script>
 /* THEME */
@@ -720,16 +750,44 @@ if(!window.addTilt)window.addTilt=function(){};
     {lang:'tr-TR',flag:'🇹🇷',name:'TURKISH',text:'Merhaba, nasılsın?',hint:'MEHR-ha-bah, NAH-suhl-suhn',mean:'Hello, how are you?'},
     {lang:'vi-VN',flag:'🇻🇳',name:'VIETNAMESE',text:'Xin chào, bạn khỏe không?',hint:'sin chow, bahn kweh khong',mean:'Hello, are you well?'}
   ];
+  /* Daily challenge pool: every twister and every World Tour phrase */
+  const DAILY=['easy','medium','hard'].reduce(function(a,d){
+    return a.concat(TWISTERS[d].map(function(t){return {lang:'en-US',text:t,flag:'📅',name:'DAILY CHALLENGE · TONGUE TWISTER',kind:'twister',label:'👅 Tongue twister'};}));
+  },[]).concat(WORLD.map(function(w){return Object.assign({},w,{name:'DAILY CHALLENGE · '+w.name,kind:'world',label:w.flag+' '+w.name+' · “'+w.mean+'”'});}));
   const MULT={easy:1,medium:1.25,hard:1.5};
   const CHAR_LEVEL=/^(th|ja|zh|ko|lo|km|my|si)/;
   const NUMS={'0':'zero','1':'one','2':'two','3':'three','4':'four','5':'five','6':'six','7':'seven','8':'eight','9':'nine','10':'ten','11':'eleven','12':'twelve','33':'thirty three','6th':'sixth','1st':'first','3rd':'third'};
 
-  let mode='twister',diff='medium',rounds=[],ri=0,results=[],total=0,submitted=false,lbMode='twister',lbPeriod='all';
+  const P=window.RSProgress||null;
+  let mode='twister',diff='medium',rounds=[],ri=0,results=[],total=0,submitted=false,lbMode='twister',lbPeriod='all',isDaily=false,dailyKey=null;
   let rec=null,listening=false,attemptDone=true,gameId=0,retries=1,tStart=0,tSpeech=0,tLast=0,finalText='',interimText='',silenceT=null,maxT=null,timerAnim=null;
   let myIds=[];try{myIds=JSON.parse(localStorage.getItem('resonance_lb_ids'))||[];}catch(e){}
   try{$('nick').value=localStorage.getItem('resonance_nick')||'';}catch(e){}
 
-  if(!SR){$('support').hidden=false;$('btn-start').disabled=true;}
+  if(!SR){$('support').hidden=false;$('btn-start').disabled=true;$('btn-daily').disabled=true;}
+
+  /* ── Daily challenge card ── */
+  function untilMidnight(){
+    const m=new Date();m.setHours(24,0,0,0);
+    const mins=Math.max(1,Math.ceil((m-Date.now())/60000));
+    return mins>=60?Math.floor(mins/60)+'h '+(mins%60)+'m':mins+'m';
+  }
+  function renderDaily(){
+    if(!P){$('daily').hidden=true;return;}
+    const r=DAILY[P.dailyIndex(P.todayKey(),DAILY.length)],s=P.streak(),done=P.dailyResult();
+    $('daily-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
+    $('daily-text').textContent=r.text;$('daily-text').lang=r.lang;
+    $('daily-sub').textContent=r.label+' · the same phrase for everyone today';
+    $('streak-n').textContent=s.count;
+    $('streak-pill').title='Best streak: '+s.best+(s.best===1?' day':' days');
+    $('btn-daily').textContent=done?'↺ PLAY AGAIN':'▶ PLAY TODAY’S CHALLENGE';
+    $('daily-note').textContent=done
+      ?'✓ Done today · best '+done.best.toLocaleString()+(done.stars?' '+'⭐'.repeat(done.stars):'')+' · new phrase in '+untilMidnight()
+      :s.count?'Play today to keep your '+s.count+'-day streak alive!':s.best?'Best streak: '+s.best+(s.best===1?' day':' days')+'. Start a new one today.':'Play once a day to build a streak.';
+    $('daily-warn').hidden=P.persistent;
+  }
+  renderDaily();
+  setInterval(function(){if(!$('setup').hidden)renderDaily();},60000);
 
   /* ── Setup choices ── */
   document.querySelectorAll('.mode').forEach(function(b){
@@ -782,15 +840,17 @@ if(!window.addTilt)window.addTilt=function(){};
 
   /* ── Game flow ── */
   function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
-  function startGame(){
+  function startGame(daily){
     if(!SR)return;
-    rounds=mode==='twister'
-      ?shuffle(TWISTERS[diff]).slice(0,5).map(function(t){return {lang:'en-US',text:t,flag:'👅',name:'TONGUE TWISTER · '+diff.toUpperCase()};})
-      :shuffle(WORLD).slice(0,5);
+    isDaily=!!(daily&&P);
+    if(isDaily){dailyKey=P.todayKey();rounds=[DAILY[P.dailyIndex(dailyKey,DAILY.length)]];}
+    else rounds=mode==='twister'
+      ?shuffle(TWISTERS[diff]).slice(0,5).map(function(t){return {lang:'en-US',text:t,flag:'👅',name:'TONGUE TWISTER · '+diff.toUpperCase(),kind:'twister'};})
+      :shuffle(WORLD).slice(0,5).map(function(w){return Object.assign({kind:'world'},w);});
     ri=0;results=[];total=0;submitted=false;gameId++;
     $('setup').hidden=true;$('final').hidden=true;$('game').hidden=false;
     $('rounds').innerHTML='';rounds.forEach(function(){const d=document.createElement('div');d.className='rd';d.appendChild(document.createElement('i'));$('rounds').appendChild(d);});
-    if(window.rsTrack)rsTrack({type:'game',mode:mode});
+    if(window.rsTrack)rsTrack({type:'game',mode:rounds[0].kind});
     showRound();
     $('game').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
@@ -884,12 +944,13 @@ if(!window.addTilt)window.addTilt=function(){};
       $('heard-text').textContent='(nothing heard. Check your microphone)';
       return;
     }
-    const acc=accuracy(r.text,said,r.lang);
+    const acc=accuracy(r.text,said,r.lang),tw=r.kind==='twister';
     const words=r.text.split(/\s+/).length,secs=Math.max(.6,((tLast||performance.now())-(tSpeech||tStart))/1000),wps=words/secs;
     let pts;
-    if(mode==='twister'){const sp=Math.max(0,Math.min(1,(wps-1.5)/3));pts=Math.round(1000*acc*acc*(.6+.4*sp)*MULT[diff]);}
+    if(tw){const sp=Math.max(0,Math.min(1,(wps-1.5)/3));pts=Math.round(1000*acc*acc*(.6+.4*sp)*(isDaily?1:MULT[diff]));}
     else pts=Math.round(1000*Math.pow(acc,1.5));
     const stars=acc>=.95?3:acc>=.8?2:acc>=.5?1:0;
+    if(isDaily)P.completeDaily({score:pts,stars:stars},dailyKey);
     if(!CHAR_LEVEL.test(r.lang)){
       const T=r.text.split(' ').map(function(w){return norm(w);}),h=hits(T,norm(said).split(' ').filter(Boolean));
       Array.prototype.forEach.call($('ph-text').querySelectorAll('.w'),function(s,i){s.classList.toggle('hit',!!h[i]);s.classList.toggle('miss',!h[i]&&norm(s.textContent)!=='');});
@@ -903,7 +964,7 @@ if(!window.addTilt)window.addTilt=function(){};
     const st=document.createElement('div');st.className='stars';
     for(let i=0;i<3;i++){const s=document.createElement('span');s.textContent='⭐';if(i>=stars)s.className='off';st.appendChild(s);}
     box.appendChild(st);
-    [[Math.round(acc*100)+'%','ACCURACY'],[mode==='twister'?wps.toFixed(1):secs.toFixed(1)+'s',mode==='twister'?'WORDS / SEC':'TIME'],['+'+pts.toLocaleString(),'POINTS']].forEach(function(x){
+    [[Math.round(acc*100)+'%','ACCURACY'],[tw?wps.toFixed(1):secs.toFixed(1)+'s',tw?'WORDS / SEC':'TIME'],['+'+pts.toLocaleString(),'POINTS']].forEach(function(x){
       const d=document.createElement('div');d.className='res';const b=document.createElement('b');b.textContent=x[0];const sp=document.createElement('span');sp.textContent=x[1];d.appendChild(b);d.appendChild(sp);box.appendChild(d);
     });
     const v=document.createElement('div');v.className='verdict';v.textContent=['🙈 KEEP PRACTISING','👍 GETTING THERE','🔥 NICE ONE!','🏆 PERFECT!'][stars];box.appendChild(v);
@@ -920,20 +981,21 @@ if(!window.addTilt)window.addTilt=function(){};
   $('btn-hear').addEventListener('click',function(){
     if(listening)return;
     const r=rounds[ri];
-    Engine.speak(r.text,{lang:r.lang,gender:'female',rate:mode==='twister'?(diff==='hard'?1:.9):.8,pitch:1});
+    Engine.speak(r.text,{lang:r.lang,gender:'female',rate:r.kind==='twister'?(diff==='hard'&&!isDaily?1:.9):.8,pitch:1});
   });
-  $('btn-quit').addEventListener('click',function(){gameId++;stopListen();Engine.stop();$('game').hidden=true;$('setup').hidden=false;});
-  $('btn-start').addEventListener('click',startGame);
+  $('btn-quit').addEventListener('click',function(){gameId++;stopListen();Engine.stop();$('game').hidden=true;$('setup').hidden=false;renderDaily();});
+  $('btn-start').addEventListener('click',function(){startGame(false);});
+  $('btn-daily').addEventListener('click',function(){startGame(true);});
 
   /* ── Final screen ── */
   function showFinal(){
     $('game').hidden=true;$('final').hidden=false;
-    const max=rounds.length*1000*(mode==='twister'?MULT[diff]:1),f=total/max;
+    const max=rounds.length*1000*(!isDaily&&mode==='twister'?MULT[diff]:1),f=total/max;
     const tiers=[[.85,'👑','LEGEND'],[.7,'🥇','SPEECH WIZARD'],[.5,'🥈','SILVER TONGUE'],[.3,'🥉','WORD WRANGLER'],[0,'🐣','ROOKIE']];
     const t=tiers.find(function(x){return f>=x[0];});
     $('final-badge').textContent=t[1];$('final-title').textContent=t[2];
     const avg=Math.round(results.reduce(function(s,r){return s+r.acc;},0)/results.length*100);
-    $('final-sub').textContent=(mode==='twister'?'Tongue Twister · '+diff:'World Tour')+' · '+avg+'% average accuracy';
+    $('final-sub').textContent=(isDaily?'Daily Challenge':mode==='twister'?'Tongue Twister · '+diff:'World Tour')+' · '+avg+'% '+(isDaily?'accuracy':'average accuracy');
     const rows=$('final-rows');rows.innerHTML='';
     results.forEach(function(r){
       const d=document.createElement('div');d.className='fr';
@@ -942,15 +1004,20 @@ if(!window.addTilt)window.addTilt=function(){};
       const c=document.createElement('b');c.textContent='+'+r.pts.toLocaleString();
       d.appendChild(a);d.appendChild(b);d.appendChild(c);rows.appendChild(d);
     });
-    $('submitted').textContent='';$('btn-submit').disabled=false;$('btn-submit').hidden=false;$('final-nick').hidden=false;$('final-nick').value=$('nick').value;
+    $('submitted').textContent='';$('btn-submit').disabled=false;$('btn-submit').hidden=isDaily;$('final-nick').hidden=isDaily;$('final-nick').value=$('nick').value;
+    /* Daily scores are one round, so they stay off the 5-round leaderboard */
+    if(isDaily){
+      const s=P.streak(dailyKey);
+      $('submitted').textContent='🔥 '+s.count+'-day streak'+(s.count>1&&s.count>=s.best?' · your best yet!':'')+' · Come back tomorrow for a new phrase.';
+    }
     const el=$('final-score'),t0=performance.now();
     (function tick(now){const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(total*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(tick);})(t0);
     if(f>=.5)burst(180);
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
-  $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;});
+  $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;renderDaily();});
   $('btn-share').addEventListener('click',function(){
-    const text='I scored '+total.toLocaleString()+' on the Resonance '+(mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';
+    const text='I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';
     const url=location.origin+location.pathname;
     if(navigator.share)navigator.share({title:'Resonance Speak to Win',text:text,url:url}).catch(function(){});
     else if(navigator.clipboard)navigator.clipboard.writeText(text+' '+url).then(function(){toast('🔗 Copied! Paste it anywhere to challenge your friends.');});
