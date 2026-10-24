@@ -74,6 +74,13 @@ Real-time speech synthesis with live controls:
 - 🏆 **Live leaderboard**: all-time and weekly boards, with medals, confetti and share-your-score
 - 🎙️ Uses your browser's speech recognition (Chrome, Edge or Safari)
 
+### 📖 Reader (`/read.html`)
+- 📄 **Any text**: paste it, type it, or open / drop a `.txt` file (UTF-8, UTF-16 or Windows-1252, up to 50,000 characters, about an hour of listening)
+- 🌍 **Language, voice and speed**: auto-detects the script (Thai, Japanese, Arabic…) or pick any language your device has a voice for
+- ✨ **Live word highlighting** that follows along and scrolls with the voice, including languages without spaces such as Thai and Japanese
+- ⏯️ **Play, pause, resume and stop**; click any word (or put your cursor in the text) to start from there
+- 🔒 Your text and settings stay in this browser
+
 ### 🎙️ Dictation
 - The Voice Lab has a **🎙️ Dictate** button: speak instead of typing, then let any character say it back
 
@@ -104,6 +111,7 @@ Real-time speech synthesis with live controls:
 | 🎮 `play.html` | Play | Tongue Twister and World Tour challenges + leaderboard |
 | 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 11 voice-changer effects live or on a recording |
 | 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
+| 📖 `read.html` | Reader | Read any pasted text or .txt file aloud with live word highlighting |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
 
 ---
@@ -127,6 +135,7 @@ resonance/
 ├── index.html          # 🏠 Home / Studio
 ├── services.html       # 🎧 Voice Tracks
 ├── contact.html        # 🎙️ Voice Lab
+├── read.html           # 📖 Reader (read any text aloud)
 ├── clone.html          # 🧬 My Voice (clone studio)
 ├── story.html          # 🎭 Story Studio
 ├── play.html           # 🎮 Speak to Win challenges
