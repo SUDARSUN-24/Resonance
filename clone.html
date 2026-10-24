@@ -297,6 +297,18 @@ body.light .fx{background:#fff;border-color:rgba(0,0,0,.08);}
 .fx.dim{opacity:.4;}
 .fx-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;}
 .fx-actions>*{flex:1 1 150px;}
+.btn-take.rec{border-color:var(--p);color:var(--p);background:rgba(255,0,128,.08);box-shadow:0 0 16px rgba(255,0,128,.25);}
+.mic-err{margin-top:.9rem;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--p);background:rgba(255,0,128,.07);color:var(--t);font-size:.86rem;line-height:1.5;}
+.take-status{margin-top:.8rem;min-height:1.2rem;font-size:.84rem;color:var(--t2);}
+.take{margin-top:.6rem;padding:.9rem 1rem;border-radius:12px;border:1px solid var(--brd);background:rgba(0,0,0,.18);display:grid;gap:.7rem;}
+body.light .take{background:#f8faff;}
+.take-top{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:1.5px;color:var(--mu);}
+.take-top span:last-child{color:var(--t);}
+.take audio{width:100%;}
+.mic-note{margin-top:.9rem;font-size:.78rem;color:var(--mu);line-height:1.6;}
+.mic-note b{color:var(--t2);}
+@media(prefers-reduced-motion:reduce){.fx.on .fx-ico,.mic-btn.rec{animation:none;}}
+@media(max-width:600px){.take-top{font-size:11px;letter-spacing:1px;}}
 
 /* ═══════════════════════════════════════
    SHARED: footer, toast, nav mobile
@@ -481,10 +493,19 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <div class="fx-vis"><canvas id="fx-cv"></canvas><div class="fx-now" id="fx-now">OUTPUT · IDLE</div></div>
       <div class="fx-grid" id="fx-grid"></div>
       <div class="fx-actions">
-        <button class="btn-sec" id="btn-live" type="button">🎧 LIVE MIC: OFF</button>
+        <button class="btn-sec" id="btn-live" type="button" aria-pressed="false">🎧 LIVE MIC: OFF</button>
+        <button class="btn-sec btn-take" id="btn-take" type="button" aria-pressed="false" disabled>⏺ RECORD TAKE</button>
         <button class="btn-sec" id="btn-dl" type="button" disabled>⬇ DOWNLOAD WAV</button>
         <button class="btn-stop" id="btn-fx-stop" type="button">■ STOP</button>
       </div>
+      <p class="mic-err" id="mic-err" role="alert" hidden></p>
+      <p class="take-status" id="take-status" role="status"></p>
+      <div class="take" id="take" hidden>
+        <div class="take-top"><span>🎬 YOUR LATEST TAKE</span><span id="take-meta"></span></div>
+        <audio id="take-audio" controls preload="metadata"></audio>
+        <button class="btn-sec" id="btn-take-dl" type="button">⬇ DOWNLOAD TAKE</button>
+      </div>
+      <p class="mic-note">🎙️ <b>Live mic</b> asks your browser for microphone access the first time. Your voice is processed on this device and <b>never uploaded</b>, and takes stay in this tab until you download them. Use headphones so the speakers don't feed back into the mic.</p>
     </section>
 
   </main>
@@ -1032,6 +1053,21 @@ if(!window.addTilt)window.addTilt=function(){};
     input.connect(dry);dry.connect(out);input.connect(cv);cv.connect(w);w.connect(out);
     return out;
   }
+  /* Real-time pitch shift for the live mic (a recording can just play faster or slower).
+     Two delay lines sweep their delay like a sawtooth, which bends the pitch (the Doppler effect);
+     each sweep is faded in and out, half a cycle apart, so the jump back is never heard. */
+  function pitch(c,input,ratio,srcs){
+    const T=.1,D=Math.abs(1-ratio)*T,len=Math.round(T*c.sampleRate),out=c.createGain();
+    [0,.5].forEach(function(ph){
+      const ramp=c.createBuffer(1,len,c.sampleRate),win=c.createBuffer(1,len,c.sampleRate),r=ramp.getChannelData(0),w=win.getChannelData(0);
+      for(let i=0;i<len;i++){const x=(i/len+ph)%1;r[i]=(ratio>1?1-x:x)*D;w[i]=Math.pow(Math.sin(Math.PI*x),2);}
+      const dl=c.createDelay(1),g=c.createGain(),m=c.createBufferSource(),f=c.createBufferSource();
+      dl.delayTime.value=0;g.gain.value=0;m.buffer=ramp;f.buffer=win;m.loop=true;f.loop=true;
+      m.connect(dl.delayTime);f.connect(g.gain);input.connect(dl);dl.connect(g);g.connect(out);
+      srcs.push(m,f);
+    });
+    return out;
+  }
   function crackle(c,srcs){
     const len=c.sampleRate*2,b=c.createBuffer(1,len,c.sampleRate),d=b.getChannelData(0);
     for(let i=0;i<len;i++)d[i]=Math.random()<.0009?(Math.random()*2-1)*.9:(Math.random()*2-1)*.025;
@@ -1042,8 +1078,12 @@ if(!window.addTilt)window.addTilt=function(){};
   const FX=[
     {id:'original', name:'ORIGINAL',   icon:'🎙️',color:'#94a3b8',desc:'Your raw recording',            live:true,  build:function(c,i){return i;}},
     {id:'robot',    name:'ROBOT',      icon:'🤖',color:'#00f5ff',desc:'Metallic ring-mod android',     live:true,  build:function(c,i,s){return feedbackDelay(c,ring(c,i,55,s),.011,.45,.7);}},
-    {id:'chipmunk', name:'CHIPMUNK',   icon:'🐿️',color:'#f59e0b',desc:'Tiny, fast and squeaky',       live:false, rate:1.6, build:function(c,i){return filt(c,i,'highshelf',3000,null,4);}},
-    {id:'monster',  name:'MONSTER',    icon:'👹',color:'#ff0080',desc:'Slow, huge and terrifying',     live:false, rate:.66, tail:1, build:function(c,i){return gainN(c,reverb(c,shaper(c,filt(c,i,'lowshelf',200,null,9),3),1.2,3,.35),.5);}},
+    {id:'deep',     name:'DEEP',       icon:'🐋',color:'#6366f1',desc:'Low, smooth trailer voice',     live:true,  build:function(c,i,s){return filt(c,pitch(c,i,.75,s),'lowshelf',180,null,5);}},
+    /* Recordings speed up or slow down; the live mic gets the same pitch without the speed change */
+    {id:'chipmunk', name:'CHIPMUNK',   icon:'🐿️',color:'#f59e0b',desc:'Tiny, fast and squeaky',       live:true,  rate:1.6, build:function(c,i){return filt(c,i,'highshelf',3000,null,4);},
+      liveBuild:function(c,i,s){return gainN(c,filt(c,pitch(c,i,1.6,s),'highshelf',3000,null,4),.75);}},
+    {id:'monster',  name:'MONSTER',    icon:'👹',color:'#ff0080',desc:'Slow, huge and terrifying',     live:true,  rate:.66, tail:1, build:function(c,i){return gainN(c,reverb(c,shaper(c,filt(c,i,'lowshelf',200,null,9),3),1.2,3,.35),.5);},
+      liveBuild:function(c,i,s){return gainN(c,reverb(c,shaper(c,filt(c,pitch(c,i,.66,s),'lowshelf',200,null,9),3),1.2,3,.35),.5);}},
     {id:'alien',    name:'ALIEN',      icon:'👽',color:'#22c55e',desc:'Warbling signal from orbit',    live:true,  tail:1, build:function(c,i,s){return feedbackDelay(c,filt(c,ring(c,i,420,s,[5,180]),'highpass',250),.09,.35,.5);}},
     {id:'radio',    name:'OLD RADIO',  icon:'📻',color:'#eab308',desc:'Crackly 1940s broadcast',       live:true,  build:function(c,i,s){const o=c.createGain();shaper(c,filt(c,filt(c,i,'highpass',650,.8),'lowpass',2600,.8),40).connect(o);gainN(c,crackle(c,s),.35).connect(o);return gainN(c,o,.6);}},
     {id:'phone',    name:'PHONE CALL', icon:'📞',color:'#38bdf8',desc:'Squeezed through a phone line', live:true,  build:function(c,i){return shaper(c,filt(c,filt(c,i,'highpass',350,.7),'lowpass',3200,.7),4);}},
@@ -1116,17 +1156,30 @@ if(!window.addTilt)window.addTilt=function(){};
   }
 
   /* Live mic */
+  function micError(msg){const el=$('mic-err');el.textContent=msg;el.hidden=!msg;}
   async function toggleLive(){
     if(live){stopLive();return;}
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('⚠ Live mic is not supported in this browser');return;}
+    micError('');
+    if(!window.isSecureContext){micError('🔒 The microphone only works on a secure (https) page.');return;}
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){micError('⚠ Live mic is not supported in this browser. Try Chrome, Edge, Firefox or Safari.');return;}
     stopPlayback();Engine.stop();if(recording)stopRec();
+    try{const p=await navigator.permissions.query({name:'microphone'});if(p.state==='prompt')toast('🎙️ Your browser will ask to use the microphone. Choose Allow to go live.');}catch(e){}
     let st;
     try{st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});}
-    catch(e){toast('🎙️ Microphone blocked. Allow mic access to use live mode.');return;}
-    const c=getCtx();
-    live={stream:st,src:c.createMediaStreamSource(st),fx:null,srcs:[],master:null};
+    catch(e){
+      micError({
+        NotAllowedError:'🎙️ Microphone access is blocked. Click the 🔒 or 🎙️ icon in the address bar, allow the microphone, then press Live mic again.',
+        NotFoundError:'🎙️ No microphone was found. Plug one in, or try another device.',
+        NotReadableError:'🎙️ Your microphone is busy in another app. Close it there and try again.'
+      }[e&&e.name]||'🎙️ Could not start the microphone. Check your browser\'s mic settings and try again.');
+      return;
+    }
+    const c=getCtx(),bus=c.createGain();
+    bus.connect(outAnalyser);
+    live={stream:st,src:c.createMediaStreamSource(st),fx:null,srcs:[],master:null,bus:bus};
     applyLive(selFx.live?selFx:FX[1]);
-    $('btn-live').textContent='🎧 LIVE MIC: ON';$('btn-live').classList.add('on');
+    $('btn-live').textContent='🎧 LIVE MIC: ON';$('btn-live').classList.add('on');$('btn-live').setAttribute('aria-pressed','true');
+    $('btn-take').disabled=!window.MediaRecorder;
     toast('🎧 Live! Wear headphones so your speakers don\'t feed back into the mic.');
   }
   function applyLive(fx){
@@ -1134,21 +1187,77 @@ if(!window.addTilt)window.addTilt=function(){};
     if(live.master){try{live.master.disconnect();}catch(e){}}
     live.srcs.forEach(function(o){try{o.stop();}catch(e){}});
     try{live.src.disconnect();}catch(e){}
-    const srcs=[],out=fx.build(c,live.src,srcs),master=gainN(c,out,.9);
-    master.connect(outAnalyser);srcs.forEach(function(o){o.start();});
+    const srcs=[],out=(fx.liveBuild||fx.build)(c,live.src,srcs),master=gainN(c,out,.9);
+    master.connect(live.bus);srcs.forEach(function(o){o.start();});
     live.fx=fx;live.srcs=srcs;live.master=master;selFx=fx;
+    if(take&&take.fxs.indexOf(fx.name)<0)take.fxs.push(fx.name);
     markTiles();
   }
   function stopLive(){
     if(!live)return;
+    stopTake();
     try{live.master.disconnect();}catch(e){}
     live.srcs.forEach(function(o){try{o.stop();}catch(e){}});
     try{live.src.disconnect();}catch(e){}
+    try{live.bus.disconnect();}catch(e){}
     live.stream.getTracks().forEach(function(t){t.stop();});
     live=null;
-    $('btn-live').textContent='🎧 LIVE MIC: OFF';$('btn-live').classList.remove('on');
+    $('btn-live').textContent='🎧 LIVE MIC: OFF';$('btn-live').classList.remove('on');$('btn-live').setAttribute('aria-pressed','false');
+    $('btn-take').disabled=true;
     markTiles();
   }
+
+  /* Record a take of the live, transformed voice. It stays in this tab until you download it. */
+  const TAKE_MAX=60;
+  let take=null,takeWav=null,takeUrl=null;
+  function clock(s){s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+  function startTake(){
+    if(!live||take)return;
+    const c=getCtx(),dest=c.createMediaStreamDestination();
+    live.bus.connect(dest);
+    let mr;
+    try{mr=new MediaRecorder(dest.stream);}catch(e){toast('⚠ Recording is not supported in this browser');try{live.bus.disconnect(dest);}catch(err){}return;}
+    const mine=take={mr:mr,dest:dest,chunks:[],fxs:[live.fx.name],t0:performance.now(),timer:null};
+    /* The last chunk arrives after stop, so keep a reference to this take rather than the global */
+    mr.ondataavailable=function(e){if(e.data&&e.data.size)mine.chunks.push(e.data);};
+    mr.onstop=function(){finishTake(mine);};
+    mr.start(250);
+    take.timer=setInterval(function(){
+      const s=(performance.now()-mine.t0)/1000;
+      $('btn-take').textContent='■ STOP TAKE · '+clock(s);
+      if(s>=TAKE_MAX)stopTake();
+    },250);
+    $('btn-take').textContent='■ STOP TAKE · 0:00';$('btn-take').classList.add('rec');$('btn-take').setAttribute('aria-pressed','true');
+    $('take-status').textContent='● Recording your live voice (up to '+TAKE_MAX+' seconds)';
+  }
+  function stopTake(){
+    if(!take)return;
+    clearInterval(take.timer);
+    try{take.mr.stop();}catch(e){finishTake(take);}
+    try{if(live)live.bus.disconnect(take.dest);}catch(e){}
+    take=null;
+    $('btn-take').textContent='⏺ RECORD TAKE';$('btn-take').classList.remove('rec');$('btn-take').setAttribute('aria-pressed','false');
+  }
+  async function finishTake(t){
+    const raw=new Blob(t.chunks,{type:t.mr.mimeType||'audio/webm'});
+    if(!raw.size){$('take-status').textContent='Nothing was recorded. Try again.';return;}
+    let wav=null,secs=(performance.now()-t.t0)/1000;
+    try{const ab=await getCtx().decodeAudioData(await raw.arrayBuffer());wav=encodeWav(ab);secs=ab.duration;}catch(e){}
+    takeWav=wav||raw;
+    if(takeUrl)URL.revokeObjectURL(takeUrl);
+    takeUrl=URL.createObjectURL(takeWav);
+    $('take-audio').src=takeUrl;
+    $('take-meta').textContent=t.fxs.join(' → ')+' · '+clock(secs);
+    $('take').hidden=false;
+    $('take-status').textContent='✓ Take saved in this tab. Play it back or download it.';
+  }
+  $('btn-take').addEventListener('click',function(){if(take)stopTake();else startTake();});
+  $('btn-take-dl').addEventListener('click',function(){
+    if(!takeUrl)return;
+    const ext=takeWav.type==='audio/wav'?'wav':(/ogg/.test(takeWav.type)?'ogg':/mp4|aac/.test(takeWav.type)?'m4a':'webm');
+    const a=document.createElement('a');a.href=takeUrl;a.download='my-live-voice.'+ext;document.body.appendChild(a);a.click();a.remove();
+    toast('⬇ Saved my-live-voice.'+ext);
+  });
   $('btn-live').addEventListener('click',toggleLive);
   $('btn-fx-stop').addEventListener('click',function(){stopPlayback();stopLive();Engine.stop();speaking=false;$('btn-speak').textContent='▶ SPEAK AS ME';});
 
