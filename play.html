@@ -228,6 +228,26 @@ body.light .topic{--mc:#b45309;background:#fff;}
 .topic-p{display:block;font-size:.7rem;color:var(--t2);margin-top:.3rem;}
 .ph-best{margin-top:.45rem;font-size:.75rem;color:var(--t2);}
 @media(prefers-reduced-motion:reduce){.topic{transition:none;}}
+/* Pass and play */
+#game,#pass,#final{scroll-margin-top:84px;} /* clear the fixed menu bar */
+.duo-names{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:-.4rem 0 1.3rem;}
+.duo-names .name-in{flex:1 1 140px;min-width:0;}
+.duo-vs{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:2px;color:var(--p);}
+.pass{text-align:center;padding:1.6rem .4rem 1rem;}
+.pass-ico{font-size:3rem;line-height:1;}
+.pass-kicker{margin-top:1rem;font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:3px;color:var(--mu);}
+.pass-name{margin-top:.5rem;font-family:'Orbitron',monospace;font-size:clamp(1.4rem,4vw,2rem);font-weight:900;letter-spacing:2px;color:var(--c);overflow-wrap:anywhere;}
+body.light .pass-name{color:var(--v);}
+.pass-sub{margin-top:.5rem;color:var(--t2);font-size:.92rem;}
+.pass-score{display:flex;justify-content:center;gap:1.4rem;flex-wrap:wrap;margin:1.2rem 0 1.4rem;font-size:.84rem;color:var(--t2);}
+.pass-score b{display:block;font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--t);font-variant-numeric:tabular-nums;}
+.pass .game-actions{margin-top:0;}
+.fr.duo .n{flex:0 0 4.6rem;text-align:right;font-variant-numeric:tabular-nums;color:var(--t2);}
+.fr.duo .n.win{color:#00e5b0;font-weight:700;}
+body.light .fr.duo .n.win{color:#047857;}
+.fr.duo.head{background:none;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:1.5px;color:var(--mu);padding-top:0;padding-bottom:0;}
+.fr.duo.head .n{color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fr.duo.sum{background:none;border-top:1px solid var(--brd2);border-radius:0;font-weight:700;}
 
 /* Daily challenge */
 .daily{--dc:#f59e0b;position:relative;margin-bottom:1.4rem;scroll-margin-top:84px;padding:1.1rem 1.2rem;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--dc) 50%,transparent);background:radial-gradient(ellipse at 0% 0%,rgba(245,158,11,.16),transparent 60%),var(--card);}
@@ -512,6 +532,18 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <button class="chip" type="button" data-d="hard">HARD</button>
           </div>
         </div>
+        <div class="opts" id="players-row">
+          <span class="opt-l" id="players-l">PLAYERS</span>
+          <div class="chips" id="players" role="group" aria-labelledby="players-l">
+            <button class="chip on" type="button" data-p="1" aria-pressed="true">1 PLAYER</button>
+            <button class="chip" type="button" data-p="2" aria-pressed="false">2 PLAYERS · PASS &amp; PLAY</button>
+          </div>
+        </div>
+        <div class="duo-names" id="duo-names" hidden>
+          <input class="name-in" id="p1-name" maxlength="16" placeholder="Player 1" aria-label="Player 1 name" autocomplete="off">
+          <span class="duo-vs" aria-hidden="true">VS</span>
+          <input class="name-in" id="p2-name" maxlength="16" placeholder="Player 2" aria-label="Player 2 name" autocomplete="off">
+        </div>
         <div class="prac" id="prac" hidden>
           <div class="opts">
             <span class="opt-l" id="prac-lang-l">LANGUAGE</span>
@@ -531,6 +563,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
           <label class="opt-l" for="nick">PLAYER NAME</label>
           <input class="name-in" id="nick" maxlength="16" placeholder="Your name for the leaderboard" autocomplete="nickname">
         </div>
+        <p class="privacy" id="duo-note" hidden>📱 Take turns on one device: you both get the same twister each round. Pass-and-play scores stay on this device and aren’t sent to the leaderboard.</p>
         <button class="btn-big" id="btn-start" type="button">▶ START GAME</button>
         <div class="support" id="support" hidden>🎙️ Speech recognition isn't available in this browser. The game needs <b>Chrome</b>, <b>Edge</b> or <b>Safari</b>. You can still browse the leaderboard.</div>
         <p class="privacy">🔒 Speech recognition is done by your browser. In Chrome and Edge your audio is sent to Google or Microsoft to be transcribed. Resonance only stores the score you choose to submit.</p>
@@ -564,6 +597,22 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
         </div>
       </section>
 
+      <!-- PASS THE DEVICE (pass and play) -->
+      <section class="panel" id="pass" hidden aria-labelledby="pass-name">
+        <div class="panel-line"></div>
+        <div class="pass">
+          <div class="pass-ico" aria-hidden="true">📱</div>
+          <div class="pass-kicker">PASS THE DEVICE TO</div>
+          <h2 class="pass-name" id="pass-name"></h2>
+          <p class="pass-sub" id="pass-sub"></p>
+          <div class="pass-score" id="pass-score"></div>
+          <div class="game-actions">
+            <button class="btn-big" id="btn-ready" type="button">I’M READY ▸</button>
+            <button class="btn-ghost" id="btn-pass-quit" type="button">✕ QUIT</button>
+          </div>
+        </div>
+      </section>
+
       <!-- FINAL -->
       <section class="panel" id="final" hidden>
         <div class="panel-line"></div>
@@ -579,6 +628,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
             <button class="btn-ghost" id="btn-share" type="button">🔗 SHARE</button>
             <button class="btn-ghost" id="btn-card" type="button" aria-expanded="false" aria-controls="card-box">🖼️ SCORE CARD</button>
             <button class="btn-big" id="btn-tricky" type="button" hidden>🎯 PRACTISE THE TRICKY ONES</button>
+            <button class="btn-big" id="btn-rematch" type="button" hidden>⚔️ REMATCH</button>
             <button class="btn-ghost" id="btn-again" type="button">↺ PLAY AGAIN</button>
           </div>
           <div class="submitted" id="submitted" role="status"></div>
@@ -924,6 +974,9 @@ window.RSShareCard=(function(){
   const MASTERED=2; /* stars needed (80%+) to count a phrase as mastered */
   let pLang=LANGS[0]||null,pTopic=null,played=null;
   if(!LANGS.length)$('mode-practice').hidden=true;
+  /* Pass and play: two players share the device and take turns on the same twister */
+  let players=1,duo=false,duoNames=['',''],duoRes=[[],[]],duoTotal=[0,0],turn=0;
+  try{const d=JSON.parse(localStorage.getItem('resonance_duo'));if(d&&Array.isArray(d.names)){$('p1-name').value=String(d.names[0]||'').slice(0,16);$('p2-name').value=String(d.names[1]||'').slice(0,16);}}catch(e){}
   let mode='twister',diff='medium',rounds=[],ri=0,results=[],total=0,submitted=false,lbMode='twister',lbPeriod='all',isDaily=false,dailyKey=null;
   let rec=null,listening=false,attemptDone=true,gameId=0,retries=1,tStart=0,tSpeech=0,tLast=0,finalText='',interimText='',silenceT=null,maxT=null,timerAnim=null;
   let myIds=[];try{myIds=JSON.parse(localStorage.getItem('resonance_lb_ids'))||[];}catch(e){}
@@ -993,11 +1046,24 @@ window.RSShareCard=(function(){
     b.addEventListener('click',function(){
       mode=b.dataset.mode;
       document.querySelectorAll('.mode').forEach(function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
-      $('diff-row').hidden=mode!=='twister';
-      $('prac').hidden=mode!=='practice';
-      $('nick-row').hidden=mode==='practice';
-      $('btn-start').textContent=mode==='practice'?'▶ START PRACTICE':'▶ START GAME';
+      setupView();
       if(mode==='practice')renderPractice();else setLb(mode,lbPeriod);
+    });
+  });
+  function setupView(){
+    const two=mode==='twister'&&players===2;
+    $('diff-row').hidden=mode!=='twister';
+    $('players-row').hidden=mode!=='twister';
+    $('duo-names').hidden=!two;$('duo-note').hidden=!two;
+    $('prac').hidden=mode!=='practice';
+    $('nick-row').hidden=mode==='practice'||two;
+    $('btn-start').textContent=mode==='practice'?'▶ START PRACTICE':two?'▶ START DUEL':'▶ START GAME';
+  }
+  document.querySelectorAll('#players .chip').forEach(function(b){
+    b.addEventListener('click',function(){
+      players=+b.dataset.p;
+      document.querySelectorAll('#players .chip').forEach(function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b));});
+      setupView();
     });
   });
 
@@ -1113,15 +1179,40 @@ window.RSShareCard=(function(){
       ?shuffle(TWISTERS[diff]).slice(0,5).map(function(t){return {lang:'en-US',text:t,flag:'👅',name:'TONGUE TWISTER · '+diff.toUpperCase(),kind:'twister'};})
       :shuffle(WORLD).slice(0,5).map(function(w){return Object.assign({kind:'world'},w);});
     ri=0;results=[];total=0;submitted=false;gameId++;
-    $('setup').hidden=true;$('final').hidden=true;$('game').hidden=false;
+    duo=!isDaily&&mode==='twister'&&players===2;
+    if(duo){
+      duoNames=[$('p1-name').value.trim()||'Player 1',$('p2-name').value.trim()||'Player 2'];
+      if(duoNames[0].toLowerCase()===duoNames[1].toLowerCase())duoNames[1]+=' 2';
+      try{localStorage.setItem('resonance_duo',JSON.stringify({names:[$('p1-name').value.trim(),$('p2-name').value.trim()]}));}catch(e){}
+      duoRes=[[],[]];duoTotal=[0,0];turn=0;results=duoRes[0];
+    }
+    $('setup').hidden=true;$('final').hidden=true;$('pass').hidden=true;$('game').hidden=false;
     $('rounds').innerHTML='';rounds.forEach(function(){const d=document.createElement('div');d.className='rd';d.appendChild(document.createElement('i'));$('rounds').appendChild(d);});
-    if(window.rsTrack)rsTrack({type:'game',mode:rounds[0].kind});
+    if(window.rsTrack)rsTrack({type:'game',mode:duo?'duo':rounds[0].kind});
+    if(duo){showPass();return;}
     showRound();
     $('game').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
+  /* Between turns: hand the device over, then the next player taps Ready */
+  function showPass(){
+    $('game').hidden=true;$('pass').hidden=false;
+    $('pass-name').textContent=duoNames[turn].toUpperCase();
+    $('pass-sub').textContent='Round '+(ri+1)+' of '+rounds.length+' · '+(ri===0&&turn===0?'you go first':turn===0?'your turn':'same twister, your turn');
+    const sc=$('pass-score');sc.innerHTML='';
+    if(ri>0||turn>0)duoNames.forEach(function(n,i){const d=document.createElement('div');d.textContent=n;const b=document.createElement('b');b.textContent=duoTotal[i].toLocaleString();d.appendChild(b);sc.appendChild(d);});
+    $('pass').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+    $('btn-ready').focus({preventScroll:true});
+  }
+  $('btn-ready').addEventListener('click',function(){
+    results=duoRes[turn];total=duoTotal[turn];
+    $('pass').hidden=true;$('game').hidden=false;
+    showRound();
+    $('game').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+    $('mic').focus({preventScroll:true});
+  });
   function showRound(){
     const r=rounds[ri];retries=1;attemptDone=true;
-    $('round-label').textContent='ROUND '+(ri+1)+' OF '+rounds.length;
+    $('round-label').textContent='ROUND '+(ri+1)+' OF '+rounds.length+(duo?' · '+duoNames[turn].toUpperCase():'');
     $('score-now').textContent=total.toLocaleString();
     Array.prototype.forEach.call($('rounds').children,function(d,i){d.className='rd'+(i<ri?' done '+(results[i].stars>=3?'good':results[i].stars>=1?'ok':'bad'):i===ri?' cur':'');});
     $('ph-lang').textContent=(r.flag||'')+' '+r.name;
@@ -1223,7 +1314,8 @@ window.RSShareCard=(function(){
     const stars=acc>=.95?3:acc>=.8?2:acc>=.5?1:0;
     if(isDaily)P.completeDaily({score:pts,stars:stars},dailyKey);
     /* Polyglot counts World Tour languages only */
-    if(P)P.record('round',{stars:stars,lang:r.kind==='world'?r.lang:null});
+    /* Pass and play shares one device, so it doesn't earn this browser's badges */
+    if(P&&!duo)P.record('round',{stars:stars,lang:r.kind==='world'?r.lang:null});
     const saved=r.kind==='practice'&&P?P.practiceSave(played.lang.code,r.key,acc,stars):null;
     if(!CHAR_LEVEL.test(r.lang)){
       const T=r.text.split(' ').map(function(w){return norm(w);}),h=hits(T,norm(said).split(' ').filter(Boolean));
@@ -1247,12 +1339,24 @@ window.RSShareCard=(function(){
     $('mic-tip').textContent=stars>=3?'FLAWLESS!':'';
     $('mic').disabled=true;
     $('btn-retry').hidden=(retries<1&&r.kind!=='practice')||stars>=3; /* practice: retry as often as you like */
-    $('btn-next').hidden=false;$('btn-next').textContent=ri===rounds.length-1?'SEE RESULTS ▸':'NEXT ROUND ▸';
+    $('btn-next').hidden=false;
+    $('btn-next').textContent=duo?(turn===0?'PASS TO '+duoNames[1].toUpperCase()+' ▸':ri===rounds.length-1?'SEE THE WINNER ▸':'PASS TO '+duoNames[0].toUpperCase()+' ▸'):ri===rounds.length-1?'SEE RESULTS ▸':'NEXT ROUND ▸';
     if(stars>=3)burst(60);
   }
   $('mic').addEventListener('click',listen);
   $('btn-retry').addEventListener('click',function(){retries--;const keep=retries;showRound();retries=keep;$('result').innerHTML='';});
-  $('btn-next').addEventListener('click',function(){stopListen();if(ri<rounds.length-1){ri++;showRound();}else showFinal();});
+  $('btn-next').addEventListener('click',function(){
+    stopListen();
+    if(duo){
+      /* A late result from this turn must not land on the next player */
+      duoTotal[turn]=total;gameId++;Engine.stop();
+      if(turn===0){turn=1;showPass();}
+      else if(ri<rounds.length-1){turn=0;ri++;showPass();}
+      else showFinal();
+      return;
+    }
+    if(ri<rounds.length-1){ri++;showRound();}else showFinal();
+  });
   function hear(rate){
     if(listening)return;
     const r=rounds[ri];
@@ -1260,12 +1364,16 @@ window.RSShareCard=(function(){
   }
   $('btn-hear').addEventListener('click',function(){hear();});
   $('btn-slow').addEventListener('click',function(){hear(.55);});
-  $('btn-quit').addEventListener('click',function(){gameId++;stopListen();Engine.stop();$('game').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();});
+  function quit(){gameId++;stopListen();Engine.stop();$('game').hidden=true;$('pass').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();}
+  $('btn-quit').addEventListener('click',quit);
+  $('btn-pass-quit').addEventListener('click',quit);
   $('btn-start').addEventListener('click',function(){startGame(false);});
   $('btn-daily').addEventListener('click',function(){startGame(true);});
 
   /* ── Final screen ── */
   function showFinal(){
+    $('btn-card').hidden=duo;$('btn-rematch').hidden=!duo;
+    if(duo){showDuoFinal();return;}
     $('game').hidden=true;$('final').hidden=false;
     const max=rounds.length*1000*(!isDaily&&mode==='twister'?MULT[diff]:1),f=total/max;
     const tiers=[[.85,'👑','LEGEND'],[.7,'🥇','SPEECH WIZARD'],[.5,'🥈','SILVER TONGUE'],[.3,'🥉','WORD WRANGLER'],[0,'🐣','ROOKIE']];
@@ -1300,13 +1408,41 @@ window.RSShareCard=(function(){
     if(P&&ranked())P.record('game',{mode:mode,diff:diff,fraction:f});
     $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   }
-  $('btn-again').addEventListener('click',function(){$('final').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();});
+  function showDuoFinal(){
+    $('game').hidden=true;$('pass').hidden=true;$('final').hidden=false;closeCard();
+    const a=duoTotal[0],b=duoTotal[1],win=a===b?-1:a>b?0:1,top=Math.max(a,b);
+    $('final-badge').textContent=win<0?'🤝':'🏆';
+    $('final-title').textContent=win<0?'IT’S A TIE!':duoNames[win].toUpperCase()+' WINS!';
+    $('final-sub').textContent='Pass & play · Tongue Twister · '+diff+' · '+duoNames[0]+' '+a.toLocaleString()+' – '+b.toLocaleString()+' '+duoNames[1];
+    const rows=$('final-rows');rows.innerHTML='';
+    const row=function(cls,label,x,y){
+      const d=document.createElement('div');d.className='fr duo'+(cls?' '+cls:'');
+      const t=document.createElement('span');t.textContent=label;t.dir='auto';d.appendChild(t);
+      [x,y].forEach(function(v,i){const n=document.createElement('span');n.className='n'+(cls!=='head'&&x!==y&&v===Math.max(x,y)?' win':'');n.textContent=cls==='head'?v:(typeof v==='number'?v.toLocaleString():'–');d.appendChild(n);});
+      rows.appendChild(d);
+    };
+    row('head','',duoNames[0].toUpperCase(),duoNames[1].toUpperCase());
+    rounds.forEach(function(r,i){row('',r.text,(duoRes[0][i]||{}).pts||0,(duoRes[1][i]||{}).pts||0);});
+    row('sum','Total',a,b);
+    $('btn-submit').hidden=true;$('final-nick').hidden=true;$('btn-tricky').hidden=true;
+    $('submitted').textContent=win<0?'Dead level. Rematch to settle it!':'Pass-and-play scores stay on this device. Solo games count for badges and the leaderboard.';
+    const el=$('final-score'),t0=performance.now();
+    (function tick(now){const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(top*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(tick);})(t0);
+    burst(180);
+    $('final').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+    $('btn-rematch').focus({preventScroll:true});
+  }
+  $('btn-rematch').addEventListener('click',function(){startGame(false);}); /* same players, new twisters */
+  $('btn-again').addEventListener('click',function(){
+    $('final').hidden=true;$('setup').hidden=false;renderDaily();if(mode==='practice')renderPractice();
+  });
   $('btn-tricky').addEventListener('click',function(){
     const keys=rounds.filter(function(r,i){return results[i]&&results[i].stars<MASTERED;}).map(function(r){return r.key;});
     pLang=played.lang;pTopic=played.topic;
     startGame(false,played.topic.phrases.filter(function(p){return keys.indexOf(p.text)>-1;}));
   });
   function shareText(){
+    if(duo){const a=duoTotal[0],b=duoTotal[1];return a===b?duoNames[0]+' and '+duoNames[1]+' tied on '+a.toLocaleString()+' in a Resonance tongue twister duel 🎙️🤝':duoNames[a>b?0:1]+' beat '+duoNames[a>b?1:0]+' '+Math.max(a,b).toLocaleString()+' to '+Math.min(a,b).toLocaleString()+' in a Resonance tongue twister duel 🎙️🔥';}
     if(mode==='practice'&&!isDaily)return 'I scored '+total.toLocaleString()+' practising '+played.lang.name+' ('+played.topic.name.toLowerCase()+') on Resonance 🗣️ Want to learn with me?';
     return 'I scored '+total.toLocaleString()+' on the Resonance '+(isDaily?'Daily':mode==='twister'?'Tongue Twister':'World Tour')+' challenge 🎙️🔥 Can you beat me?';
   }
