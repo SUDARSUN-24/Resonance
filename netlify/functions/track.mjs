@@ -24,7 +24,7 @@ export default async (req, context) => {
     } else if (d.type === 'story') {
       kind = 'story';
     } else if (d.type === 'game') {
-      if (!['twister', 'world', 'practice', 'duo'].includes(d.mode)) throw new HttpError(422, 'Unknown game mode');
+      if (!['twister', 'world', 'practice', 'duo', 'challenge'].includes(d.mode)) throw new HttpError(422, 'Unknown game mode');
       kind = `game.${d.mode}`;
     } else {
       throw new HttpError(422, 'Unknown event type');
