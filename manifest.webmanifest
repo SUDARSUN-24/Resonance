@@ -15,8 +15,10 @@
     { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
+    { "name": "Daily challenge", "short_name": "Daily", "description": "Today's tongue twister or phrase", "url": "./play.html#daily", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
     { "name": "Voice Lab", "url": "./contact.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
     { "name": "My Voice", "url": "./clone.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Story Studio", "short_name": "Story", "url": "./story.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
     { "name": "Tracks", "url": "./services.html", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }
