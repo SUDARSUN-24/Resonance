@@ -18,6 +18,7 @@ export const PAGES = {
   '/story.html': 'story', '/story': 'story',
   '/play.html': 'play', '/play': 'play',
   '/read.html': 'reader', '/read': 'reader',
+  '/learn.html': 'learn', '/learn': 'learn',
 };
 
 export class HttpError extends Error {

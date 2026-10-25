@@ -1,12 +1,12 @@
 /* RESONANCE service worker — offline cache
-   Pages and scripts: network first (so updates show up straight away), cache as fallback.
+   Pages, scripts and lesson data (.json): network first (so updates show up straight away), cache as fallback.
    Icons and images: cache first, refreshed in the background. Fonts: stale-while-revalidate.
    Never cached: /api/ (leaderboard, tracking, admin), the owner dashboard and PHP/SQL files. */
-const VERSION = 'resonance-v9';
+const VERSION = 'resonance-v10';
 const RUNTIME = 'resonance-runtime-v1';
 const CORE = [
-  './', 'index.html', 'services.html', 'contact.html', 'clone.html', 'story.html', 'play.html', 'read.html', '404.html',
-  'progress.js', 'phrases.js', 'speech.js', 'challenge.js', 'manifest.webmanifest', 'favicon.svg',
+  './', 'index.html', 'services.html', 'contact.html', 'clone.html', 'story.html', 'play.html', 'read.html', 'learn.html', '404.html',
+  'progress.js', 'phrases.js', 'speech.js', 'learn-th.json', 'challenge.js', 'manifest.webmanifest', 'favicon.svg',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'
 ];
 
@@ -39,7 +39,7 @@ self.addEventListener('fetch', function (e) {
   if (url.origin === location.origin) {
     if (url.pathname.startsWith('/api/') || url.pathname === '/admin.html' || /\.(php|sql)$/.test(url.pathname)) return;
     if (req.mode === 'navigate') { e.respondWith(networkFirst(req, 'index.html')); return; }
-    if (req.destination === 'script' || req.destination === 'style' || req.destination === 'manifest') { e.respondWith(networkFirst(req)); return; }
+    if (req.destination === 'script' || req.destination === 'style' || req.destination === 'manifest' || url.pathname.endsWith('.json')) { e.respondWith(networkFirst(req)); return; }
     e.respondWith(
       caches.match(req).then(function (hit) {
         const net = fetch(req).then(function (res) {

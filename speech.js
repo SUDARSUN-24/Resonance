@@ -1,6 +1,7 @@
 /* RESONANCE speech — the browser's text-to-speech, shared by Play and Learn Thai.
    Classic script: pages read it as window.RSSpeech.
-     speak(text, {lang, gender, rate, pitch, onstart, onword(pos,len,estimated), onend, onerror})
+     speak(text, {lang, gender, voice, rate, pitch, onstart, onword(pos,len,estimated), onend, onerror})
+                   voice: a SpeechSynthesisVoice to use instead of the automatic pick
      stop()        stop speaking
      has(lang)     true if the device has a voice for that language (once voices have loaded)
      ready()       true once the browser has listed its voices (some load a moment after the page)
@@ -43,7 +44,7 @@
       if(!synth){if(o.onerror)o.onerror('unsupported');return;}
       const busy=synth.speaking||synth.pending;
       stop();
-      const id=seq,u=new SpeechSynthesisUtterance(text),v=pick(o.lang||'en-US',o.gender);
+      const id=seq,u=new SpeechSynthesisUtterance(text),v=o.voice||pick(o.lang||'en-US',o.gender);
       u.rate=o.rate||1;u.pitch=o.pitch||1;
       if(v){u.voice=v;u.lang=v.lang;}else u.lang=o.lang||'en-US';
       let t0=0,gotBoundary=false;

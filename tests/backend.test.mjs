@@ -25,7 +25,7 @@ test('every page in the site menu can record a page view', () => {
 });
 
 test('every page sends its view with a path the backend accepts', () => {
-  for (const page of ['index', 'services', 'contact', 'read', 'clone', 'story', 'play']) {
+  for (const page of ['index', 'services', 'contact', 'read', 'clone', 'story', 'play', 'learn']) {
     const list = read(`${page}.html`).match(/if\((\[[^\]]*\])\.indexOf\(location\.pathname\)/)[1];
     for (const path of JSON.parse(list.replace(/'/g, '"'))) assert.ok(PAGES[path], `${page}.html sends ${path}, which the backend rejects`);
   }
