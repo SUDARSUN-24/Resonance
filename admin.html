@@ -419,7 +419,7 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
   const NS='http://www.w3.org/2000/svg';
   const VOICES={robotic:['ARIA‑7','🤖','#00f5ff'],news:['ANCHOR','📺','#8b5cf6'],deep:['DEEP','🎙️','#ff0080'],calm:['ZEN','🧘','#00e5b0'],hype:['HYPE','🎤','#f59e0b'],mysterious:['SHADOW','🌑','#a855f7'],nova:['NOVA','✨','#f472b6']};
   const EMOS={neutral:['Neutral','😐',1,1],calm:['Calm','😌',.85,.9],energetic:['Energetic','⚡',1.2,1.15],formal:['Formal','🎩',.9,.95],dramatic:['Dramatic','🎭',.8,.85],mysterious:['Mysterious','🌙',.75,.8]};
-  const PAGES={home:['Home','🏠'],tracks:['Tracks','🎧'],'voice-lab':['Voice Lab','🎙️'],'my-voice':['My Voice','🧬'],reader:['Reader','📖'],learn:['Learn Thai','🇹🇭']};
+  const PAGES={home:['Home','🏠'],tracks:['Tracks','🎧'],'voice-lab':['Voice Lab','🎙️'],'my-voice':['My Voice','🧬'],'music-lab':['Music Lab','🥁'],reader:['Reader','📖'],learn:['Learn Thai','🇹🇭']};
   let langNames=null,regionNames=null;
   try{langNames=new Intl.DisplayNames(['en'],{type:'language'});regionNames=new Intl.DisplayNames(['en'],{type:'region'});}catch(e){}
   const langName=function(c){try{return langNames?langNames.of(c):c;}catch(e){return c;}};
