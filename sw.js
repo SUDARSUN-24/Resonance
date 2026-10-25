@@ -1,12 +1,16 @@
 /* RESONANCE service worker — offline cache
-   Pages, scripts and lesson data (.json): network first (so updates show up straight away), cache as fallback.
+   Pages, scripts and data (.json): network first (so updates show up straight away), cache as fallback.
    Icons and images: cache first, refreshed in the background. Fonts: stale-while-revalidate.
+   HD voice: its code (exact versions on jsdelivr) and voice files are kept in their own cache, cache first,
+   so it works offline once loaded; the model itself is kept by the library (transformers-cache).
+   Only Resonance's own old caches are cleared on update, and never the HD voice ones.
    Never cached: /api/ (leaderboard, tracking, admin), the owner dashboard and PHP/SQL files. */
-const VERSION = 'resonance-v10';
+const VERSION = 'resonance-v13';
 const RUNTIME = 'resonance-runtime-v1';
+const HD = 'resonance-hd-v1';
 const CORE = [
-  './', 'index.html', 'services.html', 'contact.html', 'clone.html', 'story.html', 'play.html', 'read.html', 'learn.html', '404.html',
-  'progress.js', 'phrases.js', 'speech.js', 'learn-th.json', 'challenge.js', 'manifest.webmanifest', 'favicon.svg',
+  './', 'index.html', 'services.html', 'contact.html', 'clone.html', 'lab.html', 'story.html', 'play.html', 'read.html', '404.html',
+  'progress.js', 'phrases.js', 'speech.js', 'challenge.js', 'voicestore.js', 'hd-worker.js', 'manifest.webmanifest', 'favicon.svg',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'
 ];
 
@@ -17,7 +21,7 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
-      return Promise.all(keys.filter(function (k) { return k !== VERSION && k !== RUNTIME; }).map(function (k) { return caches.delete(k); }));
+      return Promise.all(keys.filter(function (k) { return /^resonance-/.test(k) && k !== VERSION && k !== RUNTIME && k !== HD; }).map(function (k) { return caches.delete(k); }));
     }).then(function () { return self.clients.claim(); })
   );
 });
@@ -48,6 +52,18 @@ self.addEventListener('fetch', function (e) {
         });
         if (hit) { net.catch(function () {}); return hit; }
         return net;
+      })
+    );
+    return;
+  }
+
+  if ((url.hostname === 'cdn.jsdelivr.net' && /^\/npm\/(kokoro-js@1\.2\.1|@huggingface\/transformers@[\d.]+)\//.test(url.pathname)) ||
+      (url.hostname === 'huggingface.co' && url.pathname.indexOf('/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/voices/') === 0)) {
+    e.respondWith(
+      caches.open(HD).then(function (c) {
+        return c.match(req).then(function (hit) {
+          return hit || fetch(req).then(function (res) { if (res.ok) c.put(req, res.clone()); return res; });
+        });
       })
     );
     return;

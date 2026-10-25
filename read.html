@@ -272,8 +272,8 @@ body.light :focus-visible{outline-color:var(--v);}
 }
 
 /* Eight nav links: tighten, then switch to the ☰ menu before they crowd */
-@media(max-width:1340px){.nav-links{gap:1.5rem;}.nav-links a{font-size:.68rem;letter-spacing:1.5px;}}
-@media(max-width:1180px){
+@media(max-width:1420px){.nav-links{gap:1.5rem;}.nav-links a{font-size:.68rem;letter-spacing:1.5px;}}
+@media(max-width:1220px){
   .mobile-btn{display:block;}
   .nav-links{display:none;flex-direction:column;position:absolute;top:66px;left:0;width:100%;background:var(--nav-bg);padding:1.5rem 5%;border-bottom:1px solid var(--brd);gap:1rem;backdrop-filter:blur(28px);}
   .nav-links.open{display:flex;}
@@ -313,9 +313,9 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
     <a href="contact.html">VOICE LAB</a>
     <a href="read.html" class="cur">READ</a>
     <a href="clone.html">MY VOICE</a>
+    <a href="lab.html">MUSIC LAB</a>
     <a href="story.html">STORY</a>
     <a href="play.html">PLAY</a>
-    <a href="learn.html">LEARN</a>
   </div>
   <div class="nav-tools">
     <button class="btn-theme btn-fx" id="fx-btn" type="button" aria-pressed="true" aria-label="Toggle visual effects">

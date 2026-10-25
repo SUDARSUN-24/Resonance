@@ -23,9 +23,9 @@ Type any text, pick a voice, set the mood, and hear it come alive instantly. �
 
 ## 📖 About
 
-**RESONANCE** is a futuristic voice studio that runs in the browser. Type any text, choose a voice character, language, emotion, speed and pitch, and hear it spoken in real time using the **Web Speech API**. It also reads whole documents aloud, performs multi-voice stories, measures your own voice, and turns speaking into games: tongue twisters, a world tour of languages and Thai phrase practice, with a leaderboard and challenge links you can send to a friend. 😎
+**RESONANCE** is a futuristic voice studio that runs in the browser. Type any text, choose a voice character, language, emotion, speed and pitch, and hear it spoken in real time using the **Web Speech API**. It also reads whole documents aloud, performs multi-voice stories, measures and reshapes your own voice, makes beats you can sing over in the Music Lab, and turns speaking into games: tongue twisters, a world tour of languages and Thai phrase practice, with a leaderboard and challenge links you can send to a friend. 😎
 
-Everything is built with plain HTML, CSS and JavaScript, no framework and no paid services: browser APIs do the audio, and a few small Netlify Functions handle the leaderboard and the owner dashboard.
+Everything is built with plain HTML, CSS and JavaScript, no framework and no paid services: browser APIs do the audio (plus an optional open-source HD voice that runs on your own device), and a few small Netlify Functions handle the leaderboard and the owner dashboard.
 
 ---
 
@@ -35,10 +35,12 @@ Everything is built with plain HTML, CSS and JavaScript, no framework and no pai
 | --- | --- |
 | ![Home page with the voice orb and orbiting voice ring](docs/screenshots/home.webp) | ![Voice Lab with voice, language and emotion controls](docs/screenshots/voice-lab.webp) |
 | **Studio**: talk through the voice orb | **Voice Lab**: 7 characters, 45+ languages, emotions |
-| ![Story Studio performing a multi-voice script](docs/screenshots/story.webp) | ![My Voice clone studio with the Voice DNA radar chart](docs/screenshots/clone.webp) |
-| **Story Studio**: a script performed by several voices | **My Voice**: Voice DNA and live voice changer |
+| ![Story Studio performing a multi-voice script](docs/screenshots/story.webp) | ![My Voice studio with a clip loaded and the effect tiles](docs/screenshots/clone.webp) |
+| **Story Studio**: a script performed by several voices | **My Voice**: Voice DNA and a full voice studio |
 | ![Play page with game modes and Thai language practice](docs/screenshots/play.webp) | ![Reader highlighting each word as it is read aloud](docs/screenshots/reader.webp) |
 | **Play**: tongue twisters, World Tour, Thai practice | **Reader**: any text read aloud, word by word |
+| ![Music Lab with the transport and a boom bap beat on the step grid](docs/screenshots/lab.webp) | |
+| **Music Lab**: beats, chords and your voice | |
 
 <p align="center"><img src="docs/screenshots/mobile.webp" alt="The site on a phone in dark and light themes" width="560"></p>
 
@@ -58,6 +60,7 @@ Real-time speech synthesis with live controls:
 | 🎧 **Device voice picker** | Picks the best natural voice for the character's gender automatically, or choose any installed voice yourself |
 | 🎭 **Emotions** | Neutral, Calm, Energetic, Formal, Dramatic, Mysterious |
 | 🎚️ **Fine-tuning** | Speed, pitch and volume sliders |
+| ✨ **HD voice** *(beta, English)* | 9 natural neural voices (Kokoro, open source) that run on your device instead of the browser's voices. Off until you switch it on: about 115 MB downloads once, then it works offline |
 
 ### 🌟 Live Stage
 - 🔮 **Animated visualizer** — a glowing orb and waveform that pulse with every spoken word
@@ -66,15 +69,29 @@ Real-time speech synthesis with live controls:
 - ✍️ **Script templates** — greeting, headline, story, trailer, ad and *Surprise me*
 - 🕘 **Recent takes** — replay your last 8 generations with their exact settings
 - 🔗 **Share a take** — copy a link that opens the lab with your voice, settings and text
+- 🎛 **HD takes to the studio** — an HD take can be downloaded as a WAV or opened in the My Voice studio to add effects
 
 ### 🧬 My Voice — Clone Studio
 - 🎙️ **Record or upload** — up to 15 seconds from your mic (with a line to read aloud) or any audio file
 - 🧬 **Voice DNA** — measures your pitch, range, pace, energy and brightness, drawn as a radar chart
 - 🏆 **Voice twin** — ranks how closely you match each of the 7 Resonance characters
 - 🗣️ **Speak as me** — tunes a browser voice to your pitch and pace so it can say anything you type
-- 🎛️ **Voice changer** — Robot, Deep, Chipmunk, Monster, Alien, Old Radio, Phone, Cathedral, Canyon Echo and Reverse, with WAV download
-- 🎧 **Live mic** — every effect except Reverse works in real time (Deep, Chipmunk and Monster use a live pitch shifter), and ⏺ **Record take** saves your transformed voice as a WAV you can play back and download
+- 🎛️ **Voice Studio** — its own recorder (up to a minute, no script) or any uploaded audio file, separate from the Voice DNA recording
+  - **11 effects**: Robot, Deep, Chipmunk, Monster, Alien, Old Radio, Phone, Cathedral, Canyon Echo and Reverse, plus Original
+  - **Fine-tune in 5 tabs**: pitch and speed (changed separately), **auto-tune** (snaps your pitch to a key and scale, from gentle to robotic), a 7-band **EQ curve you drag up and down**, 9 filter presets (phone, AM radio, megaphone, underwater, next room, podcast…), echo delay and repeats, reverb and room size, distortion, bit crush, robot ring-mod, chorus / flanger / vibrato / tremolo, compressor and volume
+  - **Every control has a number box**, so you can type an exact value (it snaps to the control's range)
+  - ▶ **Preview** keeps up as you drag, 🅰 **Before** plays the clip untouched, ✓ **Apply** bakes the sound in so you can stack effects, ↶ **Undo** steps back (5 steps)
+  - ✂ **Select part of the clip** to preview just that part, keep it or delete it
+  - ⬇ WAV download and 💾 saved versions, kept in this browser and shared with Voice Lab and Music Lab (🎛 **Edit in studio** opens any saved version again)
+- 🎧 **Live mic** — every effect except Reverse works in real time (Deep, Chipmunk and Monster use a live pitch shifter), the studio's pitch, EQ, echo, reverb and character controls work live too, and ⏺ **Record take** saves your transformed voice; 🎛 **Edit in studio** sends the take to the Voice Studio
 - 🔒 **Private** — your recording is processed in the browser and never uploaded
+
+### 🥁 Music Lab (`/lab.html`)
+- 🥁 **Beat maker** — a 16-step drum machine (kick, snare, clap, hi-hat, open hat, tom) with 6 presets, tempo 60–180 BPM, swing and a song length of 1–16 bars
+- 🎹 **Chords** — pick a key, major or minor, and a progression (pop, sad, doo-wop, epic, jazz…), played as pad, keys or pluck, with an optional bass line
+- 🎙️ **4 voice tracks** — record in time after a one-bar count-in, or bring in any saved version or audio file; each track has volume, pan, mute, solo, a start bar and a nudge in milliseconds
+- ⬇ **Mix down** — download the song as a WAV or save it to your library, and send any track to the My Voice studio
+- 🔒 Everything is made in the browser; recordings are never uploaded
 
 ### 📲 App, Speed & Polish
 - 📲 **Installable app (PWA)** — add Resonance to your home screen or desktop; pages keep working offline
@@ -132,8 +149,9 @@ Real-time speech synthesis with live controls:
 | 🎧 `services.html` | Tracks | Voice archive with search, filters, favorites, live captions and radio mode |
 | 🎭 `story.html` | Story | Multi-voice story and podcast performer |
 | 🎮 `play.html` | Play | Tongue Twister, World Tour, Language Practice, pass & play and challenge links + leaderboard |
-| 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you and try 11 voice-changer effects live or on a recording |
-| 🎙️ `contact.html` | Voice Lab | Text-to-speech generator and request form |
+| 🧬 `clone.html` | My Voice | Record your voice, see your Voice DNA, hear a clone of you, and shape any clip in the Voice Studio (effects, EQ curve, filters, echo, reverb, apply and undo) |
+| 🎙️ `contact.html` | Voice Lab | Text-to-speech generator with an optional on-device HD voice, and request form |
+| 🥁 `lab.html` | Music Lab | Drum machine, chords and four voice tracks, mixed down to a WAV |
 | 📖 `read.html` | Reader | Read any pasted text or .txt file aloud with live word highlighting |
 | 🛠️ `admin.php` | Admin Panel | Manage saved voice requests *(requires PHP + MySQL)* |
 
@@ -144,11 +162,11 @@ Real-time speech synthesis with live controls:
 | Layer | Technology |
 | --- | --- |
 | 🎨 Frontend | HTML5, CSS3, vanilla JavaScript (no framework, no build step), Canvas 2D |
-| 🔊 Audio | Web Speech API (`speechSynthesis` and `SpeechRecognition`), Web Audio API, MediaRecorder |
+| 🔊 Audio | Web Speech API (`speechSynthesis` and `SpeechRecognition`), Web Audio API (incl. AudioWorklet), MediaRecorder · optional HD voice: [Kokoro](https://github.com/hexgrad/kokoro) via `kokoro-js` in a Web Worker |
 | 🌏 Text | `Intl.Segmenter` for languages without spaces (Thai, Japanese, Chinese) |
 | 📴 Offline | Service worker, web app manifest |
 | ⚙️ Backend | Netlify Functions (Node.js) · legacy PHP version for XAMPP |
-| 🗄️ Storage | Netlify Blobs · `localStorage` for progress · legacy MySQL / MariaDB |
+| 🗄️ Storage | Netlify Blobs · `localStorage` for progress · IndexedDB for saved voice versions · legacy MySQL / MariaDB |
 | 🔐 Admin | Password login, signed HttpOnly session cookie, lockout after 5 tries |
 | 🧪 Testing | Node's built-in test runner (`node --test`), Lighthouse |
 | ☁️ Hosting | Netlify free plan |
@@ -176,6 +194,8 @@ flowchart LR
 - **Scoring speech**: games listen with `SpeechRecognition`, then compare what you said with the target using an edit distance. For space-separated languages it counts whole words; for Thai, Japanese, Chinese, Korean and similar scripts it counts characters. Tongue twister points reward accuracy and speed: `1000 × accuracy² × (0.6 + 0.4 × speed) × difficulty` (×1, ×1.25 or ×1.5).
 - **Voice DNA**: your recording is analysed in the browser. Pitch uses the YIN algorithm on a downsampled copy, pace counts syllable-like peaks in the loudness, and brightness uses the zero-crossing rate while you're speaking. Nothing is uploaded.
 - **Challenge links**: the challenger's name, twister numbers and scores are packed into the part of the link after `#`, which browsers never send to a server. A checksum of the twister texts spots links made before the list changed, and the name goes through the same word filter as the leaderboard.
+- **HD voice**: the Voice Lab can load Kokoro, an 82-million-parameter open-source text-to-speech model, and run it with WebAssembly in a Web Worker so the page stays smooth. It makes one sentence at a time, and each sentence plays as soon as it's ready while the next is made. The Voice Lab is cross-origin isolated (two response headers), which lets the model use several CPU cores: about 1.6× faster in testing. The service worker keeps its code, so it works offline after the first time.
+- **Music Lab timing**: drums, chords and voice clips are scheduled a little ahead on the audio clock rather than with timers, so they stay exactly in time even if the page stutters. The same list of events drives playback and the WAV export (rendered with an `OfflineAudioContext`). Takes are recorded with an AudioWorklet that notes the audio-clock time of the first sample, so each take is lined up with the song start, minus the speaker and microphone delay.
 - **Backend**: small Netlify Functions store the leaderboard, anonymous page-view counts and Voice Lab requests in Netlify Blobs. Visitors are rate-limited by a salted hash, never their IP address. The dashboard uses one password from an environment variable and a signed, HttpOnly session cookie.
 - **Performance**: heavy canvas effects switch to a lite mode on low-power devices, with reduced motion or data saver, or when the frame rate drops. Web fonts load after the first frame, and phones get a smaller background photo.
 
@@ -209,6 +229,19 @@ Lighthouse performance scores before and after the speed work (October 2026):
 
 Phone scores are lower than desktop because Lighthouse simulates a mid-range phone on slow 4G. Most of the remaining time goes on laying out and drawing the richly styled first screen, and the design is kept as it is. Devices that struggle switch to lite effects automatically.
 
+**After the Music Lab and HD voice update (26 October 2026):**
+
+| Page | 📱 Mobile | 🖥️ Desktop | Accessibility | Best practices | SEO |
+| --- | :---: | :---: | :---: | :---: | :---: |
+| 🎙️ Voice Lab | 86 → **86** | **99** | 100 | 96* | 100 |
+| 🧬 My Voice | 87 → **85** | **98** | 100 | 96* | 100 |
+| 🥁 Music Lab *(new)* | **89** | **98** | 100 | 96* | 100 |
+
+<sub>Same Lighthouse settings. "Before" is the previous version and "after" is this one, run one after the other on the same machine on the same day (median of 3; Music Lab mobile median of 5). Desktop is this version only, measured once (median of 3) earlier that day. This machine scored a few points lower that day than in the table above, so compare within a table, not across them. My Voice's 2-point drop is inside the run-to-run spread (84–87). The HD voice model only downloads when you switch it on, so it doesn't affect these scores.<br>
+\* The only failing check is the visit counter's API, which doesn't exist on a local server, so this should be 100 on the live site. It hasn't been measured there yet.</sub>
+
+- 📐 **No jumping on phones.** On a phone the Music Lab's play controls moved down by 32 pixels when the web font arrived, because the wider letters pushed the metronome switch onto a new line (layout shift 0.10). On phones each control now has its own line, so the font can't change the wrapping (layout shift 0.01).
+
 ---
 
 ## 🧪 Testing
@@ -218,12 +251,12 @@ npm install
 npm test
 ```
 
-63 automated tests run with Node's built-in test runner, with no browser needed:
+116 automated tests run with Node's built-in test runner, with no browser needed:
 - **Backend**: the tracking function refuses unknown pages and events before storing anything, accepts every game mode the Play page sends, and the dashboard has a label for each. These tests use fake requests and touch no real storage.
-- **Browser scripts**: daily challenge and streak dates (including daylight-saving changes), saved progress and badges, blocked or corrupt storage, challenge links (including broken or tampered links and blocked names) and the Thai phrase rules. Each script is loaded into Node's `vm` module and tested directly.
+- **Browser scripts**: daily challenge and streak dates (including daylight-saving changes), saved progress and badges, blocked or corrupt storage, challenge links (including broken or tampered links and blocked names), the Thai phrase rules, and the Voice Studio's settings (every slider, EQ band and filter preset in range, typed numbers snapping, the distortion curve and echo length) its pitch-free time stretch and auto-tune (an off-key tone comes out on the note, the same length), the Music Lab's timing (steps, swing, chords, clip placement, loop splitting, take alignment and export length), the shared voice library (blocked storage, WAV files) and the HD voice list. Each script is loaded into Node's `vm` module and tested directly.
 - **Every page**: each inline script still parses, the service worker only caches files that exist, and fonts and images stay set up for fast loading.
 
-Anything that needs a real microphone or real voices (games, Voice DNA, dictation) is checked by hand in Chrome, Edge and Safari.
+Anything that needs a real microphone or real voices (games, Voice DNA, dictation, recording in the Music Lab) is checked by hand in Chrome, Edge and Safari, with headphones for the Music Lab.
 
 ---
 
@@ -238,6 +271,12 @@ Anything that needs a real microphone or real voices (games, Voice DNA, dictatio
 - **Accessibility is in the details.** Visible keyboard focus, reduced-motion support, and status messages that only announce real changes made more difference than any single big feature.
 - **Testing browser code without a browser.** Running the page scripts inside Node's `vm` module let me unit-test challenge links, progress saving and phrase rules quickly, and headless browser checks covered the rest.
 
+<!-- Draft notes for this section, not yet in my own words. Rewrite them and move them above, or delete them.
+- **Read the library's code when it hangs.** The HD voice never finished its last sentence. The library's sentence splitter waits for more text unless it is closed, and it never closed it, so I pass it a splitter I close myself.
+- **Check claims before writing them.** "Works offline" and the download size were guesses until I tested with the internet blocked and measured the files (115 MB, not the 92 MB of the model alone).
+- **Time comes from the audio clock.** Timers drift and the microphone starts late, so the Music Lab schedules every sound on the audio clock and lines up each take using the time of its first sample.
+-->
+
 ---
 
 ## 📁 Project Structure
@@ -249,10 +288,13 @@ resonance/
 ├── contact.html        # 🎙️ Voice Lab
 ├── read.html           # 📖 Reader (read any text aloud)
 ├── clone.html          # 🧬 My Voice (clone studio)
+├── lab.html            # 🥁 Music Lab (beats, chords, voice tracks)
 ├── story.html          # 🎭 Story Studio
 ├── play.html           # 🎮 Speak to Win challenges
 ├── phrases.js          # 🗣️ Language Practice phrase lists (Thai)
 ├── challenge.js        # 🔗 Challenge-a-friend links (no backend)
+├── voicestore.js       # 💾 Saved voice versions (IndexedDB), shared by My Voice, Voice Lab and Music Lab
+├── hd-worker.js        # ✨ Runs the HD voice off the main thread
 ├── 404.html            # 🛰️ Custom "signal lost" page
 ├── manifest.webmanifest# 📲 App manifest (name, icons, shortcuts)
 ├── sw.js               # 📴 Service worker (offline cache)
@@ -261,9 +303,6 @@ resonance/
 ├── icons/              # 🎨 PNG app icons
 ├── og-image.png        # 🔗 Link-preview image
 ├── robots.txt / sitemap.xml
-├── style.css           # Styles (pages currently use inline <style>)
-├── script.js           # Speech synthesis logic (pages currently use inline <script>)
-├── sound.js            # Web Audio synth + tracks (pages currently use inline <script>)
 ├── admin.html          # 🔐 Owner dashboard (Netlify backend)
 ├── netlify/functions/  # ⚙️ API: requests, track, auth, admin
 ├── netlify/lib/        # ⚙️ Shared helpers (storage, auth)
