@@ -806,8 +806,10 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     return s;
   }
 
-  /* Plain text to search in: Thai, meaning, and romanization without tone accents */
-  function searchText(it){return (it.thai+' '+it.mean+' '+it.roman.normalize('NFD').replace(/[̀-ͯ]/g,'')).toLowerCase();}
+  /* Romanization as typed on a plain keyboard: no tone accents, ɔ ɛ ə ʉ as o e e u, no doubled letters */
+  function fold(t){return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ɔ/g,'o').replace(/[ɛə]/g,'e').replace(/ʉ/g,'u').replace(/-/g,' ').replace(/([a-z])\1+/g,'$1');}
+  /* Text to search in: Thai, meaning and romanization, as written and as folded */
+  function searchText(it){return (it.thai+' '+it.mean+' '+it.roman).toLowerCase()+' '+fold(it.roman);}
 
   function renderVerbs(V){
     const s=lesson('verbs','🏃','COMMON VERBS','LESSON 5',V.intro);
@@ -821,8 +823,8 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     const none=el('p','empty','No verb matches that. Try an English word, the Thai, or the romanization without accents.');none.hidden=true;
     s.appendChild(g);s.appendChild(none);
     function filter(){
-      const q=inp.value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');let n=0;
-      cards.forEach(function(c){const on=!q||c._q.indexOf(q)>-1;c.hidden=!on;if(on)n++;});
+      const q=inp.value.trim().toLowerCase(),fq=fold(q);let n=0;
+      cards.forEach(function(c){const on=!q||c._q.indexOf(q)>-1||(!!fq&&c._q.indexOf(fq)>-1);c.hidden=!on;if(on)n++;});
       out.textContent=q?n+' of '+cards.length+' verbs':cards.length+' verbs';none.hidden=n>0;
     }
     inp.addEventListener('input',filter);filter();
