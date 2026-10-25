@@ -360,5 +360,117 @@
         { "thai": "อาทิตย์หน้า", "roman": "aa-thít nâa", "mean": "next week" }
       ]
     }
+  },
+
+  "topics": {
+    "intro": "Everyday words by topic. Tap a topic to switch lists.",
+    "lists": [
+      { "id": "greetings", "icon": "👋", "name": "Greetings", "note": "sà-wàt-dii works for hello and goodbye, at any time of day.",
+        "items": [
+          { "thai": "สวัสดี", "roman": "sà-wàt-dii", "mean": "hello; goodbye" },
+          { "thai": "สบายดีไหม", "roman": "sà-baai dii mǎi", "mean": "How are you?" },
+          { "thai": "สบายดี", "roman": "sà-baai dii", "mean": "I’m fine." },
+          { "thai": "ขอบคุณ", "roman": "khɔ̀ɔp-khun", "mean": "thank you" },
+          { "thai": "ขอโทษ", "roman": "khɔ̌ɔ-thôot", "mean": "sorry; excuse me" },
+          { "thai": "ไม่เป็นไร", "roman": "mâi bpen rai", "mean": "never mind; you’re welcome" },
+          { "thai": "ยินดีที่ได้รู้จัก", "roman": "yin-dii thîi dâi rúu-jàk", "mean": "nice to meet you" },
+          { "thai": "แล้วพบกันใหม่", "roman": "lɛ́ɛo phóp gan mài", "mean": "see you again" },
+          { "thai": "โชคดี", "roman": "chôok dii", "mean": "good luck; take care" }
+        ] },
+      { "id": "numbers", "icon": "🔢", "name": "Numbers", "note": "Numbers are regular: 11 is ten-one (with èt for the one), 20 is yîi-sìp, 21 is yîi-sìp-èt.",
+        "items": [
+          { "thai": "ศูนย์", "roman": "sǔun", "mean": "zero (0)", "n": 0 },
+          { "thai": "หนึ่ง", "roman": "nʉ̀ng", "mean": "one (1)", "n": 1 },
+          { "thai": "สอง", "roman": "sɔ̌ɔng", "mean": "two (2)", "n": 2 },
+          { "thai": "สาม", "roman": "sǎam", "mean": "three (3)", "n": 3 },
+          { "thai": "สี่", "roman": "sìi", "mean": "four (4)", "n": 4 },
+          { "thai": "ห้า", "roman": "hâa", "mean": "five (5)", "n": 5 },
+          { "thai": "หก", "roman": "hòk", "mean": "six (6)", "n": 6 },
+          { "thai": "เจ็ด", "roman": "jèt", "mean": "seven (7)", "n": 7 },
+          { "thai": "แปด", "roman": "bpɛ̀ɛt", "mean": "eight (8)", "n": 8 },
+          { "thai": "เก้า", "roman": "gâao", "mean": "nine (9)", "n": 9 },
+          { "thai": "สิบ", "roman": "sìp", "mean": "ten (10)", "n": 10 },
+          { "thai": "สิบเอ็ด", "roman": "sìp-èt", "mean": "eleven (11)", "n": 11 },
+          { "thai": "ยี่สิบ", "roman": "yîi-sìp", "mean": "twenty (20)", "n": 20 },
+          { "thai": "ร้อย", "roman": "rɔ́ɔi", "mean": "hundred (100)", "n": 100 },
+          { "thai": "พัน", "roman": "phan", "mean": "thousand (1,000)", "n": 1000 },
+          { "thai": "หมื่น", "roman": "mʉ̀ʉn", "mean": "ten thousand (10,000)", "n": 10000 },
+          { "thai": "แสน", "roman": "sɛ̌ɛn", "mean": "hundred thousand (100,000)", "n": 100000 },
+          { "thai": "ล้าน", "roman": "láan", "mean": "million (1,000,000)", "n": 1000000 }
+        ] },
+      { "id": "food", "icon": "🍜", "name": "Food and drink", "note": "Order by putting khɔ̌ɔ (‘may I have’) before the dish.",
+        "items": [
+          { "thai": "ข้าว", "roman": "khâao", "mean": "rice; food, a meal" },
+          { "thai": "ข้าวผัด", "roman": "khâao-phàt", "mean": "fried rice", "example": { "thai": "ขอข้าวผัดหนึ่งจาน", "roman": "khɔ̌ɔ khâao-phàt nʉ̀ng jaan", "mean": "One fried rice, please." } },
+          { "thai": "น้ำ", "roman": "náam", "mean": "water" },
+          { "thai": "ไก่", "roman": "gài", "mean": "chicken" },
+          { "thai": "หมู", "roman": "mǔu", "mean": "pork" },
+          { "thai": "เนื้อ", "roman": "nʉ́a", "mean": "beef; meat" },
+          { "thai": "ปลา", "roman": "bplaa", "mean": "fish" },
+          { "thai": "กุ้ง", "roman": "gûng", "mean": "shrimp, prawn" },
+          { "thai": "ผัก", "roman": "phàk", "mean": "vegetables" },
+          { "thai": "ผลไม้", "roman": "phǒn-lá-mái", "mean": "fruit" },
+          { "thai": "กาแฟ", "roman": "gaa-fɛɛ", "mean": "coffee" },
+          { "thai": "ชา", "roman": "chaa", "mean": "tea" },
+          { "thai": "เผ็ด", "roman": "phèt", "mean": "spicy", "example": { "thai": "ไม่เผ็ดได้ไหม", "roman": "mâi phèt dâi mǎi", "mean": "Can you make it not spicy?" } },
+          { "thai": "หวาน", "roman": "wǎan", "mean": "sweet" },
+          { "thai": "เค็ม", "roman": "khem", "mean": "salty" },
+          { "thai": "เปรี้ยว", "roman": "bprîao", "mean": "sour" },
+          { "thai": "อร่อย", "roman": "à-rɔ̀i", "mean": "delicious", "example": { "thai": "อร่อยมาก", "roman": "à-rɔ̀i mâak", "mean": "Very tasty!" } }
+        ] },
+      { "id": "travel", "icon": "🚕", "name": "Travel", "note": "Add yùu thîi-nǎi after a place to ask where it is.",
+        "items": [
+          { "thai": "รถไฟ", "roman": "rót-fai", "mean": "train" },
+          { "thai": "รถเมล์", "roman": "rót-mee", "mean": "bus (city bus)" },
+          { "thai": "แท็กซี่", "roman": "thɛ́k-sîi", "mean": "taxi" },
+          { "thai": "สนามบิน", "roman": "sà-nǎam-bin", "mean": "airport", "example": { "thai": "ไปสนามบินเท่าไหร่", "roman": "bpai sà-nǎam-bin thâo-rài", "mean": "How much is it to the airport?" } },
+          { "thai": "สถานี", "roman": "sà-thǎa-nii", "mean": "station" },
+          { "thai": "โรงแรม", "roman": "roong-rɛɛm", "mean": "hotel" },
+          { "thai": "ตั๋ว", "roman": "dtǔa", "mean": "ticket" },
+          { "thai": "ห้องน้ำ", "roman": "hɔ̂ng-náam", "mean": "toilet, bathroom", "example": { "thai": "ห้องน้ำอยู่ที่ไหน", "roman": "hɔ̂ng-náam yùu thîi-nǎi", "mean": "Where is the toilet?" } },
+          { "thai": "ซ้าย", "roman": "sáai", "mean": "left" },
+          { "thai": "ขวา", "roman": "khwǎa", "mean": "right" },
+          { "thai": "ตรงไป", "roman": "dtrong bpai", "mean": "go straight on" },
+          { "thai": "ใกล้", "roman": "glâi", "mean": "near" },
+          { "thai": "ไกล", "roman": "glai", "mean": "far" }
+        ] },
+      { "id": "family", "icon": "👨‍👩‍👧", "name": "Family", "note": "Thai splits brothers and sisters by age: phîi is older, nɔ́ɔng is younger. Both are also used as friendly ways to address people.",
+        "items": [
+          { "thai": "ครอบครัว", "roman": "khrɔ̂ɔp-khrua", "mean": "family" },
+          { "thai": "พ่อ", "roman": "phɔ̂ɔ", "mean": "father" },
+          { "thai": "แม่", "roman": "mɛ̂ɛ", "mean": "mother" },
+          { "thai": "พี่ชาย", "roman": "phîi-chaai", "mean": "older brother" },
+          { "thai": "พี่สาว", "roman": "phîi-sǎao", "mean": "older sister" },
+          { "thai": "น้องชาย", "roman": "nɔ́ɔng-chaai", "mean": "younger brother" },
+          { "thai": "น้องสาว", "roman": "nɔ́ɔng-sǎao", "mean": "younger sister" },
+          { "thai": "ลูก", "roman": "lûuk", "mean": "child (son or daughter)" },
+          { "thai": "สามี", "roman": "sǎa-mii", "mean": "husband" },
+          { "thai": "ภรรยา", "roman": "phan-rá-yaa", "mean": "wife" },
+          { "thai": "ปู่", "roman": "bpùu", "mean": "grandfather (father’s father)" },
+          { "thai": "ย่า", "roman": "yâa", "mean": "grandmother (father’s mother)" },
+          { "thai": "ตา", "roman": "dtaa", "mean": "grandfather (mother’s father)" },
+          { "thai": "ยาย", "roman": "yaai", "mean": "grandmother (mother’s mother)" }
+        ] },
+      { "id": "questions", "icon": "❓", "name": "Questions", "note": "Question words usually go where the answer would be, often at the end: ‘You eat what?’",
+        "items": [
+          { "thai": "อะไร", "roman": "à-rai", "mean": "what", "example": { "thai": "คุณชื่ออะไร", "roman": "khun chʉ̂ʉ à-rai", "mean": "What’s your name?" } },
+          { "thai": "ใคร", "roman": "khrai", "mean": "who", "example": { "thai": "นั่นใคร", "roman": "nân khrai", "mean": "Who’s that?" } },
+          { "thai": "ที่ไหน", "roman": "thîi-nǎi", "mean": "where", "example": { "thai": "คุณอยู่ที่ไหน", "roman": "khun yùu thîi-nǎi", "mean": "Where are you?" } },
+          { "thai": "เมื่อไหร่", "roman": "mʉ̂a-rài", "mean": "when", "example": { "thai": "คุณจะกลับเมื่อไหร่", "roman": "khun jà glàp mʉ̂a-rài", "mean": "When are you going back?" } },
+          { "thai": "ทำไม", "roman": "tham-mai", "mean": "why", "example": { "thai": "ทำไมไม่มา", "roman": "tham-mai mâi maa", "mean": "Why didn’t you come?" } },
+          { "thai": "ยังไง", "roman": "yang-ngai", "mean": "how (spoken)", "example": { "thai": "ไปยังไง", "roman": "bpai yang-ngai", "mean": "How do I get there?" } },
+          { "thai": "เท่าไหร่", "roman": "thâo-rài", "mean": "how much", "example": { "thai": "อันนี้เท่าไหร่", "roman": "an níi thâo-rài", "mean": "How much is this?" } },
+          { "thai": "กี่", "roman": "gìi", "mean": "how many", "example": { "thai": "กี่โมงแล้ว", "roman": "gìi moong lɛ́ɛo", "mean": "What time is it?" } },
+          { "thai": "ไหม", "roman": "mǎi", "mean": "yes/no question word (at the end)", "example": { "thai": "หิวไหม", "roman": "hǐu mǎi", "mean": "Are you hungry?" } },
+          { "thai": "ใช่ไหม", "roman": "châi mǎi", "mean": "right? isn’t it?", "example": { "thai": "คุณเป็นคนไทยใช่ไหม", "roman": "khun bpen khon thai châi mǎi", "mean": "You’re Thai, aren’t you?" } }
+        ] },
+      { "id": "particles", "icon": "🙏", "name": "Polite particles", "note": "Put one at the end of a sentence to sound polite. Men say khráp every time. Women say khâ for statements and answers, and khá for questions and after ná.",
+        "items": [
+          { "thai": "ครับ", "roman": "khráp", "mean": "polite ending for men: statements, questions and answers; also ‘yes’", "example": { "thai": "ขอบคุณครับ", "roman": "khɔ̀ɔp-khun khráp", "mean": "Thank you. (a man speaking)" } },
+          { "thai": "ค่ะ", "roman": "khâ", "mean": "polite ending for women: statements and answers; also ‘yes’", "example": { "thai": "ขอบคุณค่ะ", "roman": "khɔ̀ɔp-khun khâ", "mean": "Thank you. (a woman speaking)" } },
+          { "thai": "คะ", "roman": "khá", "mean": "polite ending for women: questions, and after ná", "example": { "thai": "สบายดีไหมคะ", "roman": "sà-baai dii mǎi khá", "mean": "How are you? (a woman asking)" } },
+          { "thai": "นะ", "roman": "ná", "mean": "softener: ‘okay?’, ‘you know’; makes requests friendly", "example": { "thai": "ขอบคุณนะคะ", "roman": "khɔ̀ɔp-khun ná khá", "mean": "Thanks a lot. (a woman speaking)" } }
+        ] }
+    ]
   }
 }

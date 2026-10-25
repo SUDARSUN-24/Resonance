@@ -305,7 +305,7 @@ td.t-none{color:var(--mu);}
   .tone .tname,.cls-head h3,.sub-h{font-size:12px;letter-spacing:1.5px;}
   .vs{font-size:10px;}
 }
-/* Verbs and grammar */
+/* Verbs, grammar and topic words */
 .pronouns{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:1.2rem;}
 .filter{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin:.2rem 0 1rem;}
 .filter input{flex:1 1 220px;min-width:0;padding:.75rem .9rem;border-radius:10px;border:1px solid var(--brd2);background:rgba(0,0,0,.22);color:var(--t);font-family:'Outfit',sans-serif;font-size:.95rem;}
@@ -319,6 +319,11 @@ body.light .filter input:focus{border-color:var(--v);box-shadow:0 0 0 3px rgba(1
 .markers{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));}
 .marker > .th:first-child{font-size:1.9rem;}
 .marker .how{font-size:.84rem;color:var(--t2);line-height:1.5;margin-top:.2rem;}
+.topic-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem;}
+.topic-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem .95rem;border-radius:999px;border:1.5px solid var(--brd);background:var(--card);color:var(--t2);font-family:'Outfit',sans-serif;font-size:.9rem;cursor:pointer;transition:border-color .2s,color .2s;}
+.topic-btn:hover{color:var(--t);}
+.topic-btn[aria-pressed="true"]{border-color:var(--c);color:var(--t);background:rgba(0,245,255,.08);}
+body.light .topic-btn[aria-pressed="true"]{border-color:var(--v);background:rgba(109,40,217,.07);}
 @media(prefers-reduced-motion:reduce){.ls.on,.warn.flash{animation:none;}}
 
 footer{position:relative;z-index:10;border-top:1px solid var(--brd2);padding:1.6rem 5%;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:2px;color:var(--mu);}
@@ -446,6 +451,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <a href="#sounds">SOUNDS</a>
       <a href="#verbs">VERBS</a>
       <a href="#grammar">GRAMMAR</a>
+      <a href="#words">WORDS</a>
     </div>
 
     <div class="status">
@@ -851,6 +857,28 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     return s;
   }
 
+  function renderTopics(T){
+    const s=lesson('words','🗂️','WORDS BY TOPIC','LESSON 7',T.intro);
+    const row=el('div','topic-row');row.setAttribute('role','group');row.setAttribute('aria-label','Topics');
+    const note=el('p','sub-p'),box=el('div');
+    let saved=null;try{saved=localStorage.getItem('resonance_learn_topic');}catch(e){}
+    function show(L){
+      row.querySelectorAll('.topic-btn').forEach(function(b){b.setAttribute('aria-pressed',String(b._id===L.id));});
+      note.textContent=L.note;
+      box.innerHTML='';const g=grid();L.items.forEach(function(it){g.appendChild(card(it));});box.appendChild(g);
+      try{localStorage.setItem('resonance_learn_topic',L.id);}catch(e){}
+    }
+    T.lists.forEach(function(L){
+      const b=el('button','topic-btn');b.type='button';b._id=L.id;
+      b.appendChild(el('span',null,L.icon));b.appendChild(document.createTextNode(L.name+' · '+L.items.length));
+      b.addEventListener('click',function(){stopAll();show(L);});
+      row.appendChild(b);
+    });
+    s.appendChild(row);s.appendChild(note);s.appendChild(box);
+    show(T.lists.find(function(L){return L.id===saved;})||T.lists[0]);
+    return s;
+  }
+
   function renderKey(R){
     $('key-intro').textContent=R.intro;
     const box=$('keys');box.innerHTML='';
@@ -882,6 +910,7 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     box.appendChild(renderSounds(data.sounds));
     box.appendChild(renderVerbs(data.verbs));
     box.appendChild(renderGrammar(data.grammar));
+    box.appendChild(renderTopics(data.topics));
     watchLessons();
     if(location.hash){const t=$(location.hash.slice(1));if(t)t.scrollIntoView();}
   }
