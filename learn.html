@@ -305,6 +305,16 @@ td.t-none{color:var(--mu);}
   .tone .tname,.cls-head h3,.sub-h{font-size:12px;letter-spacing:1.5px;}
   .vs{font-size:10px;}
 }
+/* Verbs */
+.pronouns{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:1.2rem;}
+.filter{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin:.2rem 0 1rem;}
+.filter input{flex:1 1 220px;min-width:0;padding:.75rem .9rem;border-radius:10px;border:1px solid var(--brd2);background:rgba(0,0,0,.22);color:var(--t);font-family:'Outfit',sans-serif;font-size:.95rem;}
+body.light .filter input{background:#f8faff;border-color:#e2e8f0;}
+.filter input:focus{outline:none;border-color:var(--c);box-shadow:0 0 0 3px rgba(0,245,255,.15);}
+body.light .filter input:focus{border-color:var(--v);box-shadow:0 0 0 3px rgba(109,40,217,.15);}
+.filter output{font-size:.8rem;color:var(--mu);}
+.verbs{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));}
+.empty{color:var(--mu);font-size:.9rem;padding:.6rem 0;}
 @media(prefers-reduced-motion:reduce){.ls.on,.warn.flash{animation:none;}}
 
 footer{position:relative;z-index:10;border-top:1px solid var(--brd2);padding:1.6rem 5%;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:2px;color:var(--mu);}
@@ -430,6 +440,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <a href="#consonants">CONSONANTS</a>
       <a href="#vowels">VOWELS</a>
       <a href="#sounds">SOUNDS</a>
+      <a href="#verbs">VERBS</a>
     </div>
 
     <div class="status">
@@ -784,6 +795,29 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     return s;
   }
 
+  /* Plain text to search in: Thai, meaning, and romanization without tone accents */
+  function searchText(it){return (it.thai+' '+it.mean+' '+it.roman.normalize('NFD').replace(/[̀-ͯ]/g,'')).toLowerCase();}
+
+  function renderVerbs(V){
+    const s=lesson('verbs','🏃','COMMON VERBS','LESSON 5',V.intro);
+    const pg=grid('pronouns');V.pronouns.forEach(function(p){pg.appendChild(card(p,{meta:'“I”'}));});
+    s.appendChild(pg);
+    const f=el('div','filter'),inp=el('input'),out=el('output');
+    inp.type='search';inp.placeholder='Find a verb: eat, กิน, gin…';inp.setAttribute('aria-label','Find a verb');
+    out.setAttribute('aria-live','polite');
+    f.appendChild(inp);f.appendChild(out);s.appendChild(f);
+    const g=grid('verbs'),cards=V.list.map(function(v){const c=card(v);c._q=searchText(v);g.appendChild(c);return c;});
+    const none=el('p','empty','No verb matches that. Try an English word, the Thai, or the romanization without accents.');none.hidden=true;
+    s.appendChild(g);s.appendChild(none);
+    function filter(){
+      const q=inp.value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');let n=0;
+      cards.forEach(function(c){const on=!q||c._q.indexOf(q)>-1;c.hidden=!on;if(on)n++;});
+      out.textContent=q?n+' of '+cards.length+' verbs':cards.length+' verbs';none.hidden=n>0;
+    }
+    inp.addEventListener('input',filter);filter();
+    return s;
+  }
+
   function renderKey(R){
     $('key-intro').textContent=R.intro;
     const box=$('keys');box.innerHTML='';
@@ -798,6 +832,9 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
       entries.forEach(function(en){
         if(!en.isIntersecting)return;
         Object.keys(links).forEach(function(k){links[k].classList.toggle('on',k===en.target.id);});
+        /* On a phone the bar scrolls sideways: keep the lit link in view without moving the page */
+        const bar=$('subnav'),on=links[en.target.id];
+        if(bar&&on&&bar.scrollWidth>bar.clientWidth)bar.scrollLeft=on.offsetLeft-(bar.clientWidth-on.offsetWidth)/2;
       });
     },{rootMargin:'-45% 0px -50% 0px'});
     Object.keys(links).forEach(function(k){const s=$(k);if(s)io.observe(s);});
@@ -810,6 +847,7 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     box.appendChild(renderConsonants(data.consonants));
     box.appendChild(renderVowels(data.vowels));
     box.appendChild(renderSounds(data.sounds));
+    box.appendChild(renderVerbs(data.verbs));
     watchLessons();
     if(location.hash){const t=$(location.hash.slice(1));if(t)t.scrollIntoView();}
   }

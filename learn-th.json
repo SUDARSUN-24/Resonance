@@ -234,5 +234,61 @@
           { "thai": "ชอบ", "roman": "chɔ̂ɔp", "mean": "to like" }
         ] }
     ]
+  },
+
+  "verbs": {
+    "intro": "46 everyday verbs, each with an example sentence. The examples use chǎn for ‘I’. Men often say phǒm instead: both are below.",
+    "pronouns": [
+      { "thai": "ฉัน", "roman": "chǎn", "mean": "I (anyone; mostly women)" },
+      { "thai": "ผม", "roman": "phǒm", "mean": "I (men)" }
+    ],
+    "list": [
+      { "thai": "ไป", "roman": "bpai", "mean": "to go", "example": { "thai": "ฉันจะไปตลาด", "roman": "chǎn jà bpai dtà-làat", "mean": "I’m going to the market." } },
+      { "thai": "มา", "roman": "maa", "mean": "to come", "example": { "thai": "เขามาจากเชียงใหม่", "roman": "khǎo maa jàak chiang-mài", "mean": "He/She comes from Chiang Mai." } },
+      { "thai": "กิน", "roman": "gin", "mean": "to eat", "example": { "thai": "ฉันกินข้าวแล้ว", "roman": "chǎn gin khâao lɛ́ɛo", "mean": "I’ve already eaten." } },
+      { "thai": "ดื่ม", "roman": "dʉ̀ʉm", "mean": "to drink", "example": { "thai": "ฉันดื่มกาแฟทุกเช้า", "roman": "chǎn dʉ̀ʉm gaa-fɛɛ thúk cháao", "mean": "I drink coffee every morning." } },
+      { "thai": "อยาก", "roman": "yàak", "mean": "to want (to do)", "example": { "thai": "ฉันอยากไปทะเล", "roman": "chǎn yàak bpai thá-lee", "mean": "I want to go to the sea." } },
+      { "thai": "ต้องการ", "roman": "dtɔ̂ng-gaan", "mean": "to want, to need (polite)", "example": { "thai": "คุณต้องการอะไร", "roman": "khun dtɔ̂ng-gaan à-rai", "mean": "What would you like?" } },
+      { "thai": "ชอบ", "roman": "chɔ̂ɔp", "mean": "to like", "example": { "thai": "ฉันชอบอาหารไทย", "roman": "chǎn chɔ̂ɔp aa-hǎan thai", "mean": "I like Thai food." } },
+      { "thai": "รัก", "roman": "rák", "mean": "to love", "example": { "thai": "แม่รักลูก", "roman": "mɛ̂ɛ rák lûuk", "mean": "A mother loves her children." } },
+      { "thai": "รู้", "roman": "rúu", "mean": "to know (a fact)", "example": { "thai": "ฉันไม่รู้", "roman": "chǎn mâi rúu", "mean": "I don’t know." } },
+      { "thai": "รู้จัก", "roman": "rúu-jàk", "mean": "to know (a person or place)", "example": { "thai": "คุณรู้จักเขาไหม", "roman": "khun rúu-jàk khǎo mǎi", "mean": "Do you know him/her?" } },
+      { "thai": "เข้าใจ", "roman": "khâo-jai", "mean": "to understand", "example": { "thai": "ฉันไม่เข้าใจ", "roman": "chǎn mâi khâo-jai", "mean": "I don’t understand." } },
+      { "thai": "พูด", "roman": "phûut", "mean": "to speak", "example": { "thai": "เขาพูดภาษาไทยได้", "roman": "khǎo phûut phaa-sǎa thai dâi", "mean": "He/She can speak Thai." } },
+      { "thai": "ซื้อ", "roman": "sʉ́ʉ", "mean": "to buy", "example": { "thai": "ฉันจะซื้อเสื้อตัวนี้", "roman": "chǎn jà sʉ́ʉ sʉ̂a dtua níi", "mean": "I’ll buy this shirt." } },
+      { "thai": "ขาย", "roman": "khǎai", "mean": "to sell", "example": { "thai": "ร้านนี้ขายผลไม้", "roman": "ráan níi khǎai phǒn-lá-mái", "mean": "This shop sells fruit." } },
+      { "thai": "ทำ", "roman": "tham", "mean": "to do, to make", "example": { "thai": "คุณกำลังทำอะไร", "roman": "khun gam-lang tham à-rai", "mean": "What are you doing?" } },
+      { "thai": "ทำงาน", "roman": "tham-ngaan", "mean": "to work", "example": { "thai": "พ่อทำงานที่โรงพยาบาล", "roman": "phɔ̂ɔ tham-ngaan thîi roong-phá-yaa-baan", "mean": "Dad works at the hospital." } },
+      { "thai": "เรียน", "roman": "rian", "mean": "to study", "example": { "thai": "ฉันเรียนภาษาไทยทุกวัน", "roman": "chǎn rian phaa-sǎa thai thúk wan", "mean": "I study Thai every day." } },
+      { "thai": "อ่าน", "roman": "àan", "mean": "to read", "example": { "thai": "เขาชอบอ่านหนังสือ", "roman": "khǎo chɔ̂ɔp àan nǎng-sʉ̌ʉ", "mean": "He/She likes reading books." } },
+      { "thai": "เขียน", "roman": "khǐan", "mean": "to write", "example": { "thai": "เขียนชื่อตรงนี้", "roman": "khǐan chʉ̂ʉ dtrong níi", "mean": "Write your name here." } },
+      { "thai": "ดู", "roman": "duu", "mean": "to watch, to look at", "example": { "thai": "เราดูหนังกันไหม", "roman": "rao duu nǎng gan mǎi", "mean": "Shall we watch a film together?" } },
+      { "thai": "ฟัง", "roman": "fang", "mean": "to listen", "example": { "thai": "ฉันชอบฟังเพลง", "roman": "chǎn chɔ̂ɔp fang phleeng", "mean": "I like listening to music." } },
+      { "thai": "เห็น", "roman": "hěn", "mean": "to see", "example": { "thai": "คุณเห็นแมวของฉันไหม", "roman": "khun hěn mɛɛo khɔ̌ɔng chǎn mǎi", "mean": "Have you seen my cat?" } },
+      { "thai": "นอน", "roman": "nɔɔn", "mean": "to sleep, to lie down", "example": { "thai": "เมื่อคืนฉันนอนดึก", "roman": "mʉ̂a-khʉʉn chǎn nɔɔn dʉ̀k", "mean": "I went to bed late last night." } },
+      { "thai": "ตื่น", "roman": "dtʉ̀ʉn", "mean": "to wake up", "example": { "thai": "ฉันตื่นหกโมงเช้า", "roman": "chǎn dtʉ̀ʉn hòk moong cháao", "mean": "I wake up at six in the morning." } },
+      { "thai": "นั่ง", "roman": "nâng", "mean": "to sit", "example": { "thai": "เชิญนั่งก่อน", "roman": "chəən nâng gɔ̀ɔn", "mean": "Please have a seat." } },
+      { "thai": "ยืน", "roman": "yʉʉn", "mean": "to stand", "example": { "thai": "เขายืนรอรถเมล์", "roman": "khǎo yʉʉn rɔɔ rót-mee", "mean": "He/She is standing, waiting for the bus." } },
+      { "thai": "เดิน", "roman": "dəən", "mean": "to walk", "example": { "thai": "เราเดินไปโรงเรียน", "roman": "rao dəən bpai roong-rian", "mean": "We walk to school." } },
+      { "thai": "วิ่ง", "roman": "wîng", "mean": "to run", "example": { "thai": "เขาวิ่งทุกเช้า", "roman": "khǎo wîng thúk cháao", "mean": "He/She runs every morning." } },
+      { "thai": "ขับ", "roman": "khàp", "mean": "to drive", "example": { "thai": "คุณขับรถเป็นไหม", "roman": "khun khàp rót bpen mǎi", "mean": "Can you drive?" } },
+      { "thai": "รอ", "roman": "rɔɔ", "mean": "to wait", "example": { "thai": "รอสักครู่นะ", "roman": "rɔɔ sàk-khrûu ná", "mean": "Wait a moment, okay?" } },
+      { "thai": "ช่วย", "roman": "chûai", "mean": "to help", "example": { "thai": "ช่วยฉันหน่อยได้ไหม", "roman": "chûai chǎn nɔ̀i dâi mǎi", "mean": "Could you help me, please?" } },
+      { "thai": "ให้", "roman": "hâi", "mean": "to give", "example": { "thai": "เขาให้ของขวัญฉัน", "roman": "khǎo hâi khɔ̌ɔng-khwǎn chǎn", "mean": "He/She gave me a present." } },
+      { "thai": "ได้", "roman": "dâi", "mean": "to get, to receive; can", "example": { "thai": "ฉันได้จดหมายจากแม่", "roman": "chǎn dâi jòt-mǎai jàak mɛ̂ɛ", "mean": "I got a letter from Mum." } },
+      { "thai": "มี", "roman": "mii", "mean": "to have; there is", "example": { "thai": "ฉันมีพี่สาวหนึ่งคน", "roman": "chǎn mii phîi-sǎao nʉ̀ng khon", "mean": "I have one older sister." } },
+      { "thai": "เป็น", "roman": "bpen", "mean": "to be (a teacher, a student…)", "example": { "thai": "เขาเป็นครู", "roman": "khǎo bpen khruu", "mean": "He/She is a teacher." } },
+      { "thai": "อยู่", "roman": "yùu", "mean": "to be (at a place), to live", "example": { "thai": "ฉันอยู่ที่บ้าน", "roman": "chǎn yùu thîi bâan", "mean": "I’m at home." } },
+      { "thai": "คิด", "roman": "khít", "mean": "to think", "example": { "thai": "ฉันคิดว่าฝนจะตก", "roman": "chǎn khít wâa fǒn jà dtòk", "mean": "I think it’s going to rain." } },
+      { "thai": "ถาม", "roman": "thǎam", "mean": "to ask", "example": { "thai": "ขอถามหน่อยได้ไหม", "roman": "khɔ̌ɔ thǎam nɔ̀i dâi mǎi", "mean": "May I ask you something?" } },
+      { "thai": "เปิด", "roman": "bpə̀ət", "mean": "to open; to turn on", "example": { "thai": "เปิดหน้าต่างได้ไหม", "roman": "bpə̀ət nâa-dtàang dâi mǎi", "mean": "Could you open the window?" } },
+      { "thai": "ปิด", "roman": "bpìt", "mean": "to close; to turn off", "example": { "thai": "ปิดไฟก่อนนอน", "roman": "bpìt fai gɔ̀ɔn nɔɔn", "mean": "Turn off the light before bed." } },
+      { "thai": "เล่น", "roman": "lên", "mean": "to play", "example": { "thai": "ลูกชอบเล่นฟุตบอล", "roman": "lûuk chɔ̂ɔp lên fút-bɔɔn", "mean": "My child likes playing football." } },
+      { "thai": "ใช้", "roman": "chái", "mean": "to use", "example": { "thai": "ฉันใช้โทรศัพท์ทุกวัน", "roman": "chǎn chái thoo-rá-sàp thúk wan", "mean": "I use my phone every day." } },
+      { "thai": "จ่าย", "roman": "jàai", "mean": "to pay", "example": { "thai": "ฉันจ่ายเอง", "roman": "chǎn jàai eeng", "mean": "I’ll pay." } },
+      { "thai": "ลืม", "roman": "lʉʉm", "mean": "to forget", "example": { "thai": "อย่าลืมนะ", "roman": "yàa lʉʉm ná", "mean": "Don’t forget!" } },
+      { "thai": "กลับ", "roman": "glàp", "mean": "to go back, to return", "example": { "thai": "ฉันจะกลับบ้านพรุ่งนี้", "roman": "chǎn jà glàp bâan phrûng-níi", "mean": "I’m going home tomorrow." } },
+      { "thai": "หา", "roman": "hǎa", "mean": "to look for", "example": { "thai": "ฉันหากุญแจไม่เจอ", "roman": "chǎn hǎa gun-jɛɛ mâi jəə", "mean": "I can’t find my keys." } }
+    ]
   }
 }
