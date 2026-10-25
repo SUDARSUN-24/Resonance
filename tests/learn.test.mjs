@@ -134,3 +134,24 @@ test('ไ and ใ are always romanized ai, never aai', () => {
     }
   }
 });
+
+test('about 40 verbs, each once, each used in its own example sentence', () => {
+  const verbs = DATA.verbs.list;
+  assert.ok(verbs.length >= 40, `only ${verbs.length} verbs`);
+  assert.equal(new Set(verbs.map((v) => v.thai)).size, verbs.length, 'a verb is listed twice');
+  assert.match(DATA.verbs.intro, new RegExp(`^${verbs.length} `), 'the intro gives the right number of verbs');
+  for (const v of verbs) {
+    assert.ok(v.example, `${v.thai} needs an example sentence`);
+    assert.ok(v.example.thai.includes(v.thai), `${v.thai}: the example doesn’t use the verb`);
+  }
+});
+
+test('Thai words in explanations can also be heard somewhere on the page', () => {
+  const spoken = new Set(ALL.flatMap(({ item }) => [item.thai, item.example?.thai]).filter(Boolean));
+  const walk = (node, path) => {
+    if (node && typeof node === 'object') { for (const [k, v] of Object.entries(node)) walk(v, Array.isArray(node) ? `${path}[${k}]` : `${path}.${k}`); return; }
+    if (typeof node !== 'string' || !/\.(intro|note|tip|how|where|why|title)$/.test(path)) return;
+    for (const w of node.match(/[\u0E01-\u0E4E]{2,}/g) || []) assert.ok(spoken.has(w), `${path}: “${w}” has no Listen button anywhere`);
+  };
+  walk(DATA, 'learn-th');
+});
