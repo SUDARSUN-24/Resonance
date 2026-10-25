@@ -846,7 +846,8 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     const m=matchVoices(state.lang),sel=$('inp-device'),meta=$('lang-meta');
     sel.innerHTML='';
     function opt(v,t){const o=document.createElement('option');o.value=v;o.textContent=t;sel.appendChild(o);}
-    opt('',m.all.length?'✦ Auto — best match for '+VOICES[state.voice].name:'✦ Browser default');
+    const auto=autoVoice(),shortName=function(v){return v.name.replace(/^(Microsoft|Google)\s+/,'').replace(/\s+-\s+.*$/,'');};
+    opt('',auto?'✦ Auto — '+shortName(auto)+' for '+VOICES[state.voice].name:'✦ Browser default');
     m.all.forEach(function(v){opt(v.voiceURI,v.name.replace(/^(Microsoft|Google)\s+/,'')+' · '+v.lang+(v.localService?'':' ☁'));});
     if(state.deviceVoice&&m.all.some(function(v){return v.voiceURI===state.deviceVoice;}))sel.value=state.deviceVoice;
     else{if(sysVoices.length)state.deviceVoice='';sel.value='';}
@@ -857,25 +858,45 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     else if(m.exact.length){meta.className='lang-meta ok';meta.textContent='● '+m.exact.length+' voice'+(m.exact.length>1?'s':'')+' ready on this device';}
     else if(m.near.length){meta.className='lang-meta ok';meta.textContent='● Using a '+langInfo(m.near[0].lang.replace(/_/g,'-')).name+' voice for this language';}
     else{meta.className='lang-meta warn';meta.textContent='▲ No voice for this language on your device, so your browser will use its default. Microsoft Edge includes 100+ online voices, or you can add one in your system speech settings.';}
+    if(m.all.length&&ignoresPitch(pickVoice())&&Math.abs(effectivePitch()-1)>.05)meta.textContent+=' · This voice can\'t change pitch, so only the speed changes.';
   }
 
-  function scoreVoice(v,gender){
+  /* Edge's online "Natural" voices sound best but ignore the pitch setting */
+  function ignoresPitch(v){return !!v&&!v.localService&&/microsoft/i.test(v.name);}
+  function wantsPitch(p){return p<.65||p>1.45;}
+  function effectivePitch(){return clamp(state.pitch*(EMOTIONS[state.emotion]||EMOTIONS.neutral).p,0,2);}
+  function genderOf(v){return FEMALE_RE.test(v.name)?'female':MALE_RE.test(v.name)?'male':'';}
+
+  function scoreVoice(v,gender,pitch){
     const n=v.name;let s=0;
     if(/natural|neural|online|premium|enhanced|wavenet/i.test(n))s+=40;
     if(/google/i.test(n))s+=15;
     const f=FEMALE_RE.test(n),m=MALE_RE.test(n);
     if(gender==='female'){if(f)s+=25;if(m)s-=25;}else{if(m)s+=25;if(f)s-=25;}
     if(v.default)s+=2;
+    /* A very low or high pitch is the whole character (DEEP, ARIA‑7), so skip voices that can't do it */
+    if(wantsPitch(pitch)&&ignoresPitch(v))s-=60;
     return s;
   }
 
-  function pickVoice(){
-    const m=matchVoices(state.lang);
-    if(state.deviceVoice){const chosen=m.all.find(function(v){return v.voiceURI===state.deviceVoice;});if(chosen)return chosen;}
-    const pool=m.exact.length?m.exact:m.near;
+  /* Each character gets its own slot, so characters of the same gender don't all land on one device voice */
+  function slotOf(id){const g=VOICES[id].gender;return Object.keys(VOICES).filter(function(k){return VOICES[k].gender===g;}).indexOf(id);}
+
+  function autoVoice(){
+    const m=matchVoices(state.lang),pool=m.exact.length?m.exact:m.near;
     if(!pool.length)return null;
-    const g=VOICES[state.voice].gender;
-    return pool.slice().sort(function(a,b){return scoreVoice(b,g)-scoreVoice(a,g);})[0];
+    const g=VOICES[state.voice].gender,p=effectivePitch();
+    /* Name tie-break keeps the pick stable while Edge loads its voices in batches */
+    const ranked=pool.map(function(v){return {v:v,s:scoreVoice(v,g,p)};})
+      .sort(function(a,b){return b.s-a.s||(a.v.name<b.v.name?-1:a.v.name>b.v.name?1:0);});
+    const top=ranked.filter(function(r){return r.s>=ranked[0].s-15&&genderOf(r.v)===g;});
+    if(!top.length)return ranked[0].v;
+    return top[slotOf(state.voice)%top.length].v;
+  }
+
+  function pickVoice(){
+    if(state.deviceVoice){const chosen=matchVoices(state.lang).all.find(function(v){return v.voiceURI===state.deviceVoice;});if(chosen)return chosen;}
+    return autoVoice();
   }
 
   function loadVoices(){
@@ -921,11 +942,14 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     el.style.setProperty('--fill',pct+'%');
     $(map[1]).textContent=key==='rate'?state.rate.toFixed(2)+'x':key==='pitch'?state.pitch.toFixed(2):Math.round(state.volume*100)+'%';
     updateStats();
+    if(key==='pitch')refreshDevice();
   }
 
   function selectVoice(id,keepSliders){
     if(!VOICES[id])return;
     state.voice=id;
+    /* Picking a character goes back to its own voice instead of a device voice chosen earlier */
+    if(!keepSliders)state.deviceVoice='';
     document.querySelectorAll('.vp').forEach(function(c){const on=c.dataset.voice===id;c.classList.toggle('selected',on);c.setAttribute('aria-checked',on);});
     if(!keepSliders){setSlider('rate',VOICES[id].rate);setSlider('pitch',VOICES[id].pitch);}
     applyColor();updateChips();refreshDevice();persist();
@@ -944,7 +968,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     if(!EMOTIONS[id])return;
     state.emotion=id;
     document.querySelectorAll('.emo').forEach(function(b){const on=b.dataset.e===id;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});
-    updateChips();updateStats();persist();
+    updateChips();updateStats();refreshDevice();persist();
   }
 
   function updateStats(){
