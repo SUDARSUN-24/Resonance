@@ -2,11 +2,11 @@
    Pages and scripts: network first (so updates show up straight away), cache as fallback.
    Icons and images: cache first, refreshed in the background. Fonts: stale-while-revalidate.
    Never cached: /api/ (leaderboard, tracking, admin), the owner dashboard and PHP/SQL files. */
-const VERSION = 'resonance-v8';
+const VERSION = 'resonance-v9';
 const RUNTIME = 'resonance-runtime-v1';
 const CORE = [
   './', 'index.html', 'services.html', 'contact.html', 'clone.html', 'story.html', 'play.html', 'read.html', '404.html',
-  'progress.js', 'phrases.js', 'challenge.js', 'manifest.webmanifest', 'favicon.svg',
+  'progress.js', 'phrases.js', 'speech.js', 'challenge.js', 'manifest.webmanifest', 'favicon.svg',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'
 ];
 
