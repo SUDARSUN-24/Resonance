@@ -312,7 +312,7 @@ body.light .take{background:#f8faff;}
 @media(prefers-reduced-motion:reduce){.fx.on .fx-ico,.mic-btn.rec{animation:none;}}
 @media(max-width:600px){.take-top{font-size:11px;letter-spacing:1px;}}
 
-/* Fine-tune mixer */
+/* Fine-tune mixer and saved versions */
 .mix{--vc:var(--c);margin-top:1rem;padding:1rem 1.1rem 1.1rem;border-radius:14px;border:1px solid var(--brd2);background:rgba(0,0,0,.16);transition:opacity .25s;}
 body.light .mix{--vc:var(--v);background:#f8faff;}
 .mix.off{opacity:.45;pointer-events:none;}
@@ -330,6 +330,18 @@ body.light .mix input[type=range]{background:linear-gradient(90deg,var(--vc) var
 .mix input[type=range]:focus-visible{box-shadow:0 0 0 3px color-mix(in srgb,var(--vc) 25%,transparent);}
 .mix-btns{display:flex;gap:.4rem;}
 .mix-note{margin-top:.9rem;font-size:.78rem;color:var(--mu);line-height:1.55;}
+.saved{margin-top:.6rem;padding:.9rem 1rem;border-radius:12px;border:1px solid var(--brd);background:rgba(0,0,0,.18);display:grid;gap:.7rem;}
+body.light .saved{background:#f8faff;}
+.saved-list{list-style:none;display:grid;gap:.6rem;margin:0;padding:0;}
+.sv{display:grid;gap:.45rem;padding:.7rem .8rem;border-radius:10px;border:1px solid var(--brd2);}
+.sv-top{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;font-size:.82rem;}
+.sv-top b{color:var(--t);font-weight:600;overflow-wrap:anywhere;}
+.sv-top span{color:var(--mu);font-size:.76rem;white-space:nowrap;}
+.sv audio{width:100%;height:36px;}
+.sv-btns{display:flex;gap:.5rem;flex-wrap:wrap;}
+.sv-btns .btn-mini{flex:1 1 120px;padding:.55rem .7rem;}
+.saved-clear{justify-self:end;}
+.saved-clear.arm{border-color:var(--p);color:var(--p);}
 @media(max-width:600px){.mix{padding:.9rem;}.mix-grid{grid-template-columns:1fr 1fr;gap:.9rem 1rem;}.sl-top,.mix-top{font-size:11px;letter-spacing:1px;}.sl-marks{font-size:10px;}.sl-marks span:nth-child(2):not(:last-child){display:none;}.sl-val{font-size:12px;}}
 @media(max-width:380px){.mix-grid{grid-template-columns:1fr;}}
 
@@ -519,12 +531,13 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <div class="mix" id="mix">
         <div class="mix-top"><span>🎚️ FINE-TUNE YOUR RECORDING</span><span class="mix-btns"><button class="btn-mini" id="mix-play" type="button" disabled>▶ PREVIEW</button><button class="btn-mini" id="mix-reset" type="button">↺ RESET</button></span></div>
         <div class="mix-grid" id="mix-grid"></div>
-        <p class="mix-note"><span id="mix-note">Works on your recording, on top of the effect chosen above (ORIGINAL for your plain voice).</span> Pitch and speed change separately. ⬇ Download saves exactly what you hear.</p>
+        <p class="mix-note"><span id="mix-note">Works on your recording, on top of the effect chosen above (ORIGINAL for your plain voice).</span> Pitch and speed change separately. ⬇ Download and 💾 Save keep exactly what you hear.</p>
       </div>
       <div class="fx-actions">
         <button class="btn-sec" id="btn-live" type="button" aria-pressed="false">🎧 LIVE MIC: OFF</button>
         <button class="btn-sec btn-take" id="btn-take" type="button" aria-pressed="false" disabled>⏺ RECORD TAKE</button>
         <button class="btn-sec" id="btn-dl" type="button" disabled>⬇ DOWNLOAD WAV</button>
+        <button class="btn-sec" id="btn-save" type="button" disabled>💾 SAVE VERSION</button>
         <button class="btn-stop" id="btn-fx-stop" type="button">■ STOP</button>
       </div>
       <p class="mic-err" id="mic-err" role="alert" hidden></p>
@@ -534,7 +547,12 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
         <audio id="take-audio" controls preload="metadata"></audio>
         <button class="btn-sec" id="btn-take-dl" type="button">⬇ DOWNLOAD TAKE</button>
       </div>
-      <p class="mic-note">🎙️ <b>Live mic</b> asks your browser for microphone access the first time. Your voice is processed on this device and <b>never uploaded</b>., and takes stay in this tab until you download them. Use headphones so the speakers don't feed back into the mic.</p>
+      <div class="saved" id="saved" hidden>
+        <div class="take-top"><span>💾 SAVED VERSIONS</span><span id="saved-meta"></span></div>
+        <ul class="saved-list" id="saved-list"></ul>
+        <button class="btn-mini saved-clear" id="saved-clear" type="button">🗑 DELETE ALL</button>
+      </div>
+      <p class="mic-note">🎙️ <b>Live mic</b> asks your browser for microphone access the first time. Your voice is processed on this device and <b>never uploaded</b>. Live takes stay in this tab until you download them. <span id="save-note">Versions you 💾 save are kept in this browser on this device, so you can download them later, until you delete them.</span> Use headphones so the speakers don't feed back into the mic.</p>
     </section>
 
   </main>
@@ -870,7 +888,7 @@ if(!window.addTilt)window.addTilt=function(){};
     const b=prepare(raw);
     if(!b){setRecStatus('TOO QUIET · TRY SPEAKING CLOSER TO THE MIC');toast('🔇 I could barely hear you. Try again a bit louder.');return;}
     buffer=b;
-    $('wave-wrap').hidden=false;$('rec-actions').hidden=false;$('btn-dl').disabled=false;$('mix-play').disabled=false;
+    $('wave-wrap').hidden=false;$('rec-actions').hidden=false;$('btn-dl').disabled=false;$('btn-save').disabled=false;$('mix-play').disabled=false;
     drawWave();
     const a=analyze(b.getChannelData(0),b.sampleRate);
     if(!a){
@@ -1442,7 +1460,7 @@ if(!window.addTilt)window.addTilt=function(){};
     {k:'reverb',name:'REVERB',min:0,  max:100,step:5,  get:pct, put:frac,show:showPct,marks:['DRY','HALL']},
     {k:'vol',   name:'VOLUME',min:0,  max:200,step:5,  get:pct, put:frac,show:showPct,marks:['QUIET','LOUD']}
   ];
-  /* A short description of the settings */
+  /* A short description of the settings, for saved versions */
   function mixLabel(fx){
     if(!mixOn())return fx.name;
     const p=[fx.name];
@@ -1478,6 +1496,84 @@ if(!window.addTilt)window.addTilt=function(){};
     if(playing&&!playing.raw)playFx(playing.fx);
   });
 
+  /* ═══════════ SAVED VERSIONS ═══════════
+     Kept in this browser (IndexedDB) so they can be downloaded later, and never uploaded.
+     If the browser blocks storage, they are kept in this tab instead. */
+  const SAVE_MAX=12;
+  const store=(function(){
+    let mem=null,memId=0,dbp=null;
+    function open(){
+      if(!dbp)dbp=new Promise(function(res,rej){
+        try{
+          const r=indexedDB.open('resonance-voice',1);
+          r.onupgradeneeded=function(){r.result.createObjectStore('versions',{keyPath:'id',autoIncrement:true});};
+          r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};
+        }catch(e){rej(e);}
+      });
+      return dbp;
+    }
+    function run(mode,fn){
+      return open().then(function(db){return new Promise(function(res,rej){
+        const t=db.transaction('versions',mode),q=fn(t.objectStore('versions'));
+        t.oncomplete=function(){res(q.result);};t.onerror=t.onabort=function(){rej(t.error);};
+      });});
+    }
+    function toMemory(){
+      if(mem)return;
+      mem=[];$('save-note').textContent='This browser is blocking storage here, so versions you 💾 save stay in this tab only. Download them before you leave.';
+    }
+    return {
+      all:function(){return mem?Promise.resolve(mem.slice()):run('readonly',function(s){return s.getAll();}).catch(function(){toMemory();return [];});},
+      add:function(rec){
+        if(mem){rec.id=++memId;mem.push(rec);return Promise.resolve();}
+        return run('readwrite',function(s){return s.add(rec);}).catch(function(){toMemory();rec.id=++memId;mem.push(rec);});
+      },
+      del:function(id){if(mem){mem=mem.filter(function(r){return r.id!==id;});return Promise.resolve();}return run('readwrite',function(s){return s.delete(id);});},
+      clear:function(){if(mem){mem=[];return Promise.resolve();}return run('readwrite',function(s){return s.clear();});}
+    };
+  })();
+  let savedUrls=[];
+  function showSaved(){
+    return store.all().then(function(list){
+      savedUrls.forEach(function(u){URL.revokeObjectURL(u);});savedUrls=[];
+      const ul=$('saved-list');ul.innerHTML='';
+      $('saved').hidden=!list.length;
+      $('saved-meta').textContent=list.length+' / '+SAVE_MAX;
+      list.slice().reverse().forEach(function(r){
+        const li=document.createElement('li'),url=URL.createObjectURL(r.blob);li.className='sv';savedUrls.push(url);
+        li.innerHTML='<div class="sv-top"><b></b><span></span></div><audio controls preload="none"></audio><div class="sv-btns"><button class="btn-mini" type="button">⬇ DOWNLOAD</button><button class="btn-mini" type="button">🗑 DELETE</button></div>';
+        li.querySelector('b').textContent=r.label;
+        li.querySelector('span').textContent=new Date(r.created).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+clock(r.secs);
+        li.querySelector('audio').src=url;
+        const btns=li.querySelectorAll('.sv-btns button');
+        btns[0].setAttribute('aria-label','Download '+r.label);btns[1].setAttribute('aria-label','Delete '+r.label);
+        btns[0].addEventListener('click',function(){saveFile(r.blob,r.file);});
+        btns[1].addEventListener('click',function(){store.del(r.id).then(showSaved).then(function(){toast('🗑 Deleted');});});
+        ul.appendChild(li);
+      });
+      return list.length;
+    });
+  }
+  $('btn-save').addEventListener('click',function(){
+    if(!buffer)return;
+    busy('btn-save','⏳ SAVING…',function(){
+      return store.all().then(function(list){
+        if(list.length>=SAVE_MAX){toast('💾 You have '+SAVE_MAX+' saved versions. Delete one to save another.');return;}
+        return render().then(function(r){
+          return store.add({created:Date.now(),label:r.label,secs:r.secs,file:r.file,blob:r.blob}).then(showSaved).then(function(){toast('💾 Saved: '+r.label);});
+        });
+      });
+    });
+  });
+  let clearArm=null;
+  function disarm(){clearTimeout(clearArm);clearArm=null;const b=$('saved-clear');b.classList.remove('arm');b.textContent='🗑 DELETE ALL';}
+  $('saved-clear').addEventListener('click',function(){
+    const b=$('saved-clear');
+    if(!clearArm){b.classList.add('arm');b.textContent='🗑 TAP AGAIN TO DELETE ALL';clearArm=setTimeout(disarm,3000);return;}
+    disarm();
+    store.clear().then(showSaved).then(function(){toast('🗑 All saved versions deleted');});
+  });
+  showSaved();
 
   /* ═══════════ VISUALS ═══════════ */
   function sizeCanvas(cv){
