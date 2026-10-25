@@ -157,6 +157,21 @@ test('tense and aspect words: จะ, กำลัง, แล้ว, ไม่ a
   for (const d of DATA.grammar.demo.items) assert.ok(d.thai.includes('กิน'), `${d.thai}: the demo should keep the same verb`);
 });
 
+test('topic lists, with all three polite particles', () => {
+  const lists = Object.fromEntries(DATA.topics.lists.map((l) => [l.id, l]));
+  for (const id of ['greetings', 'numbers', 'food', 'travel', 'family', 'questions', 'particles']) {
+    assert.ok(lists[id], `topic ${id} is missing`);
+    assert.ok(lists[id].icon && lists[id].name && lists[id].note, `${id} needs icon, name and note`);
+    assert.ok(lists[id].items.length >= 4, `${id} has too few words`);
+    assert.equal(new Set(lists[id].items.map((i) => i.thai)).size, lists[id].items.length, `${id}: a word is listed twice`);
+  }
+  const particles = lists.particles.items.map((i) => i.thai);
+  for (const p of ['ครับ', 'ค่ะ', 'คะ']) assert.ok(particles.includes(p), `${p} is missing`);
+  const nums = lists.numbers.items.map((i) => i.n);
+  assert.ok(nums.every((n) => Number.isInteger(n)), 'every number has its value');
+  assert.deepEqual(nums, [...nums].sort((a, b) => a - b), 'numbers are in order');
+});
+
 test('Thai words in explanations can also be heard somewhere on the page', () => {
   const spoken = new Set(ALL.flatMap(({ item }) => [item.thai, item.example?.thai]).filter(Boolean));
   const walk = (node, path) => {
