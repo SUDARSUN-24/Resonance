@@ -72,7 +72,7 @@
           { "thai": "ป่า", "roman": "bpàa", "mean": "forest", "tone": "low" },
           { "thai": "ป้า", "roman": "bpâa", "mean": "aunt (older sister of a parent)", "tone": "falling" },
           { "thai": "ป๊า", "roman": "bpáa", "mean": "dad (informal)", "tone": "high" },
-          { "thai": "ป๋า", "roman": "bpǎa", "mean": "dad (informal); slang for a generous older man", "tone": "rising" }
+          { "thai": "ป๋า", "roman": "bpǎa", "mean": "dad (informal)", "tone": "rising" }
         ] }
     ]
   },
@@ -99,7 +99,7 @@
         "mnemonic": { "thai": "ผีฝากถุงข้าวสารให้ฉัน", "roman": "phǐi fàak thǔng khâao-sǎan hâi chǎn", "mean": "The ghost gave me a bag of rice to look after" },
         "letters": [
           { "letter": "ข", "thai": "ข ไข่", "say": "ขอ ไข่", "roman": "khɔ̌ɔ khài", "mean": "egg", "sound": "kh", "final": "k" },
-          { "letter": "ฃ", "thai": "ฃ ฃวด", "say": "ขอ ขวด", "roman": "khɔ̌ɔ khùat", "mean": "bottle (no longer used)", "sound": "kh", "final": "k", "obsolete": true },
+          { "letter": "ฃ", "thai": "ฃ ขวด", "say": "ขอ ขวด", "roman": "khɔ̌ɔ khùat", "mean": "bottle (no longer used)", "sound": "kh", "final": "k", "obsolete": true },
           { "letter": "ฉ", "thai": "ฉ ฉิ่ง", "say": "ฉอ ฉิ่ง", "roman": "chɔ̌ɔ chìng", "mean": "small cymbals", "sound": "ch", "final": "none" },
           { "letter": "ฐ", "thai": "ฐ ฐาน", "say": "ถอ ฐาน", "roman": "thɔ̌ɔ thǎan", "mean": "pedestal", "sound": "th", "final": "t" },
           { "letter": "ถ", "thai": "ถ ถุง", "say": "ถอ ถุง", "roman": "thɔ̌ɔ thǔng", "mean": "bag", "sound": "th", "final": "t" },
@@ -114,7 +114,7 @@
         "tip": "The other 24 letters. Many have a high-class partner with the same sound (ค and ข both say kh), which lets Thai spell every tone.",
         "letters": [
           { "letter": "ค", "thai": "ค ควาย", "say": "คอ ควาย", "roman": "khɔɔ khwaai", "mean": "water buffalo", "sound": "kh", "final": "k" },
-          { "letter": "ฅ", "thai": "ฅ ฅน", "say": "คอ คน", "roman": "khɔɔ khon", "mean": "person (no longer used)", "sound": "kh", "final": "k", "obsolete": true },
+          { "letter": "ฅ", "thai": "ฅ คน", "say": "คอ คน", "roman": "khɔɔ khon", "mean": "person (no longer used)", "sound": "kh", "final": "k", "obsolete": true },
           { "letter": "ฆ", "thai": "ฆ ระฆัง", "say": "คอ ระฆัง", "roman": "khɔɔ rá-khang", "mean": "bell", "sound": "kh", "final": "k" },
           { "letter": "ง", "thai": "ง งู", "say": "งอ งู", "roman": "ngɔɔ nguu", "mean": "snake", "sound": "ng", "final": "ng" },
           { "letter": "ช", "thai": "ช ช้าง", "say": "ชอ ช้าง", "roman": "chɔɔ cháang", "mean": "elephant", "sound": "ch", "final": "t" },

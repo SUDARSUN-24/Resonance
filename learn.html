@@ -244,8 +244,10 @@ body.light .ls.on{border-color:var(--v);box-shadow:0 0 0 3px rgba(109,40,217,.2)
 
 /* Tones */
 .tones{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));}
+@media(min-width:1000px){.tones{grid-template-columns:repeat(5,minmax(0,1fr));}}
 .tone{border-top:3px solid var(--tc);}
 .tone .tname{font-family:'Orbitron',monospace;font-size:.7rem;letter-spacing:2px;color:var(--tc);}
+.tone .tword{font-size:2.1rem;line-height:1.4;}
 .contour{width:100%;height:46px;margin:.2rem 0;}
 .contour path{fill:none;stroke:var(--tc);stroke-width:3;stroke-linecap:round;}
 .contour line{stroke:var(--brd2);stroke-width:1;}
@@ -582,7 +584,7 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
       onend:function(){current=null;setOn(null);if(done)done();},
       onerror:function(e){
         const local=localVoice();
-        if(e==='synthesis-failed'&&!useLocal&&local&&v!==local){
+        if(/^(synthesis-failed|synthesis-unavailable|voice-unavailable|network)$/.test(e)&&!useLocal&&local&&v!==local){
           useLocal=true;renderVoice();toast('🔈 The online Thai voice didn’t answer, so this device’s own Thai voice is used instead.');
           speak(text,rate,btn,card,done);return;
         }
@@ -674,15 +676,16 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
       c.appendChild(el('div','tname',t.name.toUpperCase()+' TONE'));
       c.appendChild(contour(t.contour));
       c.appendChild(el('div','mn',t.how));
-      c.appendChild(thai('div',null,t.thai));
-      c.appendChild(el('div','ro',t.roman));
-      c.appendChild(listen(t.thai,t.mean+', '+t.roman));
+      /* The word plays the tone; the tone's Thai name has its own tones, so it comes second */
+      c.appendChild(thai('div','tword',t.word.thai));
+      c.appendChild(el('div','ro',t.word.roman));
+      c.appendChild(el('div','mn',t.word.mean));
+      c.appendChild(listen(t.word.thai,'the '+t.id+' tone: '+t.word.roman));
       const x=el('div','ex');
-      x.appendChild(el('div','meta','Example word'));
-      x.appendChild(thai('div',null,t.word.thai));
-      x.appendChild(el('div','ro',t.word.roman));
-      x.appendChild(el('div','mn',t.word.mean));
-      x.appendChild(listen(t.word.thai,t.word.roman));
+      x.appendChild(el('div','meta','Name of this tone in Thai'));
+      x.appendChild(thai('div',null,t.thai));
+      x.appendChild(el('div','ro',t.roman));
+      x.appendChild(listen(t.thai,'the Thai name, '+t.roman));
       c.appendChild(x);
       g.appendChild(c);
     });
