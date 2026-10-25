@@ -16,7 +16,8 @@
       { "sym": "ɔ", "say": "aw, as in ‘law’" },
       { "sym": "ɛ", "say": "a, as in ‘cat’" },
       { "sym": "ə", "say": "er, as in ‘her’ (no r)" },
-      { "sym": "ʉ", "say": "say ‘oo’ while smiling" }
+      { "sym": "ʉ", "say": "say ‘oo’ while smiling" },
+      { "sym": "ai", "say": "ไ and ใ are always written ai. A few words, like mái (wood), are said a little longer" }
     ]
   },
 
@@ -42,22 +43,22 @@
     "marks": {
       "intro": "There are four tone marks, written above the consonant. A mark does not always give the tone of its name: the result depends on the consonant class (see Consonants).",
       "list": [
-        { "thai": "ไม้เอก", "roman": "máai èek", "mean": "first tone mark", "mark": "่" },
-        { "thai": "ไม้โท", "roman": "máai thoo", "mean": "second tone mark", "mark": "้" },
-        { "thai": "ไม้ตรี", "roman": "máai dtrii", "mean": "third tone mark", "mark": "๊" },
-        { "thai": "ไม้จัตวา", "roman": "máai jàt-dtà-waa", "mean": "fourth tone mark", "mark": "๋" }
+        { "thai": "ไม้เอก", "roman": "mái èek", "mean": "first tone mark", "mark": "่" },
+        { "thai": "ไม้โท", "roman": "mái thoo", "mean": "second tone mark", "mark": "้" },
+        { "thai": "ไม้ตรี", "roman": "mái dtrii", "mean": "third tone mark", "mark": "๊" },
+        { "thai": "ไม้จัตวา", "roman": "mái jàt-dtà-waa", "mean": "fourth tone mark", "mark": "๋" }
       ]
     },
     "sets": [
-      { "title": "The “mai” set", "note": "Five everyday words that differ only by tone. ไม้ is written with a short vowel but said long.",
+      { "title": "The “mai” set", "note": "Five everyday words that differ only by tone.",
         "items": [
           { "thai": "ไมล์", "roman": "mai", "mean": "mile", "tone": "mid" },
           { "thai": "ใหม่", "roman": "mài", "mean": "new", "tone": "low" },
           { "thai": "ไม่", "roman": "mâi", "mean": "not", "tone": "falling" },
-          { "thai": "ไม้", "roman": "máai", "mean": "wood", "tone": "high" },
+          { "thai": "ไม้", "roman": "mái", "mean": "wood", "tone": "high" },
           { "thai": "ไหม", "roman": "mǎi", "mean": "question word (yes/no); also silk", "tone": "rising" }
         ],
-        "example": { "thai": "ไม้ใหม่ไม่ไหม้ไหม", "roman": "máai mài mâi mâi mǎi", "mean": "New wood doesn’t burn, does it? (a classic tone twister)" } },
+        "example": { "thai": "ไม้ใหม่ไม่ไหม้ไหม", "roman": "mái mài mâi mâi mǎi", "mean": "New wood doesn’t burn, does it? (a classic tone twister)" } },
       { "title": "The “khaa” set", "note": "The same syllable with five tones. Notice how ข (high class) and ค (low class) give different tones with the same mark.",
         "items": [
           { "thai": "คา", "roman": "khaa", "mean": "to be stuck", "tone": "mid" },
@@ -90,7 +91,7 @@
           { "letter": "ฏ", "thai": "ฏ ปฏัก", "say": "ตอ ปฏัก", "roman": "dtɔɔ bpà-dtàk", "mean": "goad", "sound": "dt", "final": "t" },
           { "letter": "ด", "thai": "ด เด็ก", "say": "ดอ เด็ก", "roman": "dɔɔ dèk", "mean": "child", "sound": "d", "final": "t" },
           { "letter": "ต", "thai": "ต เต่า", "say": "ตอ เต่า", "roman": "dtɔɔ dtào", "mean": "turtle", "sound": "dt", "final": "t" },
-          { "letter": "บ", "thai": "บ ใบไม้", "say": "บอ ใบไม้", "roman": "bɔɔ bai-máai", "mean": "leaf", "sound": "b", "final": "p" },
+          { "letter": "บ", "thai": "บ ใบไม้", "say": "บอ ใบไม้", "roman": "bɔɔ bai-mái", "mean": "leaf", "sound": "b", "final": "p" },
           { "letter": "ป", "thai": "ป ปลา", "say": "ปอ ปลา", "roman": "bpɔɔ bplaa", "mean": "fish", "sound": "bp", "final": "p" },
           { "letter": "อ", "thai": "อ อ่าง", "say": "ออ อ่าง", "roman": "ɔɔ àang", "mean": "basin", "sound": "a glottal stop; also carries a vowel", "final": "vowel ɔɔ" }
         ] },
@@ -178,8 +179,8 @@
         "long":  { "thai": "โอ", "roman": "oo", "mean": "long o, as in ‘go’ (no w at the end)", "example": { "thai": "โต", "roman": "dtoo", "mean": "big; to grow up" } } },
       { "short": { "thai": "เอาะ", "roman": "ɔ", "mean": "short ɔ, as in ‘lot’ (British)", "example": { "thai": "เกาะ", "roman": "gɔ̀", "mean": "island" } },
         "long":  { "thai": "ออ", "roman": "ɔɔ", "mean": "long ɔɔ, as in ‘law’", "example": { "thai": "พ่อ", "roman": "phɔ̂ɔ", "mean": "father" } } },
-      { "short": { "thai": "เออะ", "roman": "ə", "mean": "short ə, as in ‘about’. Written เอิ when a consonant follows", "example": { "thai": "เงิน", "roman": "ngən", "mean": "money; silver" } },
-        "long":  { "thai": "เออ", "roman": "əə", "mean": "long əə, as in ‘her’ (no r)", "example": { "thai": "เธอ", "roman": "thəə", "mean": "you; she (informal)" } } }
+      { "short": { "thai": "เออะ", "roman": "ə", "mean": "short ə, as in ‘about’", "example": { "thai": "เยอะ", "roman": "yə́", "mean": "a lot, many" } },
+        "long":  { "thai": "เออ", "roman": "əə", "mean": "long əə, as in ‘her’ (no r). Written เอิ before most final consonants", "example": { "thai": "เธอ", "roman": "thəə", "mean": "you; she (informal)" } } }
     ],
     "others": {
       "intro": "Vowel glides, and three short vowels that are spelled with their own letters.",
@@ -187,8 +188,8 @@
         { "thai": "เอีย", "roman": "ia", "mean": "ia, as in ‘Mia’", "example": { "thai": "เรียน", "roman": "rian", "mean": "to study" } },
         { "thai": "เอือ", "roman": "ʉa", "mean": "ʉ gliding to a", "example": { "thai": "เรือ", "roman": "rʉa", "mean": "boat" } },
         { "thai": "อัว", "roman": "ua", "mean": "ua, as in ‘tour’ without the r", "example": { "thai": "ตัว", "roman": "dtua", "mean": "body; word for counting animals" } },
-        { "thai": "ไอ", "roman": "ai", "mean": "ai, as in ‘Thai’", "example": { "thai": "ไป", "roman": "bpai", "mean": "to go" } },
-        { "thai": "ใอ", "roman": "ai", "mean": "the same sound, used in only 20 words", "example": { "thai": "ใจ", "roman": "jai", "mean": "heart, mind" } },
+        { "thai": "ไอ", "roman": "ai", "mean": "ai, as in ‘Thai’. The usual way to write this sound", "example": { "thai": "ไป", "roman": "bpai", "mean": "to go" } },
+        { "thai": "ใอ", "roman": "ai", "mean": "the same ai sound. This sign (mái múan) is used in only 20 words", "example": { "thai": "ใจ", "roman": "jai", "mean": "heart, mind" } },
         { "thai": "เอา", "roman": "ao", "mean": "ao, as in ‘how’", "example": { "thai": "เรา", "roman": "rao", "mean": "we" } },
         { "thai": "อำ", "roman": "am", "mean": "am, as in ‘come’", "example": { "thai": "ทำ", "roman": "tham", "mean": "to do, to make" } }
       ]
@@ -217,7 +218,7 @@
       { "title": "ng at the start of a word", "tip": "English only has ng at the end (sing). Say ‘sing-along’, then drop the ‘si’: ng-along.",
         "words": [
           { "thai": "งู", "roman": "nguu", "mean": "snake" },
-          { "thai": "เงิน", "roman": "ngən", "mean": "money; silver" },
+          { "thai": "เงาะ", "roman": "ngɔ́", "mean": "rambutan" },
           { "thai": "งาน", "roman": "ngaan", "mean": "work; event, party" }
         ] },
       { "title": "The ʉ vowel", "tip": "Say ‘oo’, then spread your lips into a smile without moving your tongue.",

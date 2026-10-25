@@ -124,3 +124,13 @@ test('no stray Thai vowel or tone mark floating on a non-Thai character', () => 
   };
   walk(DATA, 'learn-th');
 });
+
+test('ไ and ใ are always romanized ai, never aai', () => {
+  for (const { item, path } of ALL) {
+    for (const [t, r] of [[item.thai, item.roman], [item.example?.thai, item.example?.roman]]) {
+      if (!t || !/[ไใ]/.test(t)) continue;
+      // aai is only right where the Thai really has the long vowel า + ย (ขาย, ควาย)
+      if (/aai/.test(r.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) assert.match(t, /าย/, `${path}: ${t} → ${r}`);
+    }
+  }
+});
