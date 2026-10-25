@@ -524,26 +524,42 @@ const Engine=(function(){
     voices.forEach(function(v){const l=v.lang.replace(/_/g,'-').toLowerCase();if(l===c)ex.push(v);else if(l.split('-')[0]===b)nr.push(v);});
     return ex.length?ex:nr;
   }
-  function score(v,g){
+  /* Edge's online "Natural" voices sound best but ignore the pitch setting */
+  function ignoresPitch(v){return !v.localService&&/microsoft/i.test(v.name);}
+  function score(v,g,p){
     let s=0;
     if(/natural|neural|online|premium|enhanced/i.test(v.name))s+=40;
     if(/google/i.test(v.name))s+=15;
     const f=FEM.test(v.name),m=MAL.test(v.name);
     if(g==='female'){if(f)s+=25;if(m)s-=25;}else if(g==='male'){if(m)s+=25;if(f)s-=25;}
+    /* A very low or high pitch is the whole character (DEEP, ARIA‑7), so skip voices that can't do it */
+    if(p&&(p<.65||p>1.45)&&ignoresPitch(v))s-=60;
     return s;
   }
-  function pick(lang,g){const p=matches(lang);return p.length?p.slice().sort(function(a,b){return score(b,g)-score(a,g);})[0]:null;}
+  /* Each character has a fixed slot (Voice Lab order), so characters of the same gender get different
+     device voices, and the same character sounds the same on every page */
+  const SLOT={robotic:0,news:1,deep:2,hype:3,mysterious:4,calm:0,nova:1};
+  function pick(lang,g,p,character){
+    const slot=SLOT[character];
+    const r=matches(lang).map(function(v){return {v:v,s:score(v,g,p)};})
+      .sort(function(a,b){return b.s-a.s||(a.v.name<b.v.name?-1:a.v.name>b.v.name?1:0);});
+    if(!r.length)return null;
+    if(slot==null||(g!=='female'&&g!=='male'))return r[0].v;
+    const mine=g==='female'?FEM:MAL,other=g==='female'?MAL:FEM;
+    const top=r.filter(function(x){return x.s>=r[0].s-15&&mine.test(x.v.name)&&!other.test(x.v.name);});
+    return top.length?top[slot%top.length].v:r[0].v;
+  }
 
   function clear(){clearInterval(timer);clearInterval(keep);}
   function stop(){seq++;clear();current=null;if(synth)synth.cancel();}
 
-  /* o: {lang, gender, rate, pitch, onstart, onword(pos,len,estimated), onend, onerror} */
+  /* o: {lang, gender, character, rate, pitch, onstart, onword(pos,len,estimated), onend, onerror} */
   function speak(text,o){
     o=o||{};
     if(!synth){if(o.onerror)o.onerror('unsupported');return;}
     const busy=synth.speaking||synth.pending;
     stop();
-    const id=seq,u=new SpeechSynthesisUtterance(text),v=pick(o.lang||'en-US',o.gender);
+    const id=seq,u=new SpeechSynthesisUtterance(text),v=pick(o.lang||'en-US',o.gender,o.pitch,o.character);
     u.rate=o.rate||1;u.pitch=o.pitch||1;
     if(v){u.voice=v;u.lang=v.lang;}else u.lang=o.lang||'en-US';
     let t0=0,gotBoundary=false;
@@ -840,9 +856,9 @@ ZEN (whisper): And the whole sky lit up. Goodnight.`}
   function detect(text){for(const s of SCRIPTS)if(s[0].test(text))return s[1];return 'en-US';}
 
   function sayLine(p,done){
-    const v=VOICES[castMap[p.who]]||VOICES.nova,m=MOODS[p.mood]||MOODS.neutral;
+    const vid=VOICES[castMap[p.who]]?castMap[p.who]:'nova',v=VOICES[vid],m=MOODS[p.mood]||MOODS.neutral;
     showLine(p);
-    Engine.speak(p.text,{lang:detect(p.text),gender:v.gender,rate:Math.min(2,v.rate*m[0]*speed),pitch:Math.min(2,v.pitch*m[1]),
+    Engine.speak(p.text,{lang:detect(p.text),gender:v.gender,character:vid,rate:Math.min(2,v.rate*m[0]*speed),pitch:Math.min(2,v.pitch*m[1]),
       onword:function(pos,len){cap.mark(pos,len);},
       onend:function(){cap.finish();if(done)done();else spotlight(null);},
       onerror:function(){if(done)done();}
