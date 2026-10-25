@@ -17,6 +17,25 @@
   [headers.values]
     Cache-Control = "no-cache"
 
+# Voice Lab: cross-origin isolation lets the HD voice use several CPU cores (about 1.6x faster).
+# "credentialless" still lets Google Fonts and Unsplash load; browsers that don't know it ignore it.
+[[headers]]
+  for = "/contact.html"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "credentialless"
+
+[[headers]]
+  for = "/contact"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "credentialless"
+
+[[headers]]
+  for = "/hd-worker.js"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "credentialless"
+
 [[headers]]
   for = "/manifest.webmanifest"
   [headers.values]
@@ -54,3 +73,14 @@
   to = "/404.html"
   status = 404
   force = true
+
+# The Learn Thai page was removed; Thai phrase practice lives on the Play page
+[[redirects]]
+  from = "/learn.html"
+  to = "/play.html"
+  status = 301
+
+[[redirects]]
+  from = "/learn"
+  to = "/play.html"
+  status = 301

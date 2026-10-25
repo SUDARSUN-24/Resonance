@@ -28,6 +28,7 @@
 <meta name="apple-mobile-web-app-title" content="Resonance">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>Voice Lab | RESONANCE</title>
+<script src="voicestore.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <script>/* Web fonts load after the first frame, so text shows straight away in a fallback font (display=swap) */(function(){var done=0;function go(){if(done)return;done=1;var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap';document.head.appendChild(l);}requestAnimationFrame(function(){setTimeout(go,0);});setTimeout(go,2500);})();</script><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap"></noscript>
 <style>
@@ -270,6 +271,9 @@ body.light .lab select,body.light .lab input[type=text],body.light .lab input[ty
 .lang-meta{font-size:.74rem;color:var(--mu);line-height:1.5;}
 .lang-meta.ok{color:#00e5b0;}
 .lang-meta.warn{color:var(--g);}
+.hd-tag{margin-left:.45rem;padding:.08rem .35rem;border:1px solid var(--brd2);border-radius:4px;font-size:.42rem;letter-spacing:1px;}
+.hd-bar{height:4px;border-radius:4px;background:var(--brd2);overflow:hidden;}
+.hd-bar i{display:block;height:100%;width:0;background:var(--vc);transition:width .2s;}
 
 .toggle{display:inline-flex;align-items:center;gap:.45rem;cursor:pointer;letter-spacing:1.5px;font-size:.48rem;}
 .toggle input{-webkit-appearance:none;appearance:none;width:28px;height:15px;border-radius:15px;background:var(--brd2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
@@ -421,12 +425,14 @@ body.light :focus-visible{outline-color:var(--v);}
 /* Legible text on phones */
 @media(max-width:600px){
   .vp-sub,.lang-meta,.take-text,.fx-d,.twin-d,.np-sub{font-size:12px;}
+  /* 16px fields so iPhones don't zoom in when one is tapped */
+  .lab select,.lab textarea,.lab input[type=text],.lab input[type=email]{font-size:16px;}
   .field-label,.btn-link,.sec-label,.save-details summary,.fields-row label,.ds-top,.prompt-top,.rec-status,.vc-spec,.vc-lab,.try-head,.sec-eye,.mq-hint{font-size:12px;letter-spacing:1.5px;}
 }
 
 /* Eight nav links: tighten, then switch to the ☰ menu before they crowd */
-@media(max-width:1340px){.nav-links{gap:1.5rem;}.nav-links a{font-size:.68rem;letter-spacing:1.5px;}}
-@media(max-width:1180px){
+@media(max-width:1420px){.nav-links{gap:1.5rem;}.nav-links a{font-size:.68rem;letter-spacing:1.5px;}}
+@media(max-width:1220px){
   .mobile-btn{display:block;}
   .nav-links{display:none;flex-direction:column;position:absolute;top:66px;left:0;width:100%;background:var(--nav-bg);padding:1.5rem 5%;border-bottom:1px solid var(--brd);gap:1rem;backdrop-filter:blur(28px);}
   .nav-links.open{display:flex;}
@@ -466,9 +472,9 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
     <a href="contact.html" class="cur">VOICE LAB</a>
     <a href="read.html">READ</a>
     <a href="clone.html">MY VOICE</a>
+    <a href="lab.html">MUSIC LAB</a>
     <a href="story.html">STORY</a>
     <a href="play.html">PLAY</a>
-    <a href="learn.html">LEARN</a>
   </div>
   <div class="nav-tools">
     <button class="btn-theme btn-fx" id="fx-btn" type="button" aria-pressed="true" aria-label="Toggle visual effects">
@@ -538,6 +544,13 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
         </div>
 
         <div class="field">
+          <div class="field-label"><label for="hd-voice">HD VOICE<span class="hd-tag">BETA</span></label><label class="toggle" title="A natural AI voice that runs on this device (English only)"><input type="checkbox" id="hd-on">USE HD</label></div>
+          <select id="hd-voice" disabled></select>
+          <div class="hd-bar" id="hd-bar" hidden><i id="hd-fill"></i></div>
+          <div class="lang-meta" id="hd-meta"></div>
+        </div>
+
+        <div class="field">
           <div class="field-label"><span>EMOTION / STYLE</span></div>
           <div class="emo-grid" id="emo-grid"></div>
         </div>
@@ -580,6 +593,8 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
           <div class="actions-2">
             <button class="btn-link" id="btn-preview" type="button">◈ PREVIEW VOICE</button>
             <button class="btn-link" id="btn-share" type="button">🔗 SHARE THIS TAKE</button>
+            <button class="btn-link" id="btn-hd-studio" type="button" hidden>🎛 EDIT IN MY VOICE</button>
+            <button class="btn-link" id="btn-hd-dl" type="button" hidden>⬇ DOWNLOAD WAV</button>
           </div>
 
           <details class="save-details">
@@ -773,7 +788,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   function load(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v==null?fallback:v;}catch(e){return fallback;}}
   function store(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
 
-  const state=Object.assign({voice:'nova',lang:'en-US',emotion:'neutral',rate:1.05,pitch:1.25,volume:1,deviceVoice:'',autoDetect:true},load(STORE,{}));
+  const state=Object.assign({voice:'nova',lang:'en-US',emotion:'neutral',rate:1.05,pitch:1.25,volume:1,deviceVoice:'',autoDetect:true,hd:false,hdVoice:''},load(STORE,{}));
   if(!VOICES[state.voice])state.voice='nova';
   if(!EMOTIONS[state.emotion])state.emotion='neutral';
   function persist(){store(STORE,state);}
@@ -860,6 +875,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     else if(m.near.length){meta.className='lang-meta ok';meta.textContent='● Using a '+langInfo(m.near[0].lang.replace(/_/g,'-')).name+' voice for this language';}
     else{meta.className='lang-meta warn';meta.textContent='▲ No voice for this language on your device, so your browser will use its default. Microsoft Edge includes 100+ online voices, or you can add one in your system speech settings.';}
     if(m.all.length&&ignoresPitch(pickVoice())&&Math.abs(effectivePitch()-1)>.05)meta.textContent+=' · This voice can\'t change pitch, so only the speed changes.';
+    refreshHd();
   }
 
   /* Edge's online "Natural" voices sound best but ignore the pitch setting */
@@ -1047,7 +1063,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     sctx.setTransform(dpr,0,0,dpr,0,0);sctx.clearRect(0,0,w,h);
 
     const speaking=!!(run&&run.live&&!run.paused);
-    if(run&&run.live){run.elapsed=Math.max(0,now-run.liveAt-run.pausedMs-(run.paused?now-run.pausedAt:0));if(!run.paused)tickEstimate(now);}
+    if(run&&run.live){run.elapsed=Math.max(0,now-run.liveAt-run.pausedMs-(run.paused?now-run.pausedAt:0));if(!run.paused){if(run.hd)hdTick();else tickEstimate(now);}}
     if(run){const s=Math.floor(run.elapsed/1000);$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 
     const target=speaking?.32:(run&&run.booting?.2:.05);
@@ -1218,13 +1234,17 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   function cleanupRun(){
     if(!run)return;
     clearTimeout(run.watchdog);clearInterval(run.keep);
+    if(run.parts)run.parts.forEach(function(p){try{p.src.stop();}catch(e){}});
+    if(run.out)run.out.disconnect();
+    if(run.hd&&hdWorker)hdWorker.postMessage({type:'cancel'});
     run=null;setButtons(false);$('boot').classList.remove('show');
   }
 
   function startRun(text,opts){
-    if(!synth){toast('⚠ Speech synthesis is not supported in this browser. Try Chrome or Edge.');return;}
     text=String(text||'').trim().slice(0,MAX_CHARS);
     if(!text){toast('✎ Type something first');$('inp-text').focus();return;}
+    if(hdUsable()){startHdRun(text,opts);return;}
+    if(!synth){toast('⚠ Speech synthesis is not supported in this browser. Try Chrome or Edge.');return;}
     const busy=synth.speaking||synth.pending;
     cleanupRun();synth.cancel();
 
@@ -1245,6 +1265,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
 
   function finishRun(){
     if(!run)return;
+    if(run.hd)keepHd(run);
     run.doneTo=run.text.length;
     spans.forEach(function(s){s.className='ch done';});
     $('prog').style.width='100%';
@@ -1254,7 +1275,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
 
   function stopRun(){
     if(!run)return;
-    cleanupRun();synth.cancel();
+    cleanupRun();if(synth)synth.cancel();
     setStatus('ready','STOPPED',1500);
   }
 
@@ -1265,8 +1286,8 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
 
   function togglePause(){
     if(!run||!run.live)return;
-    if(!run.paused){synth.pause();run.paused=true;run.pausedAt=performance.now();setStatus('paused','PAUSED');$('btn-pause').textContent='▶ RESUME';}
-    else{synth.resume();run.paused=false;run.pausedMs+=performance.now()-run.pausedAt;setStatus('speaking','SPEAKING');$('btn-pause').textContent='❚❚ PAUSE';}
+    if(!run.paused){if(run.hd)hdAc.suspend();else synth.pause();run.paused=true;run.pausedAt=performance.now();setStatus('paused','PAUSED');$('btn-pause').textContent='▶ RESUME';}
+    else{if(run.hd)hdAc.resume();else synth.resume();run.paused=false;run.pausedMs+=performance.now()-run.pausedAt;setStatus('speaking','SPEAKING');$('btn-pause').textContent='❚❚ PAUSE';}
   }
 
   function ensureStageVisible(){
@@ -1279,13 +1300,216 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     return langInfo(state.lang).greet||VOICES[state.voice].preview;
   }
 
+  /* ═══════════ HD VOICE ═══════════
+     Kokoro, an open-source neural voice (Apache 2.0), running in the browser (hd-worker.js). Nothing
+     loads until the visitor switches it on; then it downloads once (about 115 MB) and the browser
+     keeps it for next time. It speaks English only, so other languages stay on the device voices.
+     Each sentence plays as soon as it is ready. Pitch plays the audio a little faster or slower, and the
+     speed it is generated at makes up for that. */
+  const HD_MB=115;  /* first download, measured: the model (92 MB), its engine (22 MB) and the code */
+  const HD_VOICES={af_heart:'Heart · US',af_bella:'Bella · US',af_nicole:'Nicole · US, soft',af_sarah:'Sarah · US',bf_emma:'Emma · UK',am_michael:'Michael · US',am_fenrir:'Fenrir · US',am_puck:'Puck · US',bm_george:'George · UK'};
+  const HD_FOR={robotic:'am_puck',news:'am_michael',deep:'am_fenrir',calm:'af_nicole',hype:'am_puck',mysterious:'bm_george',nova:'af_heart'};
+  const library=VoiceStore.create(function(){libBlocked=true;});
+  let hdWorker=null,hdWaiting=null,hdFiles={},ttsReady=false,ttsLoading=null,hdErr='',hdAc=null,lastHd=null,libBlocked=false;
+  (function(){
+    const sel=$('hd-voice');
+    const auto=document.createElement('option');auto.value='';sel.appendChild(auto);
+    Object.keys(HD_VOICES).forEach(function(k){const o=document.createElement('option');o.value=k;o.textContent=HD_VOICES[k];sel.appendChild(o);});
+  })();
+
+  function hdName(id){return HD_VOICES[id].split(' ·')[0];}
+  function hdUsable(){return !!state.hd&&!hdErr&&baseOf(state.lang)==='en';}
+  function hdVoice(){return HD_VOICES[state.hdVoice]?state.hdVoice:HD_FOR[state.voice];}
+  function hdShift(p){return clamp(Math.sqrt(p),.7,1.35);}
+
+  function setHd(on,voice){
+    state.hd=on;state.hdVoice=HD_VOICES[voice]?voice:'';
+    if(on)hdErr='';
+    $('hd-on').checked=on;persist();refreshHd();
+  }
+
+  function refreshHd(){
+    const sel=$('hd-voice'),meta=$('hd-meta');
+    if(!sel.options.length)return;  /* still starting up */
+    sel.disabled=!state.hd;
+    sel.options[0].textContent='✦ Auto — '+hdName(HD_FOR[state.voice])+' for '+VOICES[state.voice].name;
+    sel.value=state.hdVoice;
+    if(ttsLoading)return;  /* the download shows its own progress */
+    if(!state.hd){meta.className='lang-meta';meta.textContent='A natural-sounding AI voice that runs on your device, in English. One-time download of about '+HD_MB+' MB, then it works offline.';}
+    else if(hdErr){meta.className='lang-meta warn';meta.textContent='▲ '+hdErr+' The device voice is used instead. Switch HD off and on to try again.';}
+    else if(baseOf(state.lang)!=='en'){meta.className='lang-meta warn';meta.textContent='▲ The HD voice speaks English only, so '+langInfo(state.lang).name+' uses the device voice.';}
+    else if(ttsReady){meta.className='lang-meta ok';meta.textContent='● HD voice ready'+(Math.abs(effectivePitch()-1)>.05?' · pitch makes it a little faster or slower':'');}
+    else{meta.className='lang-meta';meta.textContent='Downloads when you generate: about '+HD_MB+' MB the first time, then it loads from this browser.';}
+  }
+
+  /* The voice runs in hd-worker.js so the page stays smooth while it works */
+  function hdLoad(){
+    if(ttsReady)return Promise.resolve();
+    if(ttsLoading)return ttsLoading;
+    const meta=$('hd-meta');
+    meta.className='lang-meta';meta.textContent='Downloading the HD voice…';
+    $('hd-bar').hidden=false;$('hd-fill').style.width='0%';hdFiles={};
+    ttsLoading=new Promise(function(res,rej){
+      try{
+        if(!hdWorker){
+          hdWorker=new Worker('hd-worker.js',{type:'module'});
+          hdWorker.onmessage=hdMessage;
+          hdWorker.onerror=function(e){e.preventDefault();hdWorker.terminate();hdWorker=null;hdBroken(e.message||'the HD voice worker failed');};
+        }
+        hdWaiting={res:res,rej:rej};
+        hdWorker.postMessage({type:'load'});
+      }catch(e){rej(e);}
+    }).then(function(){
+      ttsReady=true;ttsLoading=null;$('hd-bar').hidden=true;refreshHd();
+    },function(err){
+      console.warn('HD voice did not load:',err);
+      ttsLoading=null;$('hd-bar').hidden=true;
+      hdErr=navigator.onLine===false?'The HD voice needs the internet the first time.':'The HD voice could not load on this device.';
+      refreshHd();throw err;
+    });
+    return ttsLoading;
+  }
+
+  /* The worker failed to start, or stopped: whatever was waiting on it fails */
+  function hdBroken(msg){
+    ttsReady=false;
+    if(hdWaiting){hdWaiting.rej(new Error(msg));hdWaiting=null;}
+    if(run&&run.hd)hdFallback(run,new Error(msg));
+  }
+
+  function hdMessage(e){
+    const m=e.data;
+    if(m.type==='progress'){
+      if(!m.total)return;
+      hdFiles[m.file]=[m.loaded,m.total];
+      let got=0,all=0;
+      Object.keys(hdFiles).forEach(function(k){got+=hdFiles[k][0];all+=hdFiles[k][1];});
+      /* Only the model reports progress, and it is most of the download */
+      all=Math.max(all,92e6);
+      $('hd-fill').style.width=(got/all*100).toFixed(1)+'%';
+      if(ttsLoading)$('hd-meta').textContent='Downloading the HD voice… '+Math.floor(got/all*100)+'%';
+    }
+    else if(m.type==='ready'){if(hdWaiting)hdWaiting.res();hdWaiting=null;}
+    else if(m.type==='error'&&!m.id)hdBroken(m.message);
+    else if(run&&run.hd&&m.id===run.id){
+      if(m.type==='part')hdPart(run,m);
+      else if(m.type==='done')run.genDone=true;
+      else if(m.type==='error')hdFallback(run,new Error(m.message));
+    }
+  }
+
+  function hdCtx(){
+    if(!hdAc){const AC=window.AudioContext||window.webkitAudioContext;hdAc=new AC();}
+    if(hdAc.state==='suspended')hdAc.resume();
+    return hdAc;
+  }
+
+  function startHdRun(text,opts){
+    cleanupRun();if(synth)synth.cancel();
+    const emo=EMOTIONS[state.emotion]||EMOTIONS.neutral,ac=hdCtx(),pitch=clamp(state.pitch*emo.p,.3,2);
+    run={id:++runSeq,hd:hdVoice(),text:text,chunks:[],idx:0,voice:null,rate:clamp(state.rate*emo.r,.5,2),pitch:pitch,shift:hdShift(pitch),volume:state.volume,
+      live:false,booting:true,paused:false,elapsed:0,lastPulse:0,doneTo:0,parts:[],pcm:[],sr:24000,end:0,pos:0,genDone:false};
+    const r=run;
+    r.out=ac.createGain();r.out.gain.value=r.volume;
+    r.meter=ac.createAnalyser();r.meter.fftSize=512;r.out.connect(r.meter);r.meter.connect(ac.destination);
+    showHdActions(null);
+    renderCaption(text);$('prog').style.width='0%';$('timer').textContent='00:00';
+    setStatus('cloning',ttsReady?'GENERATING…':'LOADING HD VOICE…');setButtons(true);bootSequence(r.id);ensureStageVisible();
+    $('btn-pause').disabled=true;  /* nothing to pause until it speaks */
+    hdLoad().then(function(){
+      if(!alive(r.id))return;
+      setStatus('cloning','GENERATING…');
+      hdWorker.postMessage({type:'speak',id:r.id,text:r.text,voice:r.hd,speed:clamp(r.rate/r.shift,.5,2)});
+    }).catch(function(err){hdFallback(r,err);});
+    if(opts&&opts.save){addTake(text);saveToDb(text);}
+  }
+
+  /* If it never got going, say it with the device voice instead */
+  function hdFallback(r,err){
+    if(!alive(r.id))return;
+    if(r.live){console.warn('HD voice stopped:',err);failRun('HD VOICE STOPPED');return;}
+    if(!hdErr){console.warn('HD voice failed:',err);hdErr='The HD voice failed on this device.';refreshHd();}
+    cleanupRun();toast('▲ '+hdErr+' Using the device voice.');
+    if(synth)startRun(r.text,{save:false});else failRun('NO VOICE AVAILABLE');
+  }
+
+  /* Each sentence plays straight after the one before */
+  function hdPart(r,m){
+    const ac=hdAc,pcm=m.audio,said=String(m.text||'').trim();
+    /* Where this sentence sits in the script, for the captions */
+    let start=said?r.text.indexOf(said.slice(0,8),r.pos):-1;
+    if(start<0)start=r.pos;
+    const end=Math.min(r.text.length,Math.max(start+said.length,start+1));r.pos=end;
+    const b=ac.createBuffer(1,pcm.length,m.sr);b.getChannelData(0).set(pcm);
+    const src=ac.createBufferSource();src.buffer=b;src.playbackRate.value=r.shift;src.connect(r.out);
+    const when=Math.max(ac.currentTime+.06,r.end),d=pcm.length/m.sr/r.shift;
+    src.start(when);
+    r.parts.push({start:start,end:end,t:when,d:d,src:src});r.pcm.push(pcm);r.sr=m.sr;r.end=when+d;
+    if(!r.live){goLive();$('btn-pause').disabled=false;}
+  }
+
+  /* Captions follow the audio clock; the stage moves with the real loudness */
+  function hdTick(){
+    const r=run,t=hdAc.currentTime;
+    let p=null;
+    for(let i=0;i<r.parts.length&&r.parts[i].t<=t;i++)p=r.parts[i];
+    if(p){const f=clamp((t-p.t)/p.d,0,1);markProgress(Math.floor(p.start+f*(p.end-p.start)),2);}
+    const buf=r.buf||(r.buf=new Uint8Array(r.meter.fftSize));
+    r.meter.getByteTimeDomainData(buf);
+    let s=0;for(let i=0;i<buf.length;i+=4){const v=(buf[i]-128)/128;s+=v*v;}
+    energy=Math.max(energy,Math.min(1,Math.sqrt(s/(buf.length/4))*3.2));
+    const waiting=t>=r.end+.05,st=$('status').dataset.s;
+    if(waiting&&r.genDone)finishRun();
+    else if(waiting&&st!=='cloning')setStatus('cloning','GENERATING…');
+    else if(!waiting&&st==='cloning')setStatus('speaking','SPEAKING');
+  }
+
+  /* Keep the finished take, sounding as it played, for the studio or a download */
+  function keepHd(r){
+    if(!r.pcm.length)return;
+    let n=0;r.pcm.forEach(function(x){n+=x.length;});
+    const all=new Float32Array(n);let o=0;
+    r.pcm.forEach(function(x){all.set(x,o);o+=x.length;});
+    let out=all;
+    if(Math.abs(r.shift-1)>1e-3){
+      out=new Float32Array(Math.floor(n/r.shift));
+      for(let i=0;i<out.length;i++){const q=i*r.shift,k=Math.floor(q),f=q-k;out[i]=all[k]+((k+1<n?all[k+1]:0)-all[k])*f;}
+    }
+    for(let i=0;i<out.length;i++)out[i]*=r.volume;
+    const name=hdName(r.hd);
+    showHdActions({blob:VoiceStore.wav([out],r.sr),secs:out.length/r.sr,
+      label:'HD '+name+': '+r.text.slice(0,40)+(r.text.length>40?'…':''),file:'resonance-hd-'+name.toLowerCase()+'.wav'});
+  }
+
+  function showHdActions(take){
+    lastHd=take;
+    $('btn-hd-studio').hidden=$('btn-hd-dl').hidden=!take;
+  }
+
+  /* Save it to the voice library and open it in the My Voice studio */
+  function hdToStudio(){
+    const take=lastHd;if(!take)return;
+    library.all().then(function(list){
+      if(libBlocked){toast('💾 This browser is blocking storage here. Download the WAV and upload it in My Voice instead.');return;}
+      if(list.length>=VoiceStore.MAX){toast('💾 Your library has '+VoiceStore.MAX+' saved versions. Delete one in My Voice first.');return;}
+      return library.add({created:Date.now(),label:take.label,secs:take.secs,file:take.file,blob:take.blob,kind:'voicelab'}).then(function(id){location.href='clone.html#edit='+id;});
+    });
+  }
+
+  function hdDownload(){
+    if(!lastHd)return;
+    const a=document.createElement('a');a.href=URL.createObjectURL(lastHd.blob);a.download=lastHd.file;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},4000);
+  }
+
   /* ═══════════ TAKES (recent history) ═══════════ */
   let takes=load(TAKES,[]);
   if(!Array.isArray(takes))takes=[];
 
   function addTake(text){
-    const t={v:state.voice,l:state.lang,e:state.emotion,r:state.rate,p:state.pitch,vol:state.volume,t:text,ts:Date.now()};
-    takes=takes.filter(function(x){return !(x.t===t.t&&x.v===t.v&&x.l===t.l);});
+    const t={v:state.voice,l:state.lang,e:state.emotion,r:state.rate,p:state.pitch,vol:state.volume,h:(run&&run.hd)||'',t:text,ts:Date.now()};
+    takes=takes.filter(function(x){return !(x.t===t.t&&x.v===t.v&&x.l===t.l&&(x.h||'')===t.h);});
     takes.unshift(t);takes=takes.slice(0,8);
     store(TAKES,takes);renderTakes();
   }
@@ -1295,6 +1519,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
     if(t.l)setLang(t.l,true);
     setEmotion(t.e);
     setSlider('rate',t.r);setSlider('pitch',t.p);setSlider('volume',t.vol==null?1:t.vol);
+    setHd(!!t.h,t.h&&t.h!==HD_FOR[t.v]?t.h:'');
     $('inp-text').value=t.t;updateStats();persist();
   }
 
@@ -1308,7 +1533,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
       const body=document.createElement('div');body.className='take-body';
       const tx=document.createElement('div');tx.className='take-text';tx.dir='auto';tx.textContent=t.t;
       const meta=document.createElement('div');meta.className='take-meta';
-      meta.textContent=v.name+' · '+l.flag+' '+l.name.toUpperCase()+' · '+e.label.toUpperCase()+' · '+Number(t.r).toFixed(2)+'x';
+      meta.textContent=v.name+' · '+l.flag+' '+l.name.toUpperCase()+' · '+e.label.toUpperCase()+' · '+Number(t.r).toFixed(2)+'x'+(HD_VOICES[t.h]?' · HD '+hdName(t.h).toUpperCase():'');
       body.appendChild(tx);body.appendChild(meta);
       const play=document.createElement('button');play.type='button';play.textContent='▶';play.setAttribute('aria-label','Replay take');
       play.addEventListener('click',function(){applyTake(t);startRun(t.t,{save:false});});
@@ -1403,6 +1628,10 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   $('btn-pause').addEventListener('click',togglePause);
   $('btn-stop').addEventListener('click',stopRun);
   $('btn-share').addEventListener('click',shareTake);
+  $('hd-on').addEventListener('change',function(){setHd(this.checked,state.hdVoice);if(this.checked&&baseOf(state.lang)==='en')hdLoad().catch(function(){});});
+  $('hd-voice').addEventListener('change',function(){setHd(true,this.value);});
+  $('btn-hd-studio').addEventListener('click',hdToStudio);
+  $('btn-hd-dl').addEventListener('click',hdDownload);
   $('btn-clear').addEventListener('click',function(){takes=[];store(TAKES,takes);renderTakes();});
 
   /* ═══════════ DICTATE (speech to text) ═══════════ */
@@ -1435,6 +1664,7 @@ document.getElementById('mob-btn').addEventListener('click',function(){document.
   setSlider('rate',state.rate);setSlider('pitch',state.pitch);
   setEmotion(state.emotion);
   renderTakes();updateStats();
+  setHd(!!state.hd,state.hdVoice);
 
   if(synth){
     loadVoices();
