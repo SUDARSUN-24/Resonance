@@ -305,7 +305,7 @@ td.t-none{color:var(--mu);}
   .tone .tname,.cls-head h3,.sub-h{font-size:12px;letter-spacing:1.5px;}
   .vs{font-size:10px;}
 }
-/* Verbs */
+/* Verbs and grammar */
 .pronouns{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:1.2rem;}
 .filter{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin:.2rem 0 1rem;}
 .filter input{flex:1 1 220px;min-width:0;padding:.75rem .9rem;border-radius:10px;border:1px solid var(--brd2);background:rgba(0,0,0,.22);color:var(--t);font-family:'Outfit',sans-serif;font-size:.95rem;}
@@ -315,6 +315,10 @@ body.light .filter input:focus{border-color:var(--v);box-shadow:0 0 0 3px rgba(1
 .filter output{font-size:.8rem;color:var(--mu);}
 .verbs{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));}
 .empty{color:var(--mu);font-size:.9rem;padding:.6rem 0;}
+.demo .card .th{font-size:1.3rem;}
+.markers{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));}
+.marker > .th:first-child{font-size:1.9rem;}
+.marker .how{font-size:.84rem;color:var(--t2);line-height:1.5;margin-top:.2rem;}
 @media(prefers-reduced-motion:reduce){.ls.on,.warn.flash{animation:none;}}
 
 footer{position:relative;z-index:10;border-top:1px solid var(--brd2);padding:1.6rem 5%;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:2px;color:var(--mu);}
@@ -441,6 +445,7 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
       <a href="#vowels">VOWELS</a>
       <a href="#sounds">SOUNDS</a>
       <a href="#verbs">VERBS</a>
+      <a href="#grammar">GRAMMAR</a>
     </div>
 
     <div class="status">
@@ -818,6 +823,34 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     return s;
   }
 
+  function renderGrammar(G){
+    const s=lesson('grammar','⏳','TIME WITHOUT CHANGING THE VERB','LESSON 6',G.intro);
+    s.appendChild(el('h3','sub-h',G.demo.title.toUpperCase()));
+    const dg=grid('demo');G.demo.items.forEach(function(it){dg.appendChild(card(it));});
+    s.appendChild(dg);
+    s.appendChild(el('h3','sub-h','THE TIME WORDS'));
+    const mg=grid('markers');
+    G.markers.forEach(function(m){
+      const c=card(m,{cls:'marker',meta:'Goes '+m.where});
+      c.insertBefore(el('div','how',m.how),c.querySelector('.ls-row'));
+      m.examples.forEach(function(x){
+        const e=el('div','ex');
+        e.appendChild(thai('div',null,x.thai));e.appendChild(el('div','ro',x.roman));e.appendChild(el('div','mn',x.mean));
+        e.appendChild(listen(x.thai,'the example '+x.roman));
+        c.appendChild(e);
+      });
+      mg.appendChild(c);
+    });
+    s.appendChild(mg);
+    s.appendChild(el('h3','sub-h','OR ADD A TIME WORD'));
+    s.appendChild(el('p','sub-p',G.time.intro));
+    const tg=grid('verbs');G.time.examples.forEach(function(x){tg.appendChild(card(x));});
+    s.appendChild(tg);
+    const wg=grid();wg.style.marginTop='.7rem';G.time.words.forEach(function(x){wg.appendChild(card(x));});
+    s.appendChild(wg);
+    return s;
+  }
+
   function renderKey(R){
     $('key-intro').textContent=R.intro;
     const box=$('keys');box.innerHTML='';
@@ -848,6 +881,7 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     box.appendChild(renderVowels(data.vowels));
     box.appendChild(renderSounds(data.sounds));
     box.appendChild(renderVerbs(data.verbs));
+    box.appendChild(renderGrammar(data.grammar));
     watchLessons();
     if(location.hash){const t=$(location.hash.slice(1));if(t)t.scrollIntoView();}
   }

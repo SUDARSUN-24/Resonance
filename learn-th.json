@@ -290,5 +290,75 @@
       { "thai": "กลับ", "roman": "glàp", "mean": "to go back, to return", "example": { "thai": "ฉันจะกลับบ้านพรุ่งนี้", "roman": "chǎn jà glàp bâan phrûng-níi", "mean": "I’m going home tomorrow." } },
       { "thai": "หา", "roman": "hǎa", "mean": "to look for", "example": { "thai": "ฉันหากุญแจไม่เจอ", "roman": "chǎn hǎa gun-jɛɛ mâi jəə", "mean": "I can’t find my keys." } }
     ]
+  },
+
+  "grammar": {
+    "intro": "Thai verbs never change. There is no -s, -ed or -ing: gin is eat, eats, ate and eaten. Time is shown by small words placed around the verb, by time words such as ‘tomorrow’, or simply by context.",
+    "demo": {
+      "title": "One verb, every time",
+      "items": [
+        { "thai": "กิน", "roman": "gin", "mean": "eat, eats, ate (from context)" },
+        { "thai": "จะกิน", "roman": "jà gin", "mean": "will eat, going to eat" },
+        { "thai": "กำลังกิน", "roman": "gam-lang gin", "mean": "am/is eating right now" },
+        { "thai": "กินแล้ว", "roman": "gin lɛ́ɛo", "mean": "have eaten, already ate" },
+        { "thai": "ไม่กิน", "roman": "mâi gin", "mean": "don’t eat, won’t eat" },
+        { "thai": "ยังไม่กิน", "roman": "yang mâi gin", "mean": "haven’t eaten yet" },
+        { "thai": "ไม่ได้กิน", "roman": "mâi dâi gin", "mean": "didn’t eat" },
+        { "thai": "เคยกิน", "roman": "khəəi gin", "mean": "have eaten (at some time), have tried" }
+      ]
+    },
+    "markers": [
+      { "thai": "จะ", "roman": "jà", "mean": "will, going to", "where": "before the verb", "how": "For the future, or something you intend to do.",
+        "examples": [
+          { "thai": "ฉันจะไปพรุ่งนี้", "roman": "chǎn jà bpai phrûng-níi", "mean": "I’ll go tomorrow." },
+          { "thai": "ฝนจะตก", "roman": "fǒn jà dtòk", "mean": "It’s going to rain." }
+        ] },
+      { "thai": "กำลัง", "roman": "gam-lang", "mean": "in the middle of (-ing)", "where": "before the verb", "how": "For something happening right now. Often yùu is added at the end.",
+        "examples": [
+          { "thai": "ฉันกำลังกินข้าว", "roman": "chǎn gam-lang gin khâao", "mean": "I’m eating right now." },
+          { "thai": "เขากำลังทำงานอยู่", "roman": "khǎo gam-lang tham-ngaan yùu", "mean": "He/She is working at the moment." }
+        ] },
+      { "thai": "แล้ว", "roman": "lɛ́ɛo", "mean": "already, now (done)", "where": "after the verb, or at the end", "how": "Shows that something has happened or has changed.",
+        "examples": [
+          { "thai": "ฉันกินแล้ว", "roman": "chǎn gin lɛ́ɛo", "mean": "I’ve eaten already." },
+          { "thai": "เขามาแล้ว", "roman": "khǎo maa lɛ́ɛo", "mean": "He/She is here now." }
+        ] },
+      { "thai": "ไม่", "roman": "mâi", "mean": "not", "where": "before the verb", "how": "Makes any sentence negative, at any time: don’t, doesn’t, won’t.",
+        "examples": [
+          { "thai": "ฉันไม่กินเผ็ด", "roman": "chǎn mâi gin phèt", "mean": "I don’t eat spicy food." },
+          { "thai": "พรุ่งนี้เขาไม่มา", "roman": "phrûng-níi khǎo mâi maa", "mean": "He/She isn’t coming tomorrow." }
+        ] },
+      { "thai": "ยัง", "roman": "yang", "mean": "still; (with mâi) not yet", "where": "before the verb", "how": "On its own it means ‘still’. Before mâi it means ‘not yet’.",
+        "examples": [
+          { "thai": "ฉันยังไม่ได้กิน", "roman": "chǎn yang mâi dâi gin", "mean": "I haven’t eaten yet." },
+          { "thai": "เขายังนอนอยู่", "roman": "khǎo yang nɔɔn yùu", "mean": "He/She is still asleep." }
+        ] },
+      { "thai": "ไม่ได้", "roman": "mâi dâi", "mean": "didn’t", "where": "before the verb", "how": "The usual way to say something didn’t happen.",
+        "examples": [
+          { "thai": "เมื่อวานฉันไม่ได้ไป", "roman": "mʉ̂a-waan chǎn mâi dâi bpai", "mean": "I didn’t go yesterday." }
+        ] },
+      { "thai": "เคย", "roman": "khəəi", "mean": "have ever; used to", "where": "before the verb", "how": "For experiences: something you have done at least once.",
+        "examples": [
+          { "thai": "ฉันเคยไปภูเก็ต", "roman": "chǎn khəəi bpai phuu-gèt", "mean": "I’ve been to Phuket." },
+          { "thai": "คุณเคยกินทุเรียนไหม", "roman": "khun khəəi gin thú-rian mǎi", "mean": "Have you ever eaten durian?" }
+        ] }
+    ],
+    "time": {
+      "intro": "Or keep the verb as it is and add a time word. The same sentence works for yesterday, today and tomorrow.",
+      "examples": [
+        { "thai": "ฉันไปตลาด", "roman": "chǎn bpai dtà-làat", "mean": "I go to the market." },
+        { "thai": "เมื่อวานฉันไปตลาด", "roman": "mʉ̂a-waan chǎn bpai dtà-làat", "mean": "Yesterday I went to the market." },
+        { "thai": "พรุ่งนี้ฉันจะไปตลาด", "roman": "phrûng-níi chǎn jà bpai dtà-làat", "mean": "Tomorrow I’ll go to the market." }
+      ],
+      "words": [
+        { "thai": "เมื่อวาน", "roman": "mʉ̂a-waan", "mean": "yesterday" },
+        { "thai": "วันนี้", "roman": "wan-níi", "mean": "today" },
+        { "thai": "พรุ่งนี้", "roman": "phrûng-níi", "mean": "tomorrow" },
+        { "thai": "ตอนนี้", "roman": "dtɔɔn-níi", "mean": "now" },
+        { "thai": "เมื่อกี้", "roman": "mʉ̂a-gîi", "mean": "a moment ago" },
+        { "thai": "ปีที่แล้ว", "roman": "bpii thîi lɛ́ɛo", "mean": "last year" },
+        { "thai": "อาทิตย์หน้า", "roman": "aa-thít nâa", "mean": "next week" }
+      ]
+    }
   }
 }

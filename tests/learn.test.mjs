@@ -146,6 +146,17 @@ test('about 40 verbs, each once, each used in its own example sentence', () => {
   }
 });
 
+test('tense and aspect words: จะ, กำลัง, แล้ว, ไม่ and ยัง, each shown in use', () => {
+  const markers = Object.fromEntries(DATA.grammar.markers.map((m) => [m.thai, m]));
+  for (const w of ['จะ', 'กำลัง', 'แล้ว', 'ไม่', 'ยัง']) {
+    assert.ok(markers[w], `${w} is missing`);
+    assert.ok(markers[w].where && markers[w].how, `${w} needs where and how`);
+    assert.ok(markers[w].examples.length >= 2, `${w} needs at least two examples`);
+  }
+  for (const m of DATA.grammar.markers) for (const ex of m.examples) assert.ok(ex.thai.includes(m.thai), `${m.thai}: example ${ex.thai} doesn’t use it`);
+  for (const d of DATA.grammar.demo.items) assert.ok(d.thai.includes('กิน'), `${d.thai}: the demo should keep the same verb`);
+});
+
 test('Thai words in explanations can also be heard somewhere on the page', () => {
   const spoken = new Set(ALL.flatMap(({ item }) => [item.thai, item.example?.thai]).filter(Boolean));
   const walk = (node, path) => {
