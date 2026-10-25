@@ -42,3 +42,18 @@ test('accepts underscores and a region-less match', () => {
   assert.equal(e.has('th-TH'), true);
   assert.equal(e.has('th'), true);
 });
+
+test('speaks with a chosen voice when one is given, else picks one', () => {
+  const spoken = [];
+  const voices = [v('Microsoft Premwadee Online (Natural) - Thai (Thailand)', 'th-TH'), v('Microsoft Pattara - Thai (Thailand)', 'th-TH')];
+  const synth = { getVoices: () => voices, addEventListener() {}, cancel() {}, speak: (u) => spoken.push(u), speaking: false, pending: false };
+  const window = { speechSynthesis: synth };
+  function SpeechSynthesisUtterance(text) { this.text = text; }
+  vm.runInNewContext(SRC, { window, SpeechSynthesisUtterance, setTimeout: () => 0, setInterval: () => 0, clearInterval() {} });
+  window.RSSpeech.speak('ไก่', { lang: 'th-TH' });
+  window.RSSpeech.speak('ไข่', { lang: 'th-TH', voice: voices[1], rate: 0.55 });
+  assert.match(spoken[0].voice.name, /Premwadee/);
+  assert.match(spoken[1].voice.name, /Pattara/);
+  assert.equal(spoken[1].rate, 0.55);
+  assert.equal(spoken[1].lang, 'th-TH');
+});

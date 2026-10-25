@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "lang": "th-TH",
+  "about": "Lesson content for learn.html. Every item has thai, roman and mean; example sentences are optional. 'say' (optional) is what the Listen button speaks when it should differ from 'thai'. Progress is saved by the thai text, so changing it resets that item's progress.",
+
+  "romanization": {
+    "intro": "Romanization is only a guide: listen to the voice and copy it. Long vowels are written twice (aa, ii, uu). The accent shows the tone, and no accent means mid tone.",
+    "keys": [
+      { "sym": "maa", "say": "mid tone (no accent)" },
+      { "sym": "màa", "say": "low tone" },
+      { "sym": "mâa", "say": "falling tone" },
+      { "sym": "máa", "say": "high tone" },
+      { "sym": "mǎa", "say": "rising tone" },
+      { "sym": "g · bp · dt", "say": "no puff of air (as in skin, spin, stop)" },
+      { "sym": "kh · ph · th", "say": "with a puff of air. ph is never f, th is never the th in ‘the’" },
+      { "sym": "ɔ", "say": "aw, as in ‘law’" },
+      { "sym": "ɛ", "say": "a, as in ‘cat’" },
+      { "sym": "ə", "say": "er, as in ‘her’ (no r)" },
+      { "sym": "ʉ", "say": "say ‘oo’ while smiling" }
+    ]
+  },
+
+  "tones": {
+    "intro": "Thai has five tones. The tone is part of the word: the same sound with a different tone is a different word. Listen to each tone, then to the sets of words below that differ only by tone.",
+    "list": [
+      { "id": "mid", "name": "Mid", "thai": "เสียงสามัญ", "roman": "sǐang sǎa-man", "mean": "mid tone", "contour": [3, 3],
+        "how": "Level, in the middle of your normal voice.", "mark": "",
+        "word": { "thai": "มา", "roman": "maa", "mean": "to come" } },
+      { "id": "low", "name": "Low", "thai": "เสียงเอก", "roman": "sǐang èek", "mean": "low tone", "contour": [2, 1],
+        "how": "Level and low, a little below your normal voice.", "mark": "่",
+        "word": { "thai": "ไก่", "roman": "gài", "mean": "chicken" } },
+      { "id": "falling", "name": "Falling", "thai": "เสียงโท", "roman": "sǐang thoo", "mean": "falling tone", "contour": [4.5, 1],
+        "how": "Starts high and drops, like a firm ‘No!’.", "mark": "้",
+        "word": { "thai": "ไม่", "roman": "mâi", "mean": "not" } },
+      { "id": "high", "name": "High", "thai": "เสียงตรี", "roman": "sǐang dtrii", "mean": "high tone", "contour": [4, 5],
+        "how": "High and rising a little, a bit tense.", "mark": "๊",
+        "word": { "thai": "ม้า", "roman": "máa", "mean": "horse" } },
+      { "id": "rising", "name": "Rising", "thai": "เสียงจัตวา", "roman": "sǐang jàt-dtà-waa", "mean": "rising tone", "contour": [2, 1.2, 4.5],
+        "how": "Dips, then rises, like a surprised ‘Really?’.", "mark": "๋",
+        "word": { "thai": "หมา", "roman": "mǎa", "mean": "dog" } }
+    ],
+    "marks": {
+      "intro": "There are four tone marks, written above the consonant. A mark does not always give the tone of its name: the result depends on the consonant class (see Consonants).",
+      "list": [
+        { "thai": "ไม้เอก", "roman": "máai èek", "mean": "first tone mark", "mark": "่" },
+        { "thai": "ไม้โท", "roman": "máai thoo", "mean": "second tone mark", "mark": "้" },
+        { "thai": "ไม้ตรี", "roman": "máai dtrii", "mean": "third tone mark", "mark": "๊" },
+        { "thai": "ไม้จัตวา", "roman": "máai jàt-dtà-waa", "mean": "fourth tone mark", "mark": "๋" }
+      ]
+    },
+    "sets": [
+      { "title": "The “mai” set", "note": "Five everyday words that differ only by tone. ไม้ is written with a short vowel but said long.",
+        "items": [
+          { "thai": "ไมล์", "roman": "mai", "mean": "mile", "tone": "mid" },
+          { "thai": "ใหม่", "roman": "mài", "mean": "new", "tone": "low" },
+          { "thai": "ไม่", "roman": "mâi", "mean": "not", "tone": "falling" },
+          { "thai": "ไม้", "roman": "máai", "mean": "wood", "tone": "high" },
+          { "thai": "ไหม", "roman": "mǎi", "mean": "question word (yes/no); also silk", "tone": "rising" }
+        ],
+        "example": { "thai": "ไม้ใหม่ไม่ไหม้ไหม", "roman": "máai mài mâi mâi mǎi", "mean": "New wood doesn’t burn, does it? (a classic tone twister)" } },
+      { "title": "The “khaa” set", "note": "The same syllable with five tones. Notice how ข (high class) and ค (low class) give different tones with the same mark.",
+        "items": [
+          { "thai": "คา", "roman": "khaa", "mean": "to be stuck", "tone": "mid" },
+          { "thai": "ข่า", "roman": "khàa", "mean": "galangal", "tone": "low" },
+          { "thai": "ค่า", "roman": "khâa", "mean": "value, cost", "tone": "falling" },
+          { "thai": "ค้า", "roman": "kháa", "mean": "to trade", "tone": "high" },
+          { "thai": "ขา", "roman": "khǎa", "mean": "leg", "tone": "rising" }
+        ] },
+      { "title": "The “bpaa” set", "note": "ป is a middle-class consonant, the only class that normally uses all four tone marks.",
+        "items": [
+          { "thai": "ปา", "roman": "bpaa", "mean": "to throw", "tone": "mid" },
+          { "thai": "ป่า", "roman": "bpàa", "mean": "forest", "tone": "low" },
+          { "thai": "ป้า", "roman": "bpâa", "mean": "aunt (older sister of a parent)", "tone": "falling" },
+          { "thai": "ป๊า", "roman": "bpáa", "mean": "dad (informal)", "tone": "high" },
+          { "thai": "ป๋า", "roman": "bpǎa", "mean": "dad (informal); slang for a generous older man", "tone": "rising" }
+        ] }
+    ]
+  }
+}
