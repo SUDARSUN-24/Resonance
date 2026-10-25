@@ -23,7 +23,7 @@ const TONE_MARK = { mid: null, low: '̀', falling: '̂', high: '́', rising: '̌
 const tonesIn = (roman) => [...roman.normalize('NFD')].filter((c) => /[̀́̂̌]/.test(c));
 
 test('the lessons have content', () => {
-  assert.ok(ALL.length > 25, `only ${ALL.length} items`);
+  assert.ok(ALL.length > 100, `only ${ALL.length} items`);
 });
 
 test('every item has Thai script, romanization and an English meaning', () => {
@@ -79,6 +79,36 @@ test('five tones, four tone marks, each tone set covers all five tones', () => {
   assert.deepEqual(DATA.tones.list.map((t) => t.id), ['mid', 'low', 'falling', 'high', 'rising']);
   assert.equal(DATA.tones.marks.list.length, 4);
   for (const s of DATA.tones.sets) assert.deepEqual(s.items.map((i) => i.tone), ['mid', 'low', 'falling', 'high', 'rising'], s.title);
+});
+
+test('all 44 consonants, each once, in the right class', () => {
+  const classes = Object.fromEntries(DATA.consonants.classes.map((c) => [c.id, c.letters.map((l) => l.letter)]));
+  assert.equal(classes.mid.join(''), 'กจฎฏดตบปอ');
+  assert.equal(classes.high.join(''), 'ขฃฉฐถผฝศษสห');
+  assert.equal(classes.low.length, 24);
+  const all = Object.values(classes).flat();
+  assert.equal(all.length, 44);
+  assert.equal(new Set(all).size, 44, 'a letter is listed twice');
+  for (const c of DATA.consonants.classes) for (const l of c.letters) {
+    assert.ok(l.thai.startsWith(l.letter + ' '), `${l.letter}: the name should start with the letter`);
+    assert.ok(l.sound && l.final, `${l.letter}: needs sound and final`);
+    // Letter names: high class rising, middle and low class mid (กอ, ขอ, คอ)
+    const nameTone = tonesIn(l.roman.split(' ')[0]);
+    assert.deepEqual(nameTone, c.id === 'high' ? ['̌'] : [], `${l.letter}: name tone in ${l.roman}`);
+  }
+});
+
+test('the tone rule table has a row per class and a cell per column', () => {
+  const r = DATA.consonants.rules;
+  assert.deepEqual(r.rows.map((x) => x.class), ['mid', 'high', 'low']);
+  for (const row of r.rows) assert.equal(row.tones.length, r.columns.length, row.class);
+});
+
+test('vowel pairs have a short and a long form, each with an example', () => {
+  for (const p of DATA.vowels.pairs) {
+    assert.ok(p.short && p.long, 'pair needs short and long');
+    assert.ok(p.short.example && p.long.example, `${p.short.thai}/${p.long.thai} needs examples`);
+  }
 });
 
 test('every Thai word can be spoken in Thai', () => {

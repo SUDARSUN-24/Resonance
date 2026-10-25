@@ -425,6 +425,9 @@ try{if(localStorage.getItem('resonance_theme')==='light')document.body.classList
 
     <div class="subnav" id="subnav" role="navigation" aria-label="Lessons">
       <a href="#tones">TONES</a>
+      <a href="#consonants">CONSONANTS</a>
+      <a href="#vowels">VOWELS</a>
+      <a href="#sounds">SOUNDS</a>
     </div>
 
     <div class="status">
@@ -708,6 +711,76 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     return s;
   }
 
+  function renderConsonants(C){
+    const s=lesson('consonants','🔠','CONSONANTS & CLASSES','LESSON 2',C.intro);
+    C.classes.forEach(function(k){
+      const box=el('div','cls'),head=el('div','cls-head');
+      head.appendChild(el('h3',null,k.name.toUpperCase()));
+      head.appendChild(el('span','count',k.letters.length+' LETTERS'));
+      box.appendChild(head);
+      box.appendChild(el('p','sub-p',k.tip));
+      box.appendChild(card(k,{cls:'mnemo',meta:'The class name'}));
+      if(k.mnemonic)box.appendChild(card(k.mnemonic,{cls:'mnemo',meta:'Memory sentence'}));
+      const g=grid('letters');
+      k.letters.forEach(function(l){
+        g.appendChild(card(l,{cls:'letter'+(l.obsolete?' obs':''),big:l.letter,meta:'Starts: '+l.sound+' · Ends: '+l.final}));
+      });
+      box.appendChild(g);
+      s.appendChild(box);
+    });
+
+    const R=C.rules;
+    s.appendChild(el('h3','sub-h','WORKING OUT THE TONE'));
+    s.appendChild(el('p','sub-p',R.intro));
+    const wrap=el('div','table-wrap'),t=el('table'),thead=el('thead'),hr=el('tr');
+    hr.appendChild(el('th',null,'CLASS'));
+    R.columns.forEach(function(c){const th=el('th');th.scope='col';if(/^[่-๋]$/.test(c))th.appendChild(thai('span',null,'อ'+c));else th.textContent=c.toUpperCase();hr.appendChild(th);});
+    thead.appendChild(hr);t.appendChild(thead);
+    const tb=el('tbody');
+    R.rows.forEach(function(r){
+      const tr=el('tr'),th=el('th',null,r.class.charAt(0).toUpperCase()+r.class.slice(1));th.scope='row';tr.appendChild(th);
+      r.tones.forEach(function(v){const td=el('td',v?'t-'+v.split(' ')[0]:'t-none',v||'—');tr.appendChild(td);});
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);wrap.appendChild(t);s.appendChild(wrap);
+    const g=grid();
+    R.examples.forEach(function(x){g.appendChild(card(x,{meta:x.why}));});
+    s.appendChild(g);
+    return s;
+  }
+
+  function pairRow(a,b,cls){
+    const row=el('div','pair');
+    row.appendChild(card(a,cls?{cls:cls}:null));row.appendChild(el('span','vs','VS'));row.appendChild(card(b,cls?{cls:cls}:null));
+    return row;
+  }
+  function renderVowels(V){
+    const s=lesson('vowels','🅰️','VOWELS: SHORT & LONG','LESSON 3',V.intro);
+    const box=el('div','pairs vowels');
+    V.pairs.forEach(function(p){box.appendChild(pairRow(p.short,p.long));});
+    s.appendChild(box);
+    s.appendChild(el('h3','sub-h','GLIDES AND SPECIAL VOWELS'));
+    s.appendChild(el('p','sub-p',V.others.intro));
+    const g=grid();
+    V.others.list.forEach(function(it){g.appendChild(card(it));});
+    s.appendChild(g);
+    return s;
+  }
+
+  function renderSounds(D){
+    const s=lesson('sounds','👂','TRICKY SOUNDS','LESSON 4',D.intro);
+    D.groups.forEach(function(gp){
+      const box=el('div','group');
+      box.appendChild(el('h3',null,gp.title));
+      box.appendChild(el('p','sub-p',gp.tip));
+      if(gp.pairs){const ps=el('div','pairs');gp.pairs.forEach(function(p){ps.appendChild(pairRow(p[0],p[1]));});box.appendChild(ps);}
+      if(gp.words){const g=grid();gp.words.forEach(function(w){g.appendChild(card(w));});box.appendChild(g);}
+      if(gp.note)box.appendChild(el('p','note',gp.note));
+      s.appendChild(box);
+    });
+    return s;
+  }
+
   function renderKey(R){
     $('key-intro').textContent=R.intro;
     const box=$('keys');box.innerHTML='';
@@ -731,6 +804,9 @@ function toast(msg){const t=document.getElementById('toast');if(!t)return;t.text
     renderKey(data.romanization);
     const box=$('lessons');box.innerHTML='';
     box.appendChild(renderTones(data.tones));
+    box.appendChild(renderConsonants(data.consonants));
+    box.appendChild(renderVowels(data.vowels));
+    box.appendChild(renderSounds(data.sounds));
     watchLessons();
     if(location.hash){const t=$(location.hash.slice(1));if(t)t.scrollIntoView();}
   }
