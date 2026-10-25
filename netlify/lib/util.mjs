@@ -15,10 +15,10 @@ export const PAGES = {
   '/services.html': 'tracks', '/services': 'tracks',
   '/contact.html': 'voice-lab', '/contact': 'voice-lab',
   '/clone.html': 'my-voice', '/clone': 'my-voice',
+  '/lab.html': 'music-lab', '/lab': 'music-lab',
   '/story.html': 'story', '/story': 'story',
   '/play.html': 'play', '/play': 'play',
   '/read.html': 'reader', '/read': 'reader',
-  '/learn.html': 'learn', '/learn': 'learn',
 };
 
 export class HttpError extends Error {
