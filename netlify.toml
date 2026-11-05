@@ -13,14 +13,6 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Owner dashboard: never framed by other sites, never cached
-[[headers]]
-  for = "/admin.html"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    Content-Security-Policy = "frame-ancestors 'none'"
-    Cache-Control = "no-store"
-
 # The service worker must never be cached, so new versions roll out immediately
 [[headers]]
   for = "/sw.js"
@@ -59,6 +51,15 @@
     Content-Security-Policy = "frame-ancestors 'self'"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "microphone=(self), camera=(), geolocation=()"
+
+# Owner dashboard: never framed by anyone, never cached.
+# Keep this after "/*" above: when two rules set the same header, Netlify uses the later one.
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    Content-Security-Policy = "frame-ancestors 'none'"
+    Cache-Control = "no-store"
 
 # Netlify can't run PHP, so it would serve these files as plain text.
 # Hide them (the backend only works on a PHP host such as XAMPP).
