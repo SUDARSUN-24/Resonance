@@ -1,5 +1,14 @@
 # Netlify settings for RESONANCE (static site + serverless backend)
 
+# Run the tests before every deploy. If any test fails, the deploy stops
+# and the live site stays on the last working version.
+[build]
+  command = "npm test"
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "26"
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
