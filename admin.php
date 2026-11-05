@@ -6,11 +6,13 @@
 //  Place in same folder as db.php
 // ═══════════════════════════════════════════════
 
-// ── Optional: simple password protection ────────
-// Uncomment these 3 lines and set your password:
-// $ADMIN_PASS = 'resonance2024';
-// if (!isset($_GET['pass']) || $_GET['pass'] !== $ADMIN_PASS)
-//     die('<h2>Access denied. Add ?pass=yourpassword to the URL.</h2>');
+// ── Local access only ───────────────────────────
+// This panel can read and delete requests, so it only opens on this
+// computer (XAMPP). Visitors from anywhere else get "Access denied".
+if (!in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)) {
+    http_response_code(403);
+    die('<h2>Access denied. Open the admin panel on the computer running XAMPP.</h2>');
+}
 
 require_once __DIR__ . '/db.php';
 

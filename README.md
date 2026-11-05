@@ -323,7 +323,7 @@ The text-to-speech features run entirely in the browser — no setup needed.
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/SUDARSUN-24/resonance.git
+   git clone https://github.com/SUDARSUN-24/Resonance.git
    ```
 2. Open `index.html` in a modern browser. 🌐
    > 💡 Chrome or Edge recommended for the widest voice selection.
@@ -357,7 +357,7 @@ Hosted on Netlify at **https://resonancesun.netlify.app** — every push to `mai
 
 ### 🔒 Securing the legacy admin panel
 
-`admin.php` (XAMPP version only) has **no login by default**. If you run it, enable the optional password check at the top of `admin.php`. The Netlify dashboard (`admin.html`) is always password-protected.
+`admin.php` (XAMPP version only) only opens on the computer running XAMPP; requests from any other device are refused. The Netlify dashboard (`admin.html`) is always password-protected.
 
 ---
 
